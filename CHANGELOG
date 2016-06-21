@@ -1,3 +1,9 @@
+v1.4 (20110620)
+	- introduced option -b  (allow breaks inside lines)
+	- fixed line length issues
+	- using ctype
+	- build cleanup
+
 v1.3.1 (20100427)
 	- fixed double separator issue
 

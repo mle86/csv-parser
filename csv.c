@@ -1,13 +1,14 @@
 #include "csv.h"
 
-short Opmode = OP_PresetFields;
-bool ContinueOnError = false;
+enum opmode Opmode      = OP_PresetFields;
+bool AllowBreaks        = false;
+bool ContinueOnError    = false;
 bool ArbitrarySeparator = false;
-unsigned int SkipLines = 0;
+unsigned int SkipLines  = 0;
 signed int   LimitLines = -1;
 
-bool Flush = false;
-bool Verbose = false;
+bool Flush      = false;
+bool Verbose    = false;
 bool GotIndexes = false;
 char* Indexes [MAXFIELDS];
 FILE* in;
@@ -16,19 +17,16 @@ char sepchar = '\0';
 
 
 int main (int argc, char** argv) {
-	int linenum = 0;
-	bool firstline = true; // erste zeile mit echtem inhalt?
-	int i, fieldpos = 0; // feldzähler für jede zeile
-	char c, *tok, *line;
-
 	init();
 
-	while( (c = getopt(argc, argv, "Ffnpaes:l:vhV")) != -1 )
+	char c;
+	while( (c = getopt(argc, argv, "Ffnpabes:l:vhV")) != -1 )
 		switch (c) {
 			case 'h': Help(); return 0;
 			case 'V': Version(); return 0;
 			case 'v': Verbose=true; break;
 			case 'a': ArbitrarySeparator=true; break;
+			case 'b': AllowBreaks=true; break;
 			case 'e': ContinueOnError=true; break;
 			case 'f': Opmode = OP_FixedFields; break;
 			case 'n': Opmode = OP_NamedFields; break;
@@ -43,7 +41,12 @@ int main (int argc, char** argv) {
 		getLine(true);
 		SkipLines--;
 	}
+	linenum = 0;
 
+
+	int i, fieldpos = 0;
+	char *tok,
+	     *line;
 
 	if (OP(NamedFields) || OP(PresetFields)) {
 
@@ -55,10 +58,9 @@ int main (int argc, char** argv) {
 		while(1) {
 			char c, *t;
 
-			linenum++;
 			t = line = getLine(true);
 
-			while( ((c = *t)) && (IsWhitespace(c) || IsSeparator_(c)) )
+			while( ((c = *t)) && (isblank(c) || IsSeparator_(c)) )
 				t++;
 			if ( ! (c=='\0' || c=='\r' || c=='\n' || IsSeparator_(c)) ) {
 				if (Verbose)  fprintf(stderr, "Got field names in line %i\n", linenum);
@@ -96,7 +98,7 @@ int main (int argc, char** argv) {
 					else {
 						if (! lk)
 							lk = i;
-						if (strIEqual(argv[i], tok)) {
+						if (strcasecmp(argv[i], tok) == 0) {
 							Indexes[ fieldpos ] = argv[lk];
 							GotIndexes = true;
 							if (Verbose)  fprintf(stderr, "Got field argv[%i]=%s: %s (position=%i)\n", lk, argv[lk], tok, fieldpos);
@@ -131,7 +133,7 @@ int main (int argc, char** argv) {
 
 		// Die Reihenfolge der Felder ist bereits bekannt und wird übergeben.
 		// Nicht auszulesende Felder werden durch ein @ gekennzeichnet:
-		//   vorname lastname @ phone
+		//   firstname lastname @ phone
 
 		if (optind >= argc) {
 			fprintf(stderr, PROGNAME": no field names given\n");
@@ -158,15 +160,38 @@ int main (int argc, char** argv) {
 	if (Flush || Verbose)
 		fflush(stderr);
 
-
 	// Hier beginnt das eigentliche CSV-Parsing:
+	parse();
+
+	return 0;
+}
+
+
+void init (void) {
+	register unsigned int i = 0;
+	while( i < MAXFIELDS )
+		Indexes[i++] = NULL;
+
+	in = fdopen(fileno(stdin), "r");
+}
+
+
+void parse () {
+	
+	char* line;
+	char* tok;
+
+	bool chk;
+	bool firstline = true; // erste zeile mit echtem inhalt?
+
+	unsigned int fieldpos;
+
 
 	while(( line = getLine(false) )) {
-		bool chk = false;
-		fieldpos = 0;
 
-		linenum++;
-		
+		fieldpos = 0;
+		chk      = false;
+
 		if (firstline && OP(FixedFields) && ArbitrarySeparator) {
 			// Trennzeichen finden:
 			char c, *t=line;
@@ -205,58 +230,4 @@ int main (int argc, char** argv) {
 
 		firstline = false;
 	}
-
-	return 0;
 }
-
-void init (void) {
-	register unsigned int i = MAXFIELDS;
-	while(i)
-		Indexes[i--] = NULL;
-	in = fdopen(fileno(stdin), "r");
-}
-
-
-void Help (void) { printf(
-	M1 PROGNAME M0" reads a CSV file from standard input and filters it.\n"
-	"Usage: "M1 PROGNAME M0" ["M1"OPTIONS"M0"] ["M1"FIELDNAME ..."M0"]\n"
-	"Options:\n"
-	M1"  -n    "M0"Non-fixed, named fields:\n"
-	  "        "  "The program reads field names from the argument list ("M1"FIELDNAME"M0"S)\n"
-	  "        "  "and compares them with the first line of the CSV file, then reads in\n"
-	  "        "  "all lines and prints these fields.\n"
-	  "        "  "Separate field names with a single \""M1"."M0"\".\n"
-	  "        "  "The name order is irrelevant, as is case.\n"
-	M1"  -f    "M0"Fixed names for field positions:\n"
-	  "        "  "The program reads field names from the argument list ("M1"FIELDNAME"M0"S)\n"
-	  "        "  "and applies them to all lines. Field positions which are to be ignored\n"
-	  "        "  "may be marked with a single \""M1"@"M0"\".\n"
-	  "        "  "The argument order represents the field order in the CSV input.\n"
-	M1"  -p    "M0"The programm reads field names from the first line and prints all fields\n"
-	  "        "  "with their names from the first line.\n"
-	  "        "  "In this mode, "M1"FIELDNAME"M0" specifications are neither needed nor possible.\n"
-	"\n"
-	M1"  -e    "M0"Don't quit on parse errors.\n"
-	M1"  -a    "M0"Only use separator which was found in first line.\n"
-	M1"  -s N  "M0"Skips the first "M1"N"M0" input lines.\n"
-	  "        "  "(Skipped lines are NOT counted for line numbers.)\n"
-	M1"  -l N  "M0"Limit parsing to "M1"N"M0" input lines.\n"
-	  "        "  "As soon as the "M1"N"M0"th line is reached (skipped lines not counted),\n"
-	  "        "  "the program will terminate. Limiting to zero lines is of course useless,\n"
-	  "        "  "except for mode "M1"-p"M0" (preset field names), where no content parsing\n"
-	  "        "  "will be done, instead the program will terminate after printing\n"
-	  "        "  "all field names as found on first line.\n"
-	M1"  -F    "M0"Flush stdout after every parsed input line.\n"
-	M1"  -h    "M0"This help\n"
-	M1"  -V    "M0"Program version\n"
-	M1"  -v    "M0"Verbose parsing on stderr\n"
-	"\n"
-	"Default is "M1"-p"M0". Options "M1"-nfp"M0" are mutually exclusive.\n"
-	"\n"
-); exit(0); }
-
-void Version (void) { printf(
-	PROGNAME " v" VERSION "\n"
-	"Written by Maximilian Eul <mle@multinion.de>, April 2010.\n"
-	"\n"
-); exit(0); }
