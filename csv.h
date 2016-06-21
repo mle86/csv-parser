@@ -3,11 +3,12 @@
 
 #include <stdbool.h>
 #include <unistd.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 
-#define VERSION "1.3"
+#define VERSION "1.31"
 
 #define MAXLINELEN 4096
 #define MAXFIELDLEN 90

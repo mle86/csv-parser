@@ -1,3 +1,6 @@
+v1.3.1 (20100427)
+	- fixed double separator issue
+
 v1.3 (20081028)
 	- introduced mode -p  (preset field names)
 	- introduced option -l  (line limit)

@@ -257,6 +257,6 @@ void Help (void) { printf(
 
 void Version (void) { printf(
 	PROGNAME " v" VERSION "\n"
-	"Written by Maximilian Eul <mle@multinion.de>, October 2008.\n"
+	"Written by Maximilian Eul <mle@multinion.de>, April 2010.\n"
 	"\n"
 ); exit(0); }

@@ -51,7 +51,7 @@ char* nextToken (char* *s) {
 	}
 
 	while(( c = **s )) {
-		if (c==strdelim && c && *(1+*s)==strdelim && !IsSeparator(*(2+*s))) {
+		if (c==strdelim && c && *(1+*s)==strdelim /* && !IsSeparator(*(2+*s)) */ ) {
 			// doppeltes string-begrenzungszeichen: kein string-ende, sondern escaping.
 			// --> "richtig" escapen und weiter.
 //			**s = '\\';
