@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 
-#define VERSION "1.2"
+#define VERSION "1.3"
 
 #define MAXLINELEN 4096
 #define MAXFIELDLEN 90
@@ -30,16 +30,18 @@ extern FILE* in;
 extern char sepchar;
 extern bool ArbitrarySeparator;
 
+enum opmode {
+	OP_PresetFields,
+	OP_FixedFields,
+	OP_NamedFields
+};
+#define  OP(o)  (Opmode == OP_ ## o)
+
 #define  IsSeparator_(c)  ( c==',' || c==';' || c==':' || c=='\0' )
 #define  IsSeparator(c)  ( ArbitrarySeparator ? (c==sepchar || c=='\0') : IsSeparator_(c) )
 
 
 #include "macros.h"
-#include "malloc.h"
-#include "die.h"
-
-#include "malloc.c"
-#include "die.c"
 #include "str.c"
 
 #endif // __CSV_H
