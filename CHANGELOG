@@ -1,0 +1,5 @@
+v1.1 (20080305)
+	- introduced option -F  (always flush)
+	- introduced option -e  (ingore errors)
+
+v1.0 (20080129)

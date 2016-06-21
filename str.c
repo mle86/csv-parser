@@ -1,4 +1,4 @@
-char* getLine (short needLine) {
+char* getLine (bool needLine) {
 	static char* lp = NULL;
 	if (! lp) {
 		lp = strMalloc(MAXLINELEN);
@@ -35,8 +35,6 @@ char* nextToken (char** s) {
 	char strdelim = '\0';
 	char* tokstart = *s;
 
-	#define  IsSeparator(c)  ( c==',' || c==';' || c==':' || c=='\0' )
-	
 	if (! (c = **s))
 		return NULL;
 	if (c=='"' || c=='\'' || c=='`') {
@@ -46,16 +44,16 @@ char* nextToken (char** s) {
 	}
 
 	while(( c = **s )) {
-		if (c==strdelim && *(1+*s)==strdelim) {
+		if (c==strdelim && c && *(1+*s)==strdelim && !IsSeparator(*(2+*s))) {
 			// doppeltes string-begrenzungszeichen: kein string-ende, sondern escaping.
-			// --> "richtig" escapen und weiter.
-			**s = '\\';
+//			// --> "richtig" escapen und weiter.
+//			**s = '\\';
 			(*s) += 2;
 			continue;
 		}
-		if ( IsSeparator(c) || (c==strdelim && IsSeparator( *(1+*s) )) ) {
+		if ( (IsSeparator(c) && !strdelim) || (c==strdelim && IsSeparator( *(1+*s) )) ) {
 			**s = '\0';
-			*s += (c==strdelim ? 2 : 1);
+			*s += (c==strdelim && c ? 2 : 1);
 			return tokstart;
 		}
 		(*s)++;
@@ -64,7 +62,7 @@ char* nextToken (char** s) {
 	return (*s==tokstart ? NULL : tokstart);
 }
 
-short strIEqual (char* a, char* b) {
+bool strIEqual (char* a, char* b) {
 	if (a == b) return 1;
 	if (! a)    return 0;
 	if (! b)    return 0;

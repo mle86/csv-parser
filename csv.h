@@ -1,12 +1,13 @@
 #ifndef __CSV_H
 #define __CSV_H
 
+#include <stdbool.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 
-#define VERSION "1.0"
+#define VERSION "1.1"
 
 #define MAXLINELEN 4096
 #define MAXFIELDLEN 90
@@ -16,16 +17,19 @@
 #define M0 "[0m"
 
 int   main (int argc, char** argv);
-char* getLine (short needLine);
+char* getLine (bool needLine);
 void  skipWhitespace (char** s);
 void  chopWhitespace (char* s);
 char* nextToken (char** s);
 void  init (void);
 void  Help (void);
 void  Version (void);
-short strIEqual (char* a, char* b);
+bool  strIEqual (char* a, char* b);
 
 extern FILE* in;
+
+#define  IsSeparator(c)  ( c==',' || c==';' || c==':' || c=='\0' )
+	
 
 #include "macros.h"
 #include "malloc.h"

@@ -1,11 +1,13 @@
 #include "csv.h"
 
-short FixedFields = 0;
-short NamedFields = 1;
-short ContinueOnError = 0;
+bool FixedFields = 0;
+bool NamedFields = 1;
+bool ContinueOnError = 0;
 unsigned int SkipLines = 0;
 
-short GotIndexes = 0;
+bool Flush = 0;
+bool Verbose = 0;
+bool GotIndexes = 0;
 char* Indexes [MAXFIELDS];
 FILE* in;
 
@@ -17,15 +19,24 @@ int main (int argc, char** argv) {
 
 	init();
 
-	while( (c = getopt(argc, argv, "fns:hV")) != -1 )
+	while( (c = getopt(argc, argv, "Ffnes:vhV")) != -1 )
 		switch (c) {
 			case 'h': Help(); return 0;
 			case 'V': Version(); return 0;
-			case 'e': ContinueOnError=1; return 0;
+			case 'v': Verbose++; break;
+			case 'e': ContinueOnError=1; break;
 			case 'f': FixedFields=1; NamedFields=0; break;
 			case 'n': NamedFields=1; FixedFields=0; break;
 			case 's': SkipLines = atoi(optarg); break;
+			case 'F': Flush=1; break;
 		}
+
+
+	while(SkipLines > 0) {
+		getLine(1);
+		SkipLines--;
+	}
+
 
 	if (NamedFields) {
 
@@ -38,8 +49,24 @@ int main (int argc, char** argv) {
 		if (optind >= argc)
 			die(PROGNAME ": no field names given");
 
-		linenum++;
-		line = getLine(1);
+		while(1) {
+			char c, *t;
+
+			linenum++;
+			t = line = getLine(1);
+
+			while( ((c = *t)) && (IsWhitespace(c) || IsSeparator(c)) )
+				t++;
+			if ( ! (c=='\0' || c=='\r' || c=='\n' || IsSeparator(c)) ) {
+				if (Verbose)  fprintf(stderr, "Got field names in line %i\n", linenum);
+				break;
+			}
+			// Zeile mit echtem Content gefunden? Dann gehts jetzt richtig los.
+			// Ansonsten die nächste Zeile betrachten.
+			if (Verbose)  fprintf(stderr, "Skipped junk line %i\n", linenum);
+		}
+
+
 
 		while(( tok = nextToken(&line) )) {
 			
@@ -54,6 +81,7 @@ int main (int argc, char** argv) {
 					if (strIEqual(argv[i], tok)) {
 						Indexes[ fieldpos ] = argv[lk];
 						GotIndexes = 1;
+						if (Verbose)  fprintf(stderr, "Got field argv[%i]=%s: %s (position=%i)\n", lk, argv[lk], tok, fieldpos);
 						break;
 					}
 				}
@@ -74,21 +102,25 @@ int main (int argc, char** argv) {
 			if (! (argv[i][0]=='@' && argv[i][1]=='\0')) {
 				Indexes[ fieldpos ] = argv[i];
 				GotIndexes = 1;
+				if (Verbose)  fprintf(stderr, "Got field %s (position=%i)\n", argv[i], fieldpos);
 			}
 			fieldpos++;
 		}
 
 	}
 
-	while(SkipLines > 0) {
-		getLine(1);
-		SkipLines--;
-	}
+
+	if (! GotIndexes)
+		die(PROGNAME ": no field names given");
+
+	if (Flush || Verbose)
+		fflush(stderr);
+
 
 	// Hier beginnt das eigentliche CSV-Parsing:
 
 	while(( line = getLine(0) )) {
-		short chk = 0;
+		bool chk = 0;
 		fieldpos = 0;
 		linenum++;
 		while(( tok = nextToken(&line) )) {
@@ -102,8 +134,17 @@ int main (int argc, char** argv) {
 					exit(1);
 			}
 		}
-		if (chk)
+
+		if (chk) {
+			if (Verbose)  fprintf(stderr, "This was line %i\n", linenum);
 			printf("-\n");
+		} else if (Verbose)  fprintf(stderr, "Nothing found on line %i\n", linenum);
+
+		if (Flush) {
+			if (Verbose)
+				fflush(stderr);
+			fflush(stdout);
+		}
 	}
 
 	return 0;
@@ -134,8 +175,10 @@ void Help (void) { printf(
 	M1 "  -e    " M0 "Don't quit on parse errors.\n"
 	M1 "  -s N  " M0 "Skips the first " M1 "N" M0 " input lines.\n"
 	   "        "    "(Skipped lines are NOT counted for line numbers.)\n"
+	M1 "  -F    " M0 "Flush stdout after every parsed input line.\n"
 	M1 "  -h    " M0 "This help\n"
 	M1 "  -V    " M0 "Program version\n"
+	M1 "  -v    " M0 "Verbose parsing on stderr\n"
 	"Default is " M1 "-n" M0 ". Options " M1 "-nf" M0 " are mutually exclusive.\n"
 	"\n"
 ); exit(0); }
