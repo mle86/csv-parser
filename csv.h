@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 
-#define VERSION "1.1"
+#define VERSION "1.2"
 
 #define MAXLINELEN 4096
 #define MAXFIELDLEN 90
@@ -27,9 +27,12 @@ void  Version (void);
 bool  strIEqual (char* a, char* b);
 
 extern FILE* in;
+extern char sepchar;
+extern bool ArbitrarySeparator;
 
-#define  IsSeparator(c)  ( c==',' || c==';' || c==':' || c=='\0' )
-	
+#define  IsSeparator_(c)  ( c==',' || c==';' || c==':' || c=='\0' )
+#define  IsSeparator(c)  ( ArbitrarySeparator ? (c==sepchar || c=='\0') : IsSeparator_(c) )
+
 
 #include "macros.h"
 #include "malloc.h"

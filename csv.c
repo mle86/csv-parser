@@ -1,39 +1,44 @@
 #include "csv.h"
 
-bool FixedFields = 0;
-bool NamedFields = 1;
-bool ContinueOnError = 0;
+bool FixedFields = false;
+bool NamedFields = true;
+bool ContinueOnError = false;
+bool ArbitrarySeparator = false;
 unsigned int SkipLines = 0;
 
-bool Flush = 0;
-bool Verbose = 0;
-bool GotIndexes = 0;
+bool Flush = false;
+bool Verbose = false;
+bool GotIndexes = false;
 char* Indexes [MAXFIELDS];
 FILE* in;
+
+char sepchar = '\0';
 
 
 int main (int argc, char** argv) {
 	int linenum = 0;
+	bool firstline = true; // erste zeile mit echtem inhalt?
 	int i, fieldpos = 0; // feldzähler für jede zeile
 	char c, *tok, *line;
 
 	init();
 
-	while( (c = getopt(argc, argv, "Ffnes:vhV")) != -1 )
+	while( (c = getopt(argc, argv, "Ffnaes:vhV")) != -1 )
 		switch (c) {
 			case 'h': Help(); return 0;
 			case 'V': Version(); return 0;
-			case 'v': Verbose++; break;
-			case 'e': ContinueOnError=1; break;
-			case 'f': FixedFields=1; NamedFields=0; break;
-			case 'n': NamedFields=1; FixedFields=0; break;
+			case 'v': Verbose=true; break;
+			case 'a': ArbitrarySeparator=true; break;
+			case 'e': ContinueOnError=true; break;
+			case 'f': FixedFields=true; NamedFields=false; break;
+			case 'n': NamedFields=true; FixedFields=false; break;
 			case 's': SkipLines = atoi(optarg); break;
-			case 'F': Flush=1; break;
+			case 'F': Flush=true; break;
 		}
 
 
 	while(SkipLines > 0) {
-		getLine(1);
+		getLine(true);
 		SkipLines--;
 	}
 
@@ -53,19 +58,25 @@ int main (int argc, char** argv) {
 			char c, *t;
 
 			linenum++;
-			t = line = getLine(1);
+			t = line = getLine(true);
 
-			while( ((c = *t)) && (IsWhitespace(c) || IsSeparator(c)) )
+			while( ((c = *t)) && (IsWhitespace(c) || IsSeparator_(c)) )
 				t++;
-			if ( ! (c=='\0' || c=='\r' || c=='\n' || IsSeparator(c)) ) {
+			if ( ! (c=='\0' || c=='\r' || c=='\n' || IsSeparator_(c)) ) {
 				if (Verbose)  fprintf(stderr, "Got field names in line %i\n", linenum);
+				if (ArbitrarySeparator) {
+					// Trennzeichen finden...
+					t = line;
+					while( ((c = *t)) && !IsSeparator_(c) )  t++;
+					if (c)	sepchar = c;
+					else	ArbitrarySeparator = false;
+				}
 				break;
 			}
 			// Zeile mit echtem Content gefunden? Dann gehts jetzt richtig los.
 			// Ansonsten die nächste Zeile betrachten.
 			if (Verbose)  fprintf(stderr, "Skipped junk line %i\n", linenum);
 		}
-
 
 
 		while(( tok = nextToken(&line) )) {
@@ -80,7 +91,7 @@ int main (int argc, char** argv) {
 						lk = i;
 					if (strIEqual(argv[i], tok)) {
 						Indexes[ fieldpos ] = argv[lk];
-						GotIndexes = 1;
+						GotIndexes = true;
 						if (Verbose)  fprintf(stderr, "Got field argv[%i]=%s: %s (position=%i)\n", lk, argv[lk], tok, fieldpos);
 						break;
 					}
@@ -101,7 +112,7 @@ int main (int argc, char** argv) {
 		for(i=optind; i<argc; i++) {
 			if (! (argv[i][0]=='@' && argv[i][1]=='\0')) {
 				Indexes[ fieldpos ] = argv[i];
-				GotIndexes = 1;
+				GotIndexes = true;
 				if (Verbose)  fprintf(stderr, "Got field %s (position=%i)\n", argv[i], fieldpos);
 			}
 			fieldpos++;
@@ -119,14 +130,23 @@ int main (int argc, char** argv) {
 
 	// Hier beginnt das eigentliche CSV-Parsing:
 
-	while(( line = getLine(0) )) {
-		bool chk = 0;
+	while(( line = getLine(false) )) {
+		bool chk = false;
 		fieldpos = 0;
 		linenum++;
+		
+		if (firstline && FixedFields && ArbitrarySeparator) {
+			// Trennzeichen finden:
+			char c, *t=line;
+			while( ((c = *t)) && !IsSeparator_(c) )  t++;
+			if (c)	sepchar = c;
+			else	ArbitrarySeparator = false;
+		}
+		
 		while(( tok = nextToken(&line) )) {
 			if (Indexes[fieldpos]) {
 				printf("%s: %s\n", Indexes[fieldpos], tok);
-				chk = 1;
+				chk = true;
 			}
 			if (++fieldpos >= MAXFIELDS) {
 				fprintf(stderr, "%s: too many fields in input line %i (max %i)\n", PROGNAME, linenum, MAXFIELDS);
@@ -145,6 +165,7 @@ int main (int argc, char** argv) {
 				fflush(stderr);
 			fflush(stdout);
 		}
+		firstline = false;
 	}
 
 	return 0;
@@ -173,6 +194,7 @@ void Help (void) { printf(
 	   "        "    "with a single \"" M1 "@" M0 "\".\n"
 	   "        "    "The argument order represents the field order in the CSV input.\n"
 	M1 "  -e    " M0 "Don't quit on parse errors.\n"
+	M1 "  -a    " M0 "Only use separator which was found in first line.\n"
 	M1 "  -s N  " M0 "Skips the first " M1 "N" M0 " input lines.\n"
 	   "        "    "(Skipped lines are NOT counted for line numbers.)\n"
 	M1 "  -F    " M0 "Flush stdout after every parsed input line.\n"
@@ -185,6 +207,6 @@ void Help (void) { printf(
 
 void Version (void) { printf(
 	PROGNAME " v" VERSION "\n"
-	"Written by Maximilian Eul <mle@multinion.de>, November 2007.\n"
+	"Written by Maximilian Eul <mle@multinion.de>, September 2008.\n"
 	"\n"
 ); exit(0); }

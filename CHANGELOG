@@ -1,3 +1,7 @@
+v1.2 (20080929)
+	- introduced option -a  (accept only arbitrary separator)
+	- code cleanup
+
 v1.1 (20080305)
 	- introduced option -F  (always flush)
 	- introduced option -e  (ingore errors)

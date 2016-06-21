@@ -5,7 +5,7 @@ char* getLine (bool needLine) {
 		lp[0] = '\0';
 	}
 	if (! fgets(lp, MAXLINELEN, in))
-		exit(needLine);
+		exit(needLine ? 1 : 0);
 	skipWhitespace(&lp);
 	chopWhitespace(lp);
 	return lp;
