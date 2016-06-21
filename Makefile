@@ -7,12 +7,13 @@ CHOWN=root:root
 OBJS =csv.o
 OBJS+=str.o
 OBJS+=aux.o
+OBJS+=output.o
 
 DEP=*.h
 
 CC=gcc
 LD=gcc
-CFLAGS =-O3 -Wall -I. -DPROGNAME='"$(BIN)"'
+CFLAGS =-O3 -std=gnu99 -pedantic -Wall -I. -DPROGNAME='"$(BIN)"'
 LDFLAGS=-Wl,--allow-multiple-definition
 
 .PHONY : all install clean

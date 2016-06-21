@@ -1,3 +1,6 @@
+v1.5 (20120129)
+	- introduced option -j (output JSON)
+
 v1.4 (20110620)
 	- introduced option -b  (allow breaks inside lines)
 	- fixed line length issues

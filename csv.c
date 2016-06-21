@@ -4,6 +4,7 @@ enum opmode Opmode      = OP_PresetFields;
 bool AllowBreaks        = false;
 bool ContinueOnError    = false;
 bool ArbitrarySeparator = false;
+bool OutputJSON         = false;
 unsigned int SkipLines  = 0;
 signed int   LimitLines = -1;
 
@@ -20,7 +21,7 @@ int main (int argc, char** argv) {
 	init();
 
 	char c;
-	while( (c = getopt(argc, argv, "Ffnpabes:l:vhV")) != -1 )
+	while( (c = getopt(argc, argv, "Ffnpabjes:l:vhV")) != -1 )
 		switch (c) {
 			case 'h': Help(); return 0;
 			case 'V': Version(); return 0;
@@ -28,6 +29,7 @@ int main (int argc, char** argv) {
 			case 'a': ArbitrarySeparator=true; break;
 			case 'b': AllowBreaks=true; break;
 			case 'e': ContinueOnError=true; break;
+			case 'j': OutputJSON=true; break;
 			case 'f': Opmode = OP_FixedFields; break;
 			case 'n': Opmode = OP_NamedFields; break;
 			case 'p': Opmode = OP_PresetFields; break;
@@ -181,8 +183,8 @@ void parse () {
 	char* line;
 	char* tok;
 
-	bool chk;
-	bool firstline = true; // erste zeile mit echtem inhalt?
+	bool is_first_kv = true;
+	bool is_first_line = true; // erste zeile mit echtem inhalt?
 
 	unsigned int fieldpos;
 
@@ -190,9 +192,9 @@ void parse () {
 	while(( line = getLine(false) )) {
 
 		fieldpos = 0;
-		chk      = false;
+		is_first_kv = true;
 
-		if (firstline && OP(FixedFields) && ArbitrarySeparator) {
+		if (is_first_line && OP(FixedFields) && ArbitrarySeparator) {
 			// Trennzeichen finden:
 			char c, *t=line;
 			while( ((c = *t)) && !IsSeparator_(c) )  t++;
@@ -202,8 +204,10 @@ void parse () {
 		
 		while(( tok = nextToken(&line) )) {
 			if (Indexes[fieldpos]) {
-				printf("%s: %s\n", Indexes[fieldpos], tok);
-				chk = true;
+				if (is_first_kv && is_first_line)
+						outputBegin();
+				outputKV(Indexes[fieldpos], tok, is_first_kv, is_first_line);
+				is_first_kv = false;
 			}
 			if (++fieldpos >= MAXFIELDS) {
 				fprintf(stderr, "%s: too many fields in input line %i (max %i)\n", PROGNAME, linenum, MAXFIELDS);
@@ -212,9 +216,9 @@ void parse () {
 			}
 		}
 
-		if (chk) {
+		if (! is_first_kv) {
 			if (Verbose)  fprintf(stderr, "This was line %i\n", linenum);
-			printf("-\n");
+			outputRecordEnd();
 		} else if (Verbose)  fprintf(stderr, "Nothing found on line %i\n", linenum);
 
 		if (Flush) {
@@ -228,6 +232,9 @@ void parse () {
 			break;
 		}
 
-		firstline = false;
+		is_first_line = false;
 	}
+
+	if (! is_first_line)
+		outputEnd();
 }

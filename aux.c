@@ -21,6 +21,7 @@ void Help (void) { printf(
 	  "        "  "(This is the default mode.)\n"
 	"\n"
 	"Options:\n"
+	M1"  -j    "M0"Output in JSON format.\n"
 	M1"  -a    "M0"Only use separator which was found in first line.\n"
 	M1"  -b    "M0"Allow linebreaks in fields.\n"
 	"\n"
@@ -44,6 +45,6 @@ void Help (void) { printf(
 
 void Version (void) { printf(
 	PROGNAME " v" VERSION "\n"
-	"Written by Maximilian Eul <mle@multinion.de>, June 2011.\n"
+	"Written by Maximilian Eul <mle@multinion.de>, January 2013.\n"
 	"\n"
 ); exit(0); }

@@ -2,7 +2,7 @@
 #define __CONST_H
 
 
-#define VERSION "1.4"
+#define VERSION "1.5"
 
 #ifndef PROGNAME
   #define PROGNAME "csv"

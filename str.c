@@ -45,7 +45,7 @@ char* appendLine (char* oldline) {
 	size_t lastlinelen = strlen(oldline);
 //	size_t lastlinelen = linelen;
 
-	const char between = (lastlinelen > 0) ? ' ' : '\0';
+	const char between = (lastlinelen > 0) ? '\n' : '\0';
 	const off_t boff   = (between ? 1 : 0);
 
 	char* nextline = getLine(false);
@@ -93,6 +93,41 @@ void chopWhitespace (char* s, size_t *saveLen) {
 	s[0] = '\0';
 }
 
+char* breaksToBlank (char* s) {
+	if (!s || !s[0])
+		return s;
+	for (register char* p = s; *p; p++)
+		if (*p == '\n' /*|| *p == '\r'*/)
+			*p = ' ';
+	return s;
+}
+
+void outputJsonString (char* s) {
+	if (!s || !*s)
+		return;
+	for (; *s; s++)
+	switch (*s) {
+		case 0x07: fputs("\\b", stdout); break;
+		case 0x09: fputs("\\t", stdout); break;
+		case 0x0a: fputs("\\n", stdout); break;
+		case 0x0c: fputs("\\f", stdout); break;
+		case 0x0d: fputs("\\r", stdout); break;
+		case '/':  fputs("\\/", stdout); break;
+		case '\\': fputs("\\\\", stdout); break;
+		case '"':  fputs("\\\"", stdout); break;
+		default:
+			if (*s >= 0 && *s <= 31)
+				printf("\\u%04X", (unsigned int)*s);
+			else if (s[0]==0xe2 && s[1]==0x80 && s[2]==0xa8)
+				// JS does not like these.
+				// http://timelessrepo.com/json-isnt-a-javascript-subset
+				puts("\\u2028"), s += 2;
+			else if (s[0]==0xe2 && s[1]==0x80 && s[2]==0xa9)
+				puts("\\u2029"), s += 2;
+			else
+				putchar(*s);
+	}
+}
 
 char* nextToken (char* *s) {
 	char c;

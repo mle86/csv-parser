@@ -11,6 +11,7 @@
 #include "const.h"
 #include "aux.h"
 #include "str.h"
+#include "output.h"
 
 
 int   main (int argc, char** argv);
@@ -22,6 +23,7 @@ extern FILE* in;
 extern char sepchar;
 extern bool ArbitrarySeparator;
 extern bool AllowBreaks;
+extern bool OutputJSON;
 
 extern enum opmode {
 	OP_PresetFields,
