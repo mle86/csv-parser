@@ -5,16 +5,16 @@ DEST=/usr/local/bin/$(BIN)
 CHOWN=root:root
 
 OBJS =csv.o
-OBJS+=str.o
 OBJS+=aux.o
+OBJS+=input.o
 OBJS+=output.o
 
 DEP=*.h
 
 CC=gcc
 LD=gcc
-CFLAGS =-O3 -std=gnu99 -pedantic -Wall -I. -DPROGNAME='"$(BIN)"'
-LDFLAGS=-Wl,--allow-multiple-definition
+CFEAT =-D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
+CFLAGS=-O3 -std=c99 -pedantic -Wall -Wextra -DPROGNAME='"$(BIN)"' $(CFEAT)
 
 .PHONY : all install clean
 
@@ -27,7 +27,6 @@ all: $(BIN)
 # $< is the first prerequisite
 
 $(BIN): $(OBJS)
-test: test.o $(OBJS)
 # Link all objects to final binary.
 # All needed objects are prerequisites here,
 # so they will be compiled.
@@ -44,4 +43,4 @@ install:
 	chown $(CHOWN) $(DEST)
 
 clean:
-	rm -f $(BIN) *.o a.out *~ test 
+	rm -f $(BIN) *.o a.out *~

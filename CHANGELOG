@@ -1,5 +1,13 @@
+v2.0
+	- introduced output mode -J  (compact JSON output)
+	- introduced input mode -i  (auto-numbered columns)
+	- introduced option -d  (explicit separator)
+	- introduced option -M  (don't strip BOM)
+	- renamed option -f to -g  (assigned column names)
+	- code rewrite
+
 v1.5 (20120129)
-	- introduced option -j (output JSON)
+	- introduced output mode -j  (JSON output)
 
 v1.4 (20110620)
 	- introduced option -b  (allow breaks inside lines)
@@ -11,7 +19,7 @@ v1.3.1 (20100427)
 	- fixed double separator issue
 
 v1.3 (20081028)
-	- introduced mode -p  (preset field names)
+	- introduced input mode -p  (preset field names)
 	- introduced option -l  (line limit)
 	- code cleanup
 

@@ -1,15 +1,24 @@
-#ifndef __OUTPUT_H
-#define __OUTPUT_H
-
-#include <stdio.h>
-#include "csv.h"
+#ifndef OUTPUT_H
+#define OUTPUT_H
+#include <stdbool.h>
 
 
-void outputKV (char* key, char* value, bool first_kv_of_record, bool first_line);
-void outputRecordEnd ();
+typedef enum outmode {
+	OM_SIMPLE,
+	OM_JSON,
+	OM_JSON_NUMBERED,
+	OM_JSON_COMPACT,
+} outmode_t;
 
-void outputBegin ();
-void outputEnd   ();
+
+void set_output (outmode_t _mode, bool do_flush);
+
+void output_begin (void);
+void output_end   (void);
+void output_line_begin (void);
+void output_line_end   (void);
+
+void output_kv (const char* key, const char* value);
 
 
-#endif // __OUTPUT_H
+#endif  // OUTPUT_H

@@ -1,13 +1,11 @@
-#ifndef __AUX_H
-#define __AUX_H
-
+#ifndef AUX_H
+#define AUX_H
 #include <stdlib.h>
 #include <stdio.h>
-#include "csv.h"
 
 
 void  Help    (void);
 void  Version (void);
 
 
-#endif // __AUX_H
+#endif // AUX_H

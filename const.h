@@ -1,19 +1,31 @@
-#ifndef __CONST_H
-#define __CONST_H
+#ifndef CONST_H
+#define CONST_H
 
 
-#define VERSION "1.5"
+#define VERSION "2.0"
+
+#define EXIT_HELP	0
+#define EXIT_SYNTAX	1
+#define EXIT_FORMAT	2
+#define EXIT_NOSEP	3
+#define EXIT_EMPTY	4
+#define EXIT_INTERNAL	10
+
+#define NAME_SEPARATOR "."
+#define OMIT_COLUMN "@"
 
 #ifndef PROGNAME
   #define PROGNAME "csv"
 #endif
 
-#define MAXLINELEN 8191
-#define MAXFIELDLEN 256
-#define MAXFIELDS 512
+#define MAXLINELEN 16384
+#define MAXCOLUMNS 512
+#define MAXCOLDEFS 1024
+#define MAXCOLALIASES 40
 
-#define M1 "[1m"
-#define M0 "[0m"
+#define M1 "[1m"  /* highlighted */
+#define Mu "[4m"  /* underlined */
+#define M0 "[0m"  /* normal */
 
 
-#endif // __CONST_H
+#endif  // CONST_H
