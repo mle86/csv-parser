@@ -130,7 +130,7 @@ int main (int argc, char** argv) {
 
 	} else if (mode == MODE_ASSIGNED_NAMES) {
 		/* Read column names from cmdline arguments.
-		 * Columns to be omitted can be marked with "@".  */
+		 * Columns to be omitted can be marked with OMIT_COLUMN.  */
 		read_colname_assignments(argc - optind, (const char**)(argv + optind));
 
 	} else if (mode == MODE_AUTO_COLUMNS) {
@@ -285,7 +285,7 @@ size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], s
 	}
 
 	if (basename) {
-		// last "." argument missing, we'll accept it
+		// last NAME_SEPARATOR argument missing, we'll accept it
 		n++;
 		if (n == 1)
 			fprintf(stderr,
