@@ -58,10 +58,10 @@ void output_end (void) {
 			break;
 		case OM_JSON:
 		case OM_JSON_NUMBERED:
-			prints(" ]\n");
+			prints("]\n");
 			break;
 		case OM_JSON_COMPACT:
-			prints(" ]}\n");
+			prints("]}\n");
 			break;
 	}
 }
