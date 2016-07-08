@@ -4,6 +4,8 @@
 #include "const.h"
 
 
+#define SIMPLE_LINESEP "-\n"
+#define SIMPLE_KVSEP ": "
 
 #define P_KEY Mgreen
 #define P_SYM Myellow

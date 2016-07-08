@@ -16,6 +16,9 @@ static void nobr_print (const char* value);
 
 #define PRETTY if(pretty)
 
+#define prints(s) fputs(s, stdout)
+#define printc(c) fputc(c, stdout)
+
 
 inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty) {
 	first_line = true;
@@ -32,33 +35,33 @@ void output_begin (void) {
 		break;
 	case OM_JSON:
 	case OM_JSON_NUMBERED:
-		fputc('[', stdout);
-		PRETTY{ fputs(P_SYM, stdout); }
+		printc('[');
+		PRETTY{ prints(P_SYM); }
 		break;
 	case OM_JSON_COMPACT:
-		fputs("{\"columns\": [", stdout);
+		prints("{\"columns\": [");
 		for (size_t c = 0; c < MAXCOLUMNS; c++) {
 			if (ColumnName[c])
 				output_kv(NULL, ColumnName[c]);
 		}
-		fputs("],\n\"lines\": [\n ", stdout);
-		PRETTY{ fputs(P_SYM, stdout); }
+		prints("],\n\"lines\": [\n ");
+		PRETTY{ prints(P_SYM); }
 		first_kv = true;  // output_kv() has cleared it
 		break;
 } }
 
 void output_end (void) {
-	PRETTY{ fputs(P_RST, stdout); }
+	PRETTY{ prints(P_RST); }
 
 	switch (mode) {
 		case OM_SIMPLE:
 			break;
 		case OM_JSON:
 		case OM_JSON_NUMBERED:
-			fputs(" ]\n", stdout);
+			prints(" ]\n");
 			break;
 		case OM_JSON_COMPACT:
-			fputs(" ]}\n", stdout);
+			prints(" ]}\n");
 			break;
 	}
 }
@@ -68,27 +71,27 @@ void output_line_begin (void) {
 		case OM_SIMPLE:
 			if (! first_line) {
 				if (pretty)
-					fputs(P_SYM "-\n" P_RST, stdout);
-				else	fputs(      "-\n"      , stdout);
+					prints(P_SYM SIMPLE_LINESEP P_RST);
+				else	prints(      SIMPLE_LINESEP      );
 			}
 			break;
 		case OM_JSON:
 			if (!first_line)
-				fputs("\n,", stdout);
+				prints("\n,");
 			if (pretty)
-				fputs(P_SYM "{" P_RST, stdout);
-			else	fputc(      '{'      , stdout);
+				prints(P_SYM "{" P_RST);
+			else	printc(      '{'      );
 			break;
 		case OM_JSON_COMPACT:
 		case OM_JSON_NUMBERED:
 			if (pretty) {
 				if (first_line)
-					fputs(      P_SYM "[" P_RST, stdout);
-				else	fputs("\n," P_SYM "[" P_RST, stdout);
+					prints(      P_SYM "[" P_RST);
+				else	prints("\n," P_SYM "[" P_RST);
 			} else {
 				if (first_line)
-					fputc(   '[', stdout);
-				else	fputs("\n,[", stdout);
+					printc(   '[');
+				else	prints("\n,[");
 			}
 			break;
 	}
@@ -102,14 +105,14 @@ void output_line_end (void) {
 			break;
 		case OM_JSON:
 			if (pretty)
-				fputs(P_SYM "}" P_RST, stdout);
-			else	fputc(      '}'      , stdout);
+				prints(P_SYM "}" P_RST);
+			else	printc(      '}'      );
 			break;
 		case OM_JSON_NUMBERED:
 		case OM_JSON_COMPACT:
 			if (pretty)
-				fputs(P_SYM "]" P_RST, stdout);
-			else	fputc(      ']'      , stdout);
+				prints(P_SYM "]" P_RST);
+			else	printc(      ']'      );
 			break;
 	}
 
@@ -120,26 +123,26 @@ void output_line_end (void) {
 void output_kv (const char* key, const char* value) {
 	switch (mode) {
 		case OM_SIMPLE:
-			PRETTY{ fputs(P_KEY, stdout); }
-			fputs(key, stdout);
-			PRETTY{ fputs(P_RST, stdout); }
-			fputs(", ", stdout);
+			PRETTY{ prints(P_KEY); }
+			prints(key);
+			PRETTY{ prints(P_RST); }
+			prints(SIMPLE_KVSEP);
 			nobr_print(value);
-			fputc('\n', stdout);
+			printc('\n');
 			break;
 
 		case OM_JSON:
 			if (! first_kv)
-				fputs(pretty ? (P_SYM "," P_RST) : ",", stdout);
+				prints(pretty ? (P_SYM "," P_RST) : ",");
 			if (pretty)
-				fputs("\"" P_KEY, stdout);
-			else	fputc( '"'      , stdout);
+				prints("\"" P_KEY);
+			else	printc( '"'      );
 			json_print(key);
 			if (pretty)
-				fputs(P_RST "\":\"", stdout);
-			else	fputs(      "\":\"", stdout);
+				prints(P_RST "\":\"");
+			else	prints(      "\":\"");
 			json_print(value);
-			fputc('"', stdout);
+			printc('"');
 			break;
 
 		case OM_JSON_NUMBERED:
@@ -147,16 +150,16 @@ void output_kv (const char* key, const char* value) {
 			const bool is_colname = (mode == OM_JSON_COMPACT && !key);
 			if (! first_kv) {
 				if (pretty && !is_colname)
-					fputs(P_SYM "," P_RST, stdout);
-				else	fputc(      ','      , stdout);
+					prints(P_SYM "," P_RST);
+				else	printc(      ','      );
 			}
 			if (pretty && is_colname)
-				fputs("\"" P_KEY, stdout);
-			else	fputc( '"'      , stdout);
+				prints("\"" P_KEY);
+			else	printc( '"'      );
 			json_print(value);
 			if (pretty && is_colname)
-				fputs(P_RST "\"", stdout);
-			else	fputc(       '"', stdout);
+				prints(P_RST "\"");
+			else	printc(       '"');
 			break;
 	}
 
@@ -167,27 +170,27 @@ void output_kv (const char* key, const char* value) {
 void json_print (const char* value) {
 	for (register const unsigned char* c = (const unsigned char*)value; *c; c++)
 	switch (*c) {
-		case 0x07: fputs("\\b", stdout); break;
-		case 0x09: fputs("\\t", stdout); break;
-		case 0x0a: fputs("\\n", stdout); break;
-		case 0x0c: fputs("\\f", stdout); break;
-		case 0x0d: fputs("\\r", stdout); break;
-		case '/':  fputs("\\/", stdout); break;
-		case '\\': fputs("\\\\", stdout); break;
-		case '"':  fputs("\\\"", stdout); break;
+		case 0x07: prints("\\b"); break;
+		case 0x09: prints("\\t"); break;
+		case 0x0a: prints("\\n"); break;
+		case 0x0c: prints("\\f"); break;
+		case 0x0d: prints("\\r"); break;
+		case '/':  prints("\\/"); break;
+		case '\\': prints("\\\\"); break;
+		case '"':  prints("\\\""); break;
 		default:
 			if (*c <= 31)
 				printf("\\u%04X", (unsigned int)*c);
 			else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa8) {
 				// JS does not like these.
 				// http://timelessrepo.com/json-isnt-a-javascript-subset
-				fputs("\\u2028", stdout);
+				prints("\\u2028");
 				c += 2;
 			} else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa9) {
-				fputs("\\u2029", stdout);
+				prints("\\u2029");
 				c += 2;
 			} else
-				fputc(*c, stdout);
+				printc(*c);
 	}
 }
 
@@ -196,16 +199,16 @@ void nobr_print (const char* value) {
 	while (*c) {
 		if (*c == '\\')
 			// print an extra backslash
-			fputs("\\\\", stdout);
+			prints("\\\\");
 		else if (c[0] == '\r' && c[1] == '\n') {
 			// collapse CRLF to single "\n"
-			fputs("\\n", stdout);
+			prints("\\n");
 			c++;
 		} else if (c[0] == '\r' || c[0] == '\n') {
 			// output single linebreaks as "\n"
-			fputs("\\n", stdout);
+			prints("\\n");
 		} else
-			fputc(*c, stdout);
+			printc(*c);
 		
 		c++;
 	}
