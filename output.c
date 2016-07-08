@@ -6,6 +6,7 @@
 
 static outmode_t mode = OM_SIMPLE;
 static bool do_flush = false;
+static bool pretty = false;
 
 static bool first_line = true;
 static bool first_kv   = true;
@@ -13,12 +14,15 @@ static bool first_kv   = true;
 static void json_print (const char* value);
 static void nobr_print (const char* value);
 
+#define PRETTY if(pretty)
 
-inline void set_output (outmode_t _mode, bool _do_flush) {
+
+inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty) {
 	first_line = true;
 	first_kv   = true;
 	mode       = _mode;
 	do_flush   = _do_flush;
+	pretty     = _pretty;
 }
 
 
@@ -29,6 +33,7 @@ void output_begin (void) {
 	case OM_JSON:
 	case OM_JSON_NUMBERED:
 		fputc('[', stdout);
+		PRETTY{ fputs(P_SYM, stdout); }
 		break;
 	case OM_JSON_COMPACT:
 		fputs("{\"columns\": [", stdout);
@@ -37,40 +42,54 @@ void output_begin (void) {
 				output_kv(NULL, ColumnName[c]);
 		}
 		fputs("],\n\"lines\": [\n ", stdout);
+		PRETTY{ fputs(P_SYM, stdout); }
 		first_kv = true;  // output_kv() has cleared it
 		break;
 } }
 
 void output_end (void) {
-  switch (mode) {
-	case OM_SIMPLE:
-		break;
-	case OM_JSON:
-	case OM_JSON_NUMBERED:
-		fputs(" ]\n", stdout);
-		break;
-	case OM_JSON_COMPACT:
-		fputs(" ]}\n", stdout);
-		break;
-} }
+	PRETTY{ fputs(P_RST, stdout); }
+
+	switch (mode) {
+		case OM_SIMPLE:
+			break;
+		case OM_JSON:
+		case OM_JSON_NUMBERED:
+			fputs(" ]\n", stdout);
+			break;
+		case OM_JSON_COMPACT:
+			fputs(" ]}\n", stdout);
+			break;
+	}
+}
 
 void output_line_begin (void) {
 	switch (mode) {
 		case OM_SIMPLE:
-			if (! first_line)
-				fputs("-\n", stdout);
+			if (! first_line) {
+				if (pretty)
+					fputs(P_SYM "-\n" P_RST, stdout);
+				else	fputs(      "-\n"      , stdout);
+			}
 			break;
 		case OM_JSON:
 			if (!first_line)
 				fputs("\n,", stdout);
-			fputc('{', stdout);
+			if (pretty)
+				fputs(P_SYM "{" P_RST, stdout);
+			else	fputc(      '{'      , stdout);
 			break;
 		case OM_JSON_COMPACT:
 		case OM_JSON_NUMBERED:
-			if (first_line)
-				fputc('[', stdout);
-			else
-				fputs("\n,[", stdout);
+			if (pretty) {
+				if (first_line)
+					fputs(      P_SYM "[" P_RST, stdout);
+				else	fputs("\n," P_SYM "[" P_RST, stdout);
+			} else {
+				if (first_line)
+					fputc(   '[', stdout);
+				else	fputs("\n,[", stdout);
+			}
 			break;
 	}
 	first_line = false;
@@ -82,11 +101,15 @@ void output_line_end (void) {
 		case OM_SIMPLE:
 			break;
 		case OM_JSON:
-			fputc('}', stdout);
+			if (pretty)
+				fputs(P_SYM "}" P_RST, stdout);
+			else	fputc(      '}'      , stdout);
 			break;
 		case OM_JSON_NUMBERED:
 		case OM_JSON_COMPACT:
-			fputc(']', stdout);
+			if (pretty)
+				fputs(P_SYM "]" P_RST, stdout);
+			else	fputc(      ']'      , stdout);
 			break;
 	}
 
@@ -97,29 +120,43 @@ void output_line_end (void) {
 void output_kv (const char* key, const char* value) {
 	switch (mode) {
 		case OM_SIMPLE:
+			PRETTY{ fputs(P_KEY, stdout); }
 			fputs(key, stdout);
-			fputs(": ", stdout);
+			PRETTY{ fputs(P_RST, stdout); }
+			fputs(", ", stdout);
 			nobr_print(value);
 			fputc('\n', stdout);
 			break;
 
 		case OM_JSON:
 			if (! first_kv)
-				fputc(',', stdout);
-			fputc('"', stdout);
+				fputs(pretty ? (P_SYM "," P_RST) : ",", stdout);
+			if (pretty)
+				fputs("\"" P_KEY, stdout);
+			else	fputc( '"'      , stdout);
 			json_print(key);
-			fputs("\":\"", stdout);
+			if (pretty)
+				fputs(P_RST "\":\"", stdout);
+			else	fputs(      "\":\"", stdout);
 			json_print(value);
 			fputc('"', stdout);
 			break;
 
 		case OM_JSON_NUMBERED:
-		case OM_JSON_COMPACT:
-			if (! first_kv)
-				fputc(',', stdout);
-			fputc('"', stdout);
+		case OM_JSON_COMPACT:;
+			const bool is_colname = (mode == OM_JSON_COMPACT && !key);
+			if (! first_kv) {
+				if (pretty && !is_colname)
+					fputs(P_SYM "," P_RST, stdout);
+				else	fputc(      ','      , stdout);
+			}
+			if (pretty && is_colname)
+				fputs("\"" P_KEY, stdout);
+			else	fputc( '"'      , stdout);
 			json_print(value);
-			fputc('"', stdout);
+			if (pretty && is_colname)
+				fputs(P_RST "\"", stdout);
+			else	fputc(       '"', stdout);
 			break;
 	}
 

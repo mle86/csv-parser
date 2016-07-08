@@ -1,7 +1,13 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 #include <stdbool.h>
+#include "const.h"
 
+
+
+#define P_KEY Mgreen
+#define P_SYM Myellow
+#define P_RST M0
 
 typedef enum outmode {
 	OM_SIMPLE,
@@ -11,7 +17,7 @@ typedef enum outmode {
 } outmode_t;
 
 
-void set_output (outmode_t _mode, bool do_flush);
+void set_output (outmode_t _mode, bool do_flush, bool pretty);
 
 void output_begin (void);
 void output_end   (void);

@@ -105,13 +105,14 @@ int main (int argc, char** argv) {
 			outmode = OM_JSON_NUMBERED;
 	}
 
+	bool pretty_print = isatty(fileno(stdout));
 	bool file_has_header = (mode == MODE_NAMED_COLUMNS || mode == MODE_AUTO_COLUMNS);
 	bool skip_after_header = skip_lines && file_has_header;
 	if (limit_lines && file_has_header)
 		limit_lines += 1;
 
 	set_input(stdin, separator, allow_breaks, remove_bom, skip_after_header, skip_lines, limit_lines);
-	set_output(outmode, do_flush);
+	set_output(outmode, do_flush, pretty_print);
 
 	if (! next_line()) {
 		if (file_has_header) {

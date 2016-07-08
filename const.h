@@ -23,9 +23,12 @@
 #define MAXCOLDEFS 1024
 #define MAXCOLALIASES 40
 
+
 #define M1 "[1m"  /* highlighted */
 #define Mu "[4m"  /* underlined */
 #define M0 "[0m"  /* normal */
+#define Myellow	"[33m"
+#define Mgreen 	"[32m"
 
 
 #endif  // CONST_H
