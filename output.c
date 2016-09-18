@@ -173,7 +173,7 @@ void output_kv (const char* key, const char* value) {
 void json_print (const char* value) {
 	for (register const unsigned char* c = (const unsigned char*)value; *c; c++)
 	switch (*c) {
-		case 0x07: printx("\\b"); break;
+		case 0x08: printx("\\b"); break;
 		case 0x09: printx("\\t"); break;
 		case 0x0a: printx("\\n"); break;
 		case 0x0c: printx("\\f"); break;
