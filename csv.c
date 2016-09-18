@@ -229,7 +229,7 @@ void match_colnames (size_t argc, const char** argv) {
 					// this coldef had the name!
 					// assign the coldef's basename:
 					ColumnName[c] = strdup(coldefs[cd].name[0]);
-					VERBOSE("found column \"%s\" (%zu)\n", ColumnName[c], c + 1);
+					VERBOSE("found column \"%s\" (%zu)\n", ColumnName[c], c);
 					found++;
 					goto next_col;
 				}
@@ -238,7 +238,7 @@ void match_colnames (size_t argc, const char** argv) {
 			}
 		}
 
-		VERBOSE("unknown column \"%s\" (%zu)\n", s, c + 1);
+		VERBOSE("unknown column \"%s\" (%zu)\n", s, c);
 
 		next_col:
 		c++;
@@ -307,9 +307,11 @@ void find_colnames (void) {
 			break;
 		}
 
-		ColumnName[ c++ ] = strdup(s);
+		ColumnName[c] = strdup(s);
 
 		VERBOSE("found column name %zu: \"%s\"\n", c, s);
+
+		c++;
 	}
 
 	if (c <= 0)
