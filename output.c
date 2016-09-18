@@ -178,11 +178,12 @@ void json_print (const char* value) {
 		case 0x0a: printx("\\n"); break;
 		case 0x0c: printx("\\f"); break;
 		case 0x0d: printx("\\r"); break;
-		case '/':  printx("\\/"); break;
+		case '/':  printx("\\/"); break;  // http://stackoverflow.com/questions/1580647/json-why-are-forward-slashes-escaped
 		case '\\': printx("\\\\"); break;
 		case '"':  printx("\\\""); break;
 		default:
 			if (*c <= 31) {
+				// control character
 				PRETTY{ prints(P_ESC); }
 				printf("\\u%04X", (unsigned int)*c);
 				PRETTY{ prints(P_RST); }
