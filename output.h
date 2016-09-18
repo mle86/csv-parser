@@ -9,6 +9,7 @@
 
 #define P_KEY Mgreen
 #define P_SYM Myellow
+#define P_ESC Mcyan
 #define P_RST M0
 
 typedef enum outmode {

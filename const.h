@@ -27,6 +27,8 @@
 #define M1	"[1m"  /* highlighted */
 #define Mu	"[4m"  /* underlined */
 #define M0	"[0m"  /* normal */
+#define Mcyan	"[36m"
+#define Mpurple	"[35m"
 #define Myellow	"[33m"
 #define Mgreen	"[32m"
 

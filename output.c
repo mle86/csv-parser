@@ -19,6 +19,9 @@ static void nobr_print (const char* value);
 #define prints(s) fputs(s, stdout)
 #define printc(c) fputc(c, stdout)
 
+// Prints an escape sequence. Like prints(), but will pretty-print using P_ESC.
+static void printx (const char* s);
+
 
 inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty) {
 	first_line = true;
@@ -170,24 +173,26 @@ void output_kv (const char* key, const char* value) {
 void json_print (const char* value) {
 	for (register const unsigned char* c = (const unsigned char*)value; *c; c++)
 	switch (*c) {
-		case 0x07: prints("\\b"); break;
-		case 0x09: prints("\\t"); break;
-		case 0x0a: prints("\\n"); break;
-		case 0x0c: prints("\\f"); break;
-		case 0x0d: prints("\\r"); break;
-		case '/':  prints("\\/"); break;
-		case '\\': prints("\\\\"); break;
-		case '"':  prints("\\\""); break;
+		case 0x07: printx("\\b"); break;
+		case 0x09: printx("\\t"); break;
+		case 0x0a: printx("\\n"); break;
+		case 0x0c: printx("\\f"); break;
+		case 0x0d: printx("\\r"); break;
+		case '/':  printx("\\/"); break;
+		case '\\': printx("\\\\"); break;
+		case '"':  printx("\\\""); break;
 		default:
-			if (*c <= 31)
+			if (*c <= 31) {
+				PRETTY{ prints(P_ESC); }
 				printf("\\u%04X", (unsigned int)*c);
-			else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa8) {
+				PRETTY{ prints(P_RST); }
+			} else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa8) {
 				// JS does not like these.
 				// http://timelessrepo.com/json-isnt-a-javascript-subset
-				prints("\\u2028");
+				printx("\\u2028");
 				c += 2;
 			} else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa9) {
-				prints("\\u2029");
+				printx("\\u2029");
 				c += 2;
 			} else
 				printc(*c);
@@ -199,18 +204,24 @@ void nobr_print (const char* value) {
 	while (*c) {
 		if (*c == '\\')
 			// print an extra backslash
-			prints("\\\\");
+			printx("\\\\");
 		else if (c[0] == '\r' && c[1] == '\n') {
 			// collapse CRLF to single "\n"
-			prints("\\n");
+			printx("\\n");
 			c++;
 		} else if (c[0] == '\r' || c[0] == '\n') {
 			// output single linebreaks as "\n"
-			prints("\\n");
+			printx("\\n");
 		} else
 			printc(*c);
 		
 		c++;
 	}
+}
+
+inline void printx (const char* s) {
+	PRETTY{ prints(P_ESC); }
+	prints(s);
+	PRETTY{ prints(P_RST); }
 }
 
