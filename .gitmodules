@@ -1,0 +1,3 @@
+[submodule "test/framework"]
+	path = test/framework
+	url = git@github.com:mle86/sh-tests

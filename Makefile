@@ -16,7 +16,7 @@ LD=gcc
 CFEAT =-D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
 CFLAGS=-O3 -std=c99 -pedantic -Wall -Wextra -DPROGNAME='"$(BIN)"' $(CFEAT)
 
-.PHONY : all install clean
+.PHONY : all install test clean
 
 
 all: $(BIN)
@@ -41,6 +41,10 @@ install:
 	strip $(BIN)
 	cp $(BIN) $(DEST)
 	chown $(CHOWN) $(DEST)
+
+test:
+	git submodule update --init test/framework/
+	test/run-all-tests.sh
 
 clean:
 	rm -f $(BIN) *.o a.out *~
