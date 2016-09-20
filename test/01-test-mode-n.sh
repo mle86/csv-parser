@@ -3,7 +3,7 @@
 
 target_fn1="COLN1" ; aliases_fn1="l1c1 foo-bar"
 target_fn2="l1c2"  ; aliases_fn2=""  # no aliases, target name is the actual column name
-target_fn3="COLN3" ; aliases_fn3="rhubarb l1c3 l1c6"  # l1c3 is found first, so this alias list should not claim l1c6
+target_fn3="COLN3" ; aliases_fn3="rhubarb l1c3 l1c4"  # l1c3 is found first, so this alias list should not claim l1c4
 target_fn5="COLN5" ; aliases_fn5="lemon"  # not found at all
 # skip l1c4 and l1c5
 collist=\

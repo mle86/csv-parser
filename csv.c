@@ -15,6 +15,7 @@ const char* ColumnName   [MAXCOLUMNS] = {0};
 typedef struct coldef {
 	const char* name [MAXCOLALIASES];
 	size_t names;
+	bool found;
 } coldef_t;
 
 static void int_arg (size_t *var, char option, const char* value);
@@ -229,10 +230,11 @@ void match_colnames (size_t argc, const char** argv) {
 			for (size_t cd = 0; cd < n_coldefs; cd++) {
 				#define has_name(ni) (ni < coldefs[cd].names)
 				#define name_equal(ni, s) (streq(coldefs[cd].name[ni], s))
-				if (has_name(ni) && name_equal(ni, s)) {
+				if (!coldefs[cd].found && has_name(ni) && name_equal(ni, s)) {
 					// this coldef had the name!
 					// assign the coldef's basename:
 					ColumnName[c] = strdup(coldefs[cd].name[0]);
+					coldefs[cd].found = true;
 					VERBOSE("found column \"%s\" (%zu)\n", ColumnName[c], c);
 					found++;
 					goto next_col;
@@ -273,10 +275,11 @@ size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], s
 		}
 
 		if (! basename) {
-			// this is a new basename argument
+			// this is a new basename argument, initialize new coldef_t struct:
 			basename = arg;
 			coldefs[n].name[0] = basename;
 			coldefs[n].names = 1;
+			coldefs[n].found = false;
 		} else {
 			// this is an alias argument for the last basename
 			const size_t ai = coldefs[n].names++;
