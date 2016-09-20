@@ -8,19 +8,24 @@ static outmode_t mode = OM_SIMPLE;
 static bool do_flush = false;
 static bool pretty = false;
 
+static const char
+	*pp_key, *pp_sym, *pp_esc, *pp_rst;
+
 static bool first_line = true;
 static bool first_kv   = true;
 
-static void json_print (const char* value);
-static void nobr_print (const char* value);
+static void json_print  (const char* value, bool is_key);
+static void nobr_print  (const char* value, bool is_key);
 
 #define PRETTY if(pretty)
 
 #define prints(s) fputs(s, stdout)
 #define printc(c) fputc(c, stdout)
 
-// Prints an escape sequence. Like prints(), but will pretty-print using P_ESC.
-static void printx (const char* s);
+// Like prints(), but will pretty-print using PP_ESC.
+static void printx (const char* s, bool in_key);
+// Like prints(), but will pretty-print using PP_KEY.
+static void printk (const char* s);
 
 
 inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty) {
@@ -28,7 +33,19 @@ inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty) {
 	first_kv   = true;
 	mode       = _mode;
 	do_flush   = _do_flush;
-	pretty     = _pretty;
+
+	pretty = _pretty;
+	if (pretty) {
+		pp_sym = PP_SYM;
+		pp_key = PP_KEY;
+		pp_esc = PP_ESC;
+		pp_rst = PP_RST;
+	} else {
+		pp_sym = "";
+		pp_key = "";
+		pp_esc = "";
+		pp_rst = "";
+	}
 }
 
 
@@ -39,7 +56,7 @@ void output_begin (void) {
 	case OM_JSON:
 	case OM_JSON_NUMBERED:
 		printc('[');
-		PRETTY{ prints(P_SYM); }
+		prints(pp_sym);
 		break;
 	case OM_JSON_COMPACT:
 		prints("{\"columns\": [");
@@ -48,13 +65,13 @@ void output_begin (void) {
 				output_kv(NULL, ColumnName[c]);
 		}
 		prints("],\n\"lines\": [\n ");
-		PRETTY{ prints(P_SYM); }
+		prints(pp_sym);
 		first_kv = true;  // output_kv() has cleared it
 		break;
 } }
 
 void output_end (void) {
-	PRETTY{ prints(P_RST); }
+	prints(pp_rst);
 
 	switch (mode) {
 		case OM_SIMPLE:
@@ -74,23 +91,23 @@ void output_line_begin (void) {
 		case OM_SIMPLE:
 			if (! first_line) {
 				if (pretty)
-					prints(P_SYM SIMPLE_LINESEP P_RST);
-				else	prints(      SIMPLE_LINESEP      );
+					prints(PP_SYM SIMPLE_LINESEP PP_RST);
+				else	prints(       SIMPLE_LINESEP       );
 			}
 			break;
 		case OM_JSON:
 			if (!first_line)
 				prints("\n,");
 			if (pretty)
-				prints(P_SYM "{" P_RST);
-			else	printc(      '{'      );
+				prints(PP_SYM "{" PP_RST);
+			else	printc(       '{'       );
 			break;
 		case OM_JSON_COMPACT:
 		case OM_JSON_NUMBERED:
 			if (pretty) {
 				if (first_line)
-					prints(      P_SYM "[" P_RST);
-				else	prints("\n," P_SYM "[" P_RST);
+					prints(      PP_SYM "[" PP_RST);
+				else	prints("\n," PP_SYM "[" PP_RST);
 			} else {
 				if (first_line)
 					printc(   '[');
@@ -108,14 +125,14 @@ void output_line_end (void) {
 			break;
 		case OM_JSON:
 			if (pretty)
-				prints(P_SYM "}" P_RST);
-			else	printc(      '}'      );
+				prints(PP_SYM "}" PP_RST);
+			else	printc(       '}'       );
 			break;
 		case OM_JSON_NUMBERED:
 		case OM_JSON_COMPACT:
 			if (pretty)
-				prints(P_SYM "]" P_RST);
-			else	printc(      ']'      );
+				prints(PP_SYM "]" PP_RST);
+			else	printc(       ']'       );
 			break;
 	}
 
@@ -124,45 +141,43 @@ void output_line_end (void) {
 }
 
 void output_kv (const char* key, const char* value) {
+	const bool is_colname = (!key && (mode == OM_JSON_COMPACT));
 	switch (mode) {
 		case OM_SIMPLE:
-			PRETTY{ prints(P_KEY); }
-			prints(key);
-			PRETTY{ prints(P_RST); }
+			printk(key),
 			prints(SIMPLE_KVSEP);
-			nobr_print(value);
+			nobr_print(value, is_colname);
 			printc('\n');
 			break;
 
 		case OM_JSON:
 			if (! first_kv)
-				prints(pretty ? (P_SYM "," P_RST) : ",");
+				prints(pretty ? (PP_SYM "," PP_RST) : ",");
 			if (pretty)
-				prints("\"" P_KEY);
+				prints("\"" PP_KEY);
 			else	printc( '"'      );
-			json_print(key);
+			json_print(key, true);
 			if (pretty)
-				prints(P_RST "\":\"");
-			else	prints(      "\":\"");
-			json_print(value);
+				prints(PP_RST "\":\"");
+			else	prints(       "\":\"");
+			json_print(value, false);
 			printc('"');
 			break;
 
 		case OM_JSON_NUMBERED:
 		case OM_JSON_COMPACT:;
-			const bool is_colname = (mode == OM_JSON_COMPACT && !key);
 			if (! first_kv) {
 				if (pretty && !is_colname)
-					prints(P_SYM "," P_RST);
-				else	printc(      ','      );
+					prints(PP_SYM "," PP_RST);
+				else	printc(       ','       );
 			}
 			if (pretty && is_colname)
-				prints("\"" P_KEY);
-			else	printc( '"'      );
-			json_print(value);
+				prints("\"" PP_KEY);
+			else	printc( '"'       );
+			json_print(value, is_colname);
 			if (pretty && is_colname)
-				prints(P_RST "\"");
-			else	printc(       '"');
+				prints(PP_RST "\"");
+			else	printc(        '"');
 			break;
 	}
 
@@ -170,49 +185,49 @@ void output_kv (const char* key, const char* value) {
 }
 
 
-void json_print (const char* value) {
+void json_print (const char* value, bool is_key) {
 	for (register const unsigned char* c = (const unsigned char*)value; *c; c++)
 	switch (*c) {
-		case 0x08: printx("\\b"); break;
-		case 0x09: printx("\\t"); break;
-		case 0x0a: printx("\\n"); break;
-		case 0x0c: printx("\\f"); break;
-		case 0x0d: printx("\\r"); break;
-		case '/':  printx("\\/"); break;  // http://stackoverflow.com/questions/1580647/json-why-are-forward-slashes-escaped
-		case '\\': printx("\\\\"); break;
-		case '"':  printx("\\\""); break;
+		case 0x08: printx("\\b",  is_key); break;
+		case 0x09: printx("\\t",  is_key); break;
+		case 0x0a: printx("\\n",  is_key); break;
+		case 0x0c: printx("\\f",  is_key); break;
+		case 0x0d: printx("\\r",  is_key); break;
+		case '/':  printx("\\/",  is_key); break;  // http://stackoverflow.com/questions/1580647/json-why-are-forward-slashes-escaped
+		case '\\': printx("\\\\", is_key); break;
+		case '"':  printx("\\\"", is_key); break;
 		default:
 			if (*c <= 31) {
 				// control character
-				PRETTY{ prints(P_ESC); }
-				printf("\\u%04X", (unsigned int)*c);
-				PRETTY{ prints(P_RST); }
+				char buf [sizeof "\\uFFFF"];
+				snprintf(buf, sizeof(buf), "\\u%04X", (unsigned int)*c);
+				printx(buf, is_key);
 			} else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa8) {
 				// JS does not like these.
 				// http://timelessrepo.com/json-isnt-a-javascript-subset
-				printx("\\u2028");
+				printx("\\u2028", is_key);
 				c += 2;
 			} else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa9) {
-				printx("\\u2029");
+				printx("\\u2029", is_key);
 				c += 2;
 			} else
 				printc(*c);
 	}
 }
 
-void nobr_print (const char* value) {
+void nobr_print (const char* value, bool is_key) {
 	register const char* c = value;
 	while (*c) {
 		if (*c == '\\')
 			// print an extra backslash
-			printx("\\\\");
+			printx("\\\\", is_key);
 		else if (c[0] == '\r' && c[1] == '\n') {
 			// collapse CRLF to single "\n"
-			printx("\\n");
+			printx("\\n", is_key);
 			c++;
 		} else if (c[0] == '\r' || c[0] == '\n') {
 			// output single linebreaks as "\n"
-			printx("\\n");
+			printx("\\n", is_key);
 		} else
 			printc(*c);
 		
@@ -220,9 +235,15 @@ void nobr_print (const char* value) {
 	}
 }
 
-inline void printx (const char* s) {
-	PRETTY{ prints(P_ESC); }
+inline void printx (const char* s, bool in_key_name) {
+	PRETTY{ prints(PP_ESC); }
 	prints(s);
-	PRETTY{ prints(P_RST); }
+	PRETTY{ prints((in_key_name) ? PP_KEY : PP_RST); }
 }
+inline void printk (const char* s) {
+	PRETTY{ prints(PP_KEY); }
+	prints(s);
+	PRETTY{ prints(PP_RST); }
+}
+
 
