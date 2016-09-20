@@ -282,6 +282,8 @@ size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], s
 			coldefs[n].name[0] = basename;
 			coldefs[n].names = 1;
 			coldefs[n].found = false;
+			if (1 > *max_names)
+				*max_names = 1;
 		} else {
 			// this is an alias argument for the last basename
 			const size_t ai = coldefs[n].names++;
