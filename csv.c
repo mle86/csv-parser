@@ -225,12 +225,12 @@ void match_colnames (size_t argc, const char** argv) {
 			break;
 		}
 
-		// got one actual colname, now compare it against all known colname aliases
-		for (size_t ni = 0; ni < max_names; ni++) {
-			for (size_t cd = 0; cd < n_coldefs; cd++) {
-				#define has_name(ni) (ni < coldefs[cd].names)
-				#define name_equal(ni, s) (streq(coldefs[cd].name[ni], s))
-				if (!coldefs[cd].found && has_name(ni) && name_equal(ni, s)) {
+		// got one actual input colname, now compare it against all known colname aliases
+		for (size_t cd = 0; cd < n_coldefs; cd++) {
+			#define has_name(ni) (ni < coldefs[cd].names)
+			#define name_equal(ni, s) (streq(coldefs[cd].name[ni], s))
+			for (size_t ni = 0; ni < max_names && has_name(ni); ni++) {
+				if (!coldefs[cd].found && name_equal(ni, s)) {
 					// this coldef had the name!
 					// assign the coldef's basename:
 					ColumnName[c] = strdup(coldefs[cd].name[0]);
@@ -239,9 +239,9 @@ void match_colnames (size_t argc, const char** argv) {
 					found++;
 					goto next_col;
 				}
-				#undef has_name
-				#undef name_equal
 			}
+			#undef name_equal
+			#undef has_name
 		}
 
 		VERBOSE("unknown column \"%s\" (%zu)\n", s, c);
