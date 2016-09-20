@@ -23,7 +23,7 @@ static void chr_arg (char   *var, char option, const char* value);
 static void invalid_arg (char option, const char* value);
 static void find_colnames (void);
 static void read_colname_assignments (size_t args, const char** fieldname);
-static size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max, size_t *max_names);
+static size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max);
 static void match_colnames (size_t argc, const char** argv);
 static void autonumber_columns (void);
 static void process_csv_input ();
@@ -213,8 +213,7 @@ void int_arg (size_t *var, char option, const char* value) {
 
 void match_colnames (size_t argc, const char** argv) {
 	coldef_t coldefs [MAXCOLDEFS];
-	size_t max_names = 0;
-	size_t n_coldefs = read_coldefs(argc, argv, coldefs, MAXCOLDEFS, &max_names);
+	size_t n_coldefs = read_coldefs(argc, argv, coldefs, MAXCOLDEFS);
 	if (! n_coldefs)
 		FAIL(EXIT_SYNTAX, "no column names\n");
 
@@ -231,7 +230,7 @@ void match_colnames (size_t argc, const char** argv) {
 		for (size_t cd = 0; cd < n_coldefs; cd++) {
 			#define has_name(ni) (ni < coldefs[cd].names)
 			#define name_equal(ni, s) (streq(coldefs[cd].name[ni], s))
-			for (size_t ni = 0; ni < max_names && has_name(ni); ni++) {
+			for (size_t ni = 0; has_name(ni); ni++) {
 				if (!coldefs[cd].found && name_equal(ni, s)) {
 					// this coldef had the name!
 					// assign the coldef's basename:
@@ -256,14 +255,13 @@ void match_colnames (size_t argc, const char** argv) {
 		FAIL(EXIT_FORMAT, "could not match any column names\n");
 }
 
-size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max, size_t *max_names) {
+size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max) {
 	if (argc > max) {
 		FAIL(EXIT_SYNTAX, "too many column definitions\n");
 	}
 
 	const char* basename = NULL;
 	size_t n = 0;
-	*max_names = 0;
 
 	for (size_t a = 0; a < argc; a++) {
 		#define arg argv[a]
@@ -282,15 +280,11 @@ size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], s
 			coldefs[n].name[0] = basename;
 			coldefs[n].names = 1;
 			coldefs[n].found = false;
-			if (1 > *max_names)
-				*max_names = 1;
 		} else {
 			// this is an alias argument for the last basename
 			const size_t ai = coldefs[n].names++;
 			if (ai >= MAXCOLALIASES)
 				FAIL(EXIT_SYNTAX, "too many aliases for column name \"%s\"\n", coldefs[n].name[0]);
-			if (coldefs[n].names > *max_names)
-				*max_names = coldefs[n].names;
 			coldefs[n].name[ ai ] = arg;
 		}
 		#undef arg
