@@ -31,6 +31,7 @@ void set_output (outmode_t mode, bool do_flush, bool pretty, const char* shvar_p
 
 void output_begin (void);
 void output_end   (void);
+void output_empty (void);
 void output_line_begin (void);
 void output_line_end   (void);
 

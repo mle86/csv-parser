@@ -108,6 +108,11 @@ void output_end (void) {
 	}
 }
 
+void output_empty (void) {
+	output_begin();
+	output_end();
+}
+
 void output_line_begin (void) {
 	fields = 0;
 	switch (mode) {

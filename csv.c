@@ -125,6 +125,7 @@ int main (int argc, char** argv) {
 		} else {
 			// Ok, this is MODE_ASSIGNED_NAMES or MODE_NUMBERED_COLUMNS,
 			// it's okay if the input is empty.
+			output_empty();
 			return 0;
 		}
 	}
@@ -151,6 +152,7 @@ int main (int argc, char** argv) {
 	if (file_has_header) {
 		if (! next_line()) {
 			VERBOSE("no content lines\n");
+			output_empty();
 			return 0;
 		}
 	}
