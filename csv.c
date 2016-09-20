@@ -46,7 +46,7 @@ int main (int argc, char** argv) {
 	bool   allow_breaks = false;
 	bool   do_flush     = false;
 
-	const char* options = "gnaihVvjJd:bes:l:FM";
+	const char* options = "gnaihVvjJXd:bes:l:FM";
 	const struct option long_options [] = {
 		{ "assigned-names",	0, NULL, 'g' },
 		{ "named-columns",	0, NULL, 'n' },
@@ -59,6 +59,8 @@ int main (int argc, char** argv) {
 
 		{ "compact-json",	0, NULL, 'j' },
 		{ "json",		0, NULL, 'J' },
+		{ "shell-vars",		0, NULL, 'X' },
+
 		{ "separator",		0, NULL, 'd' },
 		{ "allow-breaks",	0, NULL, 'b' },
 		{ "ignore-errors",	0, NULL, 'e' },
@@ -86,10 +88,12 @@ int main (int argc, char** argv) {
 				  chr_arg(&separator, c, optarg);
 			  break;
 
-		case 'b': allow_breaks = true; break;
-		case 'e': IgnoreErrors = true; break;
 		case 'j': outmode = OM_JSON; break;
 		case 'J': outmode = OM_JSON_COMPACT; break;
+		case 'X': outmode = OM_SHELL_VARS; break;
+
+		case 'b': allow_breaks = true; break;
+		case 'e': IgnoreErrors = true; break;
 		case 'F': do_flush = true; break;
 		case 'v': Verbose = true; break;
 		case 'M': remove_bom = false; break;
@@ -112,7 +116,7 @@ int main (int argc, char** argv) {
 		limit_lines += 1;
 
 	set_input(stdin, separator, allow_breaks, remove_bom, skip_after_header, skip_lines, limit_lines);
-	set_output(outmode, do_flush, pretty_print);
+	set_output(outmode, do_flush, pretty_print, "");
 
 	if (! next_line()) {
 		if (file_has_header) {
