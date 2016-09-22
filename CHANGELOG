@@ -1,5 +1,6 @@
 v2.0
 	- introduced output mode -J  (compact JSON output)
+	- introduced output mode -X  (shell var output)
 	- introduced input mode -i  (auto-numbered columns)
 	- introduced option -d  (explicit separator)
 	- introduced option -M  (don't strip BOM)

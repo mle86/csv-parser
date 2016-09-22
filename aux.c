@@ -39,6 +39,8 @@ void Help (void) { printf(
 	"  "M1"-J"M0", "M1"--compact-json"M0"  "
 	                      "Output in compact JSON format\n"
 	"                      (an object with 'columns' and 'lines' keys).\n"
+	"  "M1"-X"M0", "M1"--shell-vars"M0"  "
+	                      "Output in shell variable assignment format.\n"
 	"  "M1"-d"M0", "M1"--separator"M0" "Mu "C"M0"  "
 	                     "Use cell separator character "Mu "C"M0".\n"
 	"                     The special value \""M1"auto"M0"\" causes auto-detection\n"
