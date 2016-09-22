@@ -106,6 +106,8 @@ int main (int argc, char** argv) {
 	if (mode == MODE_NUMBERED_COLUMNS) {
 		if (outmode == OM_JSON_COMPACT)
 			FAIL(EXIT_SYNTAX, "input mode -i is not compatible with output mode -J\n");
+		else if (outmode == OM_SHELL_VARS)
+			outmode = OM_SHELL_VARS_NUMBERED;
 		else if (outmode == OM_JSON)
 			outmode = OM_JSON_NUMBERED;
 	}

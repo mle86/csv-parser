@@ -83,6 +83,9 @@ void output_begin (void) {
 				output_kv(NULL, ColumnName[c]);
 		}
 		break;
+	case OM_SHELL_VARS_NUMBERED:
+		// don't print column names!
+		break;
 } }
 
 void output_end (void) {
@@ -99,6 +102,7 @@ void output_end (void) {
 			prints("]}\n");
 			break;
 		case OM_SHELL_VARS:
+		case OM_SHELL_VARS_NUMBERED:
 			printf("%s%s" SHVAR_N_RECORDS "=%s%zu\n",
 					pp_sym,
 					shvar_prefix,
@@ -143,6 +147,7 @@ void output_line_begin (void) {
 			}
 			break;
 		case OM_SHELL_VARS:
+		case OM_SHELL_VARS_NUMBERED:
 			break;
 	}
 	first_line = false;
@@ -153,6 +158,7 @@ void output_line_end (void) {
 	switch (mode) {
 		case OM_SIMPLE:
 		case OM_SHELL_VARS:
+		case OM_SHELL_VARS_NUMBERED:
 			break;
 		case OM_JSON:
 			if (pretty)
@@ -214,6 +220,7 @@ void output_kv (const char* key, const char* value) {
 			break;
 
 		case OM_SHELL_VARS:
+		case OM_SHELL_VARS_NUMBERED:
 			if (is_colname) {
 				printf("%s%s" SHVAR_COLNAME "=",
 						pp_sym,

@@ -31,6 +31,7 @@ void Help (void) { printf(
 	"            starting from zero.  Similar to \""M1"-g 0 1 2 3"M0"...\",\n"
 	"            but will force the "M1"-j"M0" output mode to print each line\n"
 	"            as an array instead of an object.  Not compatible with "M1"-J"M0" mode.\n"
+	"            Causes the "M1"-X"M0" mode not to output any header names.\n"
 	"\n"
 	"Options:\n"
 	"  "M1"-j"M0", "M1"--json"M0"  "

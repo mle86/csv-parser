@@ -21,9 +21,10 @@
 typedef enum outmode {
 	OM_SIMPLE,
 	OM_JSON,
-	OM_JSON_NUMBERED,
+	OM_JSON_NUMBERED,  // special mode, only reachable with mode combination -ij.
 	OM_JSON_COMPACT,
 	OM_SHELL_VARS,
+	OM_SHELL_VARS_NUMBERED,  // special mode, only reachable with mode combination -iX.
 } outmode_t;
 
 

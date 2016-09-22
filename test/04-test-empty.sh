@@ -72,5 +72,8 @@ cd_tmpdir
 assertCmd "$CSV -gX Col1 Col2 <$emptyFile" 0
 check_empty_shellvars '-gX'
 
+assertCmd "$CSV -iX <$emptyFile" 0
+check_empty_shellvars '-iX'
+
 
 success
