@@ -86,6 +86,8 @@ int main (int argc, char** argv) {
 		case 'd':
 			  if (streq(optarg, "auto"))
 				  separator = SEP_AUTO;
+			  else if (streq(optarg, "none"))
+				  separator = SEP_NONE;
 			  else
 				  chr_arg(&separator, c, optarg);
 			  break;
