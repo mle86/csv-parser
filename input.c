@@ -85,13 +85,13 @@ char* get_line (void) {
 	if (first_line) {
 		first_line = false;
 
+		if (separator == '\0')
+			find_separator(linebuffer);
+
 		if (skip_lines)
 			// Looks like we just read the header line,
 			// and now we're supposed to skip some content lines.
 			skip(skip_lines);
-
-		if (separator == '\0')
-			find_separator(linebuffer);
 
 		if (remove_bom)
 			// skip bom in returned input:
