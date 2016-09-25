@@ -85,7 +85,7 @@ char* get_line (void) {
 	if (first_line) {
 		first_line = false;
 
-		if (separator == '\0')
+		if (separator == SEP_AUTO)
 			find_separator(linebuffer);
 
 		if (skip_lines)

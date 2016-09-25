@@ -4,6 +4,10 @@
 #include <stdio.h>
 
 
+/* Use this for set_input(separator) to auto-detect the separator on the first input line.  */
+#define SEP_AUTO '\0'
+
+
 void set_input (FILE* file, char separator, bool allow_breaks, bool remove_bom, bool skip_after_header, size_t skip_lines, size_t limit_lines);
 
 size_t lineno (void);
