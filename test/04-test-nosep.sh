@@ -5,12 +5,12 @@
 # Check the handling of input files without a separator character,
 # with and without the "-d none" option.
 
-assertCmd "$CSV -am < $HELPER/nosep.csv" $EXIT_NOSEP \
+assertCmd "$CSV -am < $SAMPLE/nosep.csv" $EXIT_NOSEP \
 	"csv exited with an unexpected exit code while reading nosep.csv!"
 
 expectedOutput="header-line-without-separator: cell1;cell2|cell3${TAB}cell4,cell5"
 
-assertCmdEq "$CSV -am -d none < $HELPER/nosep.csv" "$expectedOutput" \
+assertCmdEq "$CSV -am -d none < $SAMPLE/nosep.csv" "$expectedOutput" \
 	"\"csv -d none\" failed while reading nosep.csv!"
 
 
@@ -22,7 +22,7 @@ define expectedOutput <<-EOT
 	,{"l1c1;l1c2;l1c3;l1c4;l1c5":"l3c1;l3c2;l3c3;l3c4;l3c5"}]
 EOT
 
-assertCmdEq "$CSV -aj -d none < $HELPER/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -aj -d none < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"\"csv -d none\" did not ignore separator characters in sample1.csv!"
 
 success
