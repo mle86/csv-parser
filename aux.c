@@ -74,6 +74,7 @@ void Help (void) { printf(
 
 void Version (void) { printf(
 	PROGNAME " v" VERSION "\n"
-	"Written by Maximilian Eul <maximilian@eul.cc>, June 2016.\n"
+	"Written by Maximilian Eul <maximilian@eul.cc>, " VERDATE ".\n"
 	"\n"
 ); }
+
