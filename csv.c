@@ -323,8 +323,10 @@ void find_colnames (void) {
 		c++;
 	}
 
-	if (c <= 0)
-		FAIL(EXIT_FORMAT, "first line contains no column names\n");
+	if (c <= 0) {
+		// This should never happen -- next_field() should at least return a single empty string.
+		FAIL(EXIT_INTERNAL, "first line contains no column names\n");
+	}
 }
 
 void read_colname_assignments (size_t args, const char** argv) {
