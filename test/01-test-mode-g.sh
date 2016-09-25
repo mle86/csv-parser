@@ -29,7 +29,7 @@ define expectedOutput <<-EOT
 	$fn5: l3c5
 EOT
 
-assertCmdEq "$CSV -g $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -gm $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -g did not read sample1.csv correctly!"
 
 
@@ -48,7 +48,7 @@ define expectedOutput <<-EOT
 	$fn1: l3c1
 	$fn2: l3c2
 EOT
-assertCmdEq "$CSV -g $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -gm $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -g did not work correctly when given less fieldname arguments than csv columns! Should have ignored the extra csv columns."
 
 
@@ -69,7 +69,7 @@ define expectedOutput <<-EOT
 	$fn1: l3c2
 	$fn2: l3c4
 EOT
-assertCmdEq "$CSV -g $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -gm $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -g did not work correctly when given '@' arguments! Should have skipped the @ columns."
 
 success

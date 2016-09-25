@@ -22,7 +22,7 @@ define expectedOutput <<-EOT
 	$fn5: l3c5
 EOT
 
-assertCmdEq "$CSV -a < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -am < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -a did not read sample1.csv correctly!"
 
 success

@@ -5,7 +5,7 @@
 # Let's try auto-detection of a different separator.
 # separators.csv's first separator-like character is a pipe:
 
-assertCmd "$CSV -ai < $SAMPLE/separators.csv" 0 \
+assertCmd "$CSV -aim < $SAMPLE/separators.csv" 0 \
 	"csv failed while reading separators.csv!"
 
 assertContains "$ASSERTCMDOUTPUT" "0: hdr1" \
@@ -20,7 +20,7 @@ assertContains "$ASSERTCMDOUTPUT" "1: a.b${TAB}c;d,cell4" "$errmsg"
 # Now let's try a different, manually-set separator character
 # which is not contained in the header line:
 
-assertCmd "$CSV -ai -d, < $SAMPLE/separators.csv" 0 \
+assertCmd "$CSV -aim -d, < $SAMPLE/separators.csv" 0 \
 	"csv -d',' failed while reading separators.csv!"
 errmsg="csv -d did not correctly split lines on a manually-set separator character!"
 assertContains "$ASSERTCMDOUTPUT" "0: hdr1|hdr2;a" "$errmsg"

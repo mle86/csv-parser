@@ -15,7 +15,7 @@ define expectedOutput <<-EOT
 	$fn2: backslash=\\\\ separator=; eot
 EOT
 
-assertCmdEq "$CSV -a < $SAMPLE/quotes.csv" "$expectedOutput" \
+assertCmdEq "$CSV -am < $SAMPLE/quotes.csv" "$expectedOutput" \
 	"csv did not handle \"-quoted values correctly!"
 
 success

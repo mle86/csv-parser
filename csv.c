@@ -47,7 +47,7 @@ int main (int argc, char** argv) {
 	bool   allow_breaks = false;
 	bool   do_flush     = false;
 
-	const char* options = "gnaihVvjJXd:bes:l:FM";
+	const char* options = "gnaihVvmjJXd:bes:l:FM";
 	const struct option long_options [] = {
 		{ "assigned-names",	0, NULL, 'g' },
 		{ "named-columns",	0, NULL, 'n' },
@@ -58,6 +58,7 @@ int main (int argc, char** argv) {
 		{ "version",		0, NULL, 'V' },
 		{ "verbose",		0, NULL, 'v' },
 
+		{ "simple",		0, NULL, 'm' },
 		{ "compact-json",	0, NULL, 'j' },
 		{ "json",		0, NULL, 'J' },
 		{ "shell-vars",		0, NULL, 'X' },
@@ -89,6 +90,7 @@ int main (int argc, char** argv) {
 				  chr_arg(&separator, c, optarg);
 			  break;
 
+		case 'm': outmode = OM_SIMPLE; break;
 		case 'j': outmode = OM_JSON; break;
 		case 'J': outmode = OM_JSON_COMPACT; break;
 		case 'X': outmode = OM_SHELL_VARS; break;

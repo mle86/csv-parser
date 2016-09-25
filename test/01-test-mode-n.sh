@@ -22,7 +22,7 @@ define expectedOutput <<-EOT
 	$target_fn3: l3c3
 EOT
 
-assertCmdEq "$CSV -n $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -nm $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -n did not read sample1.csv correctly!"
 
 success

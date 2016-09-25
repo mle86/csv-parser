@@ -14,7 +14,7 @@ define expectedOutput <<-EOT
 	$MLC2: $MLVC2
 EOT
 
-assertCmdEq "$CSV -ab < $SAMPLE/multiline.csv" "$expectedOutput" \
+assertCmdEq "$CSV -abm < $SAMPLE/multiline.csv" "$expectedOutput" \
 	"csv -b did not read multiline.csv correctly!"
 
 success

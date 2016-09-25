@@ -12,7 +12,7 @@ define expectedOutput <<-EOT
 	l1c5: l2c5
 EOT
 
-assertCmdEq "$CSV -a -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -am -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -al1 failed!"
 
 # Skipping one line (-s 1) should NOT skip the header line, it should only skip the first "content" line.
@@ -26,7 +26,7 @@ define expectedOutput <<-EOT
 	l1c5: l3c5
 EOT
 
-assertCmdEq "$CSV -a -s1 -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -am -s1 -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -as1l1 failed!"
 
 
@@ -40,7 +40,7 @@ define expectedOutput <<-EOT
 	4: l1c5
 EOT
 
-assertCmdEq "$CSV -i -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -im -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -il1 failed!"
 
 # Again, but skip the first line:
@@ -53,7 +53,7 @@ define expectedOutput <<-EOT
 	4: l2c5
 EOT
 
-assertCmdEq "$CSV -i -s1 -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
+assertCmdEq "$CSV -im -s1 -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -is1l1 failed!"
 
 
