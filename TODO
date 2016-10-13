@@ -1,0 +1,3 @@
+- Support LF and LFCR line ends
+  (needs fgets() alternative).
+
