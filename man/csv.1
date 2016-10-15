@@ -1,0 +1,427 @@
+.TH CSV "1" "October 2016" "csv 2.0" ""
+.SH NAME
+csv \- convert csv files to json and other formats
+.SH SYNOPSIS
+\fBcsv\fR
+[\fIMODE\fR]
+[\fIOPTIONS\fR]
+[\fB\-\-\fR]
+[\fICOLUMNNAME\fR...]
+.de co
+.  P
+.  nf
+.  RS 4
+..
+.de cm
+.  co
+.  B "\\$1"
+.  P
+..
+.de cx
+.  RE
+.  fi
+.  P
+..
+.SH DESCRIPTION
+This program reads CSV from its standard input (\fIstdin\fR)
+and outputs the contents in a different format.
+.P
+CSV (\(lqComma Separated Values\(rq)
+is a simple, tabular, widely-used data exchange format
+mostly used for textual and numeric data.
+Unfortunately, there are many different implementations.
+This program aims to be fully RFC\ 4180-compliant
+while supporting many common standard\ violations as well.
+.SH INPUT MODES
+The program operates in one of several
+.B input modes
+to read its input.
+The default input mode is \fB\-a\fR.
+.TP
+.B \-a, \-\-auto\-columns
+Automatic column names:
+Column names will be read automatically from the first CSV line.
+In this mode, \fICOLUMNNAME\fR specifications are
+neither needed nor possible.
+(This is the default mode.)
+.TP
+.B \-n, \-\-named\-columns
+Non-fixed, named columns:
+The program reads column names from the argument list
+and compares them to the first line of the CSV input,
+printing only the named columns.
+Separate column names with a single \(lq\fB.\fR\(rq argument!
+The name order is irrelevant, as is case.
+See the section \(lqNamed Columns Mode\(rq below
+for more information about this input mode.
+.TP
+.B \-g, \-\-assigned\-names
+Names assigned to column positions:
+The program reads column names from the argument list and
+applies them to all lines.
+The special name \(lq\fB@\fR\(rq
+causes columns to be ignored.
+The argument order represents
+the column order in the CSV input.
+The input's first line will not be treated specially.
+.TP
+.B \-i, \-\-numbered\-columns
+Numbered columns:
+In this mode,
+the columns will be automatically numbered,
+starting from zero.
+Similar to \(lq\fB\-g 0 1 2 3\fR...\(rq,
+but will force the \fB\-j\fR output mode to print each line
+as an array instead of an object.
+Not compatible with \fB\-J\fR mode.
+In this mode,
+\fICOLUMNNAME\fR specifications are
+neither needed nor possible.
+The first input line will not be treated specially.
+.SH OUTPUT MODES
+The program operates in one of several
+.B output modes\fR.
+The default output mode is \fB\-m\fR.
+.TP
+.B \-m, \-\-simple
+Simple output:
+For every input field, one line will be printed,
+with the column name, a colon and a space, and the content.
+Input lines will be separated with an extra line containing only a dash.
+Backslashes in the input will be replaced with a literal \fB\\\\\fR,
+while linebreaks in the input will be replaced with a literal \fB\\n\fR
+(if the \fB\-b\fR option is given).
+.TP
+.B \-j, \-\-json
+Long JSON output:
+An ordered array of input lines is printed.
+Every line is represented by an object
+with the column names as keys and the field values as values.
+(In the \fB\-i\fR input mode,
+every line is represented as an ordered array instead.)
+.TP
+.B \-J, \-\-compact\-json
+Compact JSON output:
+An object with a \(lq\fIcolumns\fR\(rq and a \(lq\fIlines\fR\(rq key is returned.
+The \(lq\fIcolumns\fR\(rq entry is an ordered array of the column names.
+The \(lq\fIlines\fR\(rq entry is an ordered array of ordered arrays,
+each of which represents one input line.
+.SH OTHER OPTIONS
+.TP
+\fB\-d\fR \fIC\fR, \fB\-\-separator\fR \fIC\fR
+Use field separator character \fIC\fR.
+The special value \(lq\fIauto\fR\(rq
+causes auto-detection
+on the first input line
+(this is the default mode).
+The special value \(lq\fInone\fR\(rq
+disables separator character detection
+(use this for single-column input files).
+.TP
+.B \-b, \-\-allow\-breaks
+By default,
+every record is assumed to span exactly one line.
+This option allows quoted fields to contain linebreaks,
+i.e. to span several lines.
+Without this option,
+multi-line field values will cause an error.
+.TP
+\fB\-s\fR \fIN\fR, \fB\fB\-\-skip\fR \fIN\fR
+Skip the first \fIN\fR input lines.
+In modes \fB\-n\fR and \fB\-a\fR,
+skip the first \fIN\fR input lines
+after the header line.
+Setting \fIN\fR to zero mean no\ skip,
+which is the default.
+.TP
+\fB\-l\fR \fIN\fR, \fB\-\-limit\fR \fIN\fR
+Stop after the \fIN\fRth input line.
+In modes \fB\-n\fR and \fB\-a\fR,
+the header line is not counted.
+Setting \fIN\fR to zero removes the limit, which is the default.
+.TP
+.B \-e, \-\-ignore\-errors
+Don't stop on encountering malformed CSV input;
+instead, truncate the current field value and continue.
+(By default, malformed CSV input
+terminates the program with exit status 2.)
+Malformed input includes:
+.PD 0
+.RS
+.IP - 2
+too many columns
+.IP - 2
+overlong fields
+.IP - 2
+unexpected quote characters
+.IP - 2
+unexpected end-of-line (within a quoted field)
+.IP - 2
+unexpected end-of-file (within a quoted field)
+.RE
+.PD
+.TP
+.B \-F, \-\-flush
+Flush the output after every input line.
+.TP
+.B \-M, \-\-keep\-bom
+Don't try to remove UTF\-8/16 BOMs from the first line.
+(By default, the program will strip the BOM from the first line,
+if there is one.)
+.TP
+.B \-h, \-\-help
+Show command line usage information.
+.TP
+.B \-V, \-\-version
+Show program version and licensing information.
+.SH NAMED COLUMNS MODE
+The \fB\-n\fR input mode is useful
+if the input column names are known in advance,
+but not their position.
+.br
+For example,
+calling the program with the arguments
+\(lq\fB\-n phone . fax .\fR\(rq
+will extract the columns
+\(lq\fIphone\fR\(rq
+and \(lq\fIfax\fR\(rq
+from the input (if they exist),
+regardless of their position.
+All other columns will be ignored.
+.P
+The input mode also supports
+\fBcolumn aliases\fR.
+This is useful if several names with the same meaning
+are acceptable for one column.
+To use this feature,
+list the accepted column aliases
+after the column name.
+The\ \(lq\fB.\fR\(rq\ argument
+separates the column aliases
+from the next column definition.
+.br
+For example,
+the invocation
+\(lq\fB\-n\ phone tel telephone telno\ . fax telefax faxno\ .\fR\(rq
+will again extract the columns 
+\(lq\fIphone\fR\(rq
+and \(lq\fIfax\fR\(rq
+from the input
+(and will always call them thus in the output),
+but will also recognize them
+under one of several possible name variants.
+.SH PRETTY-PRINTING
+The program has limited pretty-printing capabilities:
+if the output (\fBstdout\fR) is a tty,
+the output will be colorized.
+Indentation will not be changed in any way.
+.IP - 2
+Column names will be printed in green.
+.IP - 2
+Structural elements,
+such as record separators,
+will be printed in yellow.
+.IP - 2
+Escaped characters
+will be printed in cyan.
+.IP - 2
+Everything else,
+including the field contents,
+will be printed in the terminal's default color.
+.P
+.SH EXAMPLES
+All examples assume this CSV file as input:
+.co
+h1;h2;h3
+c1;c2;c3
+ca;"cb""";cc
+cx;cy;cz
+.cx
+The default input mode is \fB\-a\fR
+(get column names automatically from first line).
+The default output mode is \fB\-m\fR
+(simple output).
+This is what is looks like:
+.cm "csv < test.csv"
+h1: c1
+h2: c2
+h3: c3
+\-
+h1: ca
+h2: cb"
+h3: cc
+\-
+h1: cx
+h2: cy
+h3: cz
+.cx
+In contrast, this is what the \fB\-j\fR (JSON) output mode
+looks like with the same input:
+.cm "csv \-j < test.csv"
+[{"h1":"c1","h2":"c2","h3":"c3"}
+,{"h1":"ca","h2":"cb\\"","h3":"cc"}
+,{"h1":"cx","h2":"cy","h3":"cz"}]
+.cx
+The \fB\-J\fR output mode (compact JSON)
+only prints the column names once:
+.cm "csv \-J < test.csv"
+{"columns": ["h1","h2","h3"],
+"lines": [
+ ["c1","c2","c3"]
+,["ca","cb\\"","cc"]
+,["cx","cy","cz"]]}
+.cx
+In the \fB\-i\fR input mode,
+the first line is not considered special.
+Instead, all columns are automatically numbered:
+.cm "csv \-i < test.csv"
+0: h1
+1: h2
+2: h3
+\-
+0: c1
+1: c2
+2: c3
+\-
+0: ca
+1: cb"
+2: cc
+\-
+0: cx
+1: cy
+2: cz
+.cx
+As a special case,
+the long JSON mode\ (\fB\-j\fR) omits the auto-numbered column names
+of the \fB\-i\fR input mode.
+Thus,
+an array
+instead of an object
+will be printed
+for every record,
+simplifying further JSON processing.
+.cm "csv \-i \-j < test.csv"
+[["h1","h2","h3"]
+,["c1","c2","c3"]
+,["ca","cb\\"","cc"]
+,["cx","cy","cz"]]
+.cx
+.SH INPUT
+.SS Encoding
+The program is encoding-agnostic,
+so long as
+a single-byte character is used as field separator,
+LF\ (\fB\\n\fR) or CRLF\ (\fB\\r\\n\fR) is used as record separator,
+and there are no NUL\ bytes (\fB\\0\fR) in the input.
+.P
+NB:
+Some encodings,
+like UTF\-16 and UTF\-32,
+may use NUL/CR/LF bytes
+to represent other (non\-NUL) characters.
+This will result in unexpected output,
+since the program cannot handle NUL\ bytes correctly yet
+and is not wide\ character-aware.
+Plain ASCII or UTF\-8 are safer choices,
+because they never use a low byte
+for the representation of another non\-NUL\ character.
+.P
+It is recommended that input
+in an encoding
+other than plain ASCII or UTF\-8
+is converted to UTF\-8
+with a tool like \fB\iconv\fR(1)
+before being passed to this program.
+.SS Separator Character
+By default,
+the program will look for a field separator character
+in the first input line;
+the first such character found there
+will be used for the rest of the input.
+Accepted separator characters are
+comma\ (\fB,\fR),
+semicolon\ (\fB;\fR),
+tabulator\ (\fB\\t\fR),
+and
+pipe\ (\fB|\fR).
+If the input uses a different separator character,
+specify it manually with the \fB\-d\fR option.
+.P
+Both the auto-detection feature
+and the \fB\-d\fR option
+support one-byte separators only
+and assume that the input
+does not use more than one distinct separator.
+Input files using multiple different separators
+and/or multibyte separators
+cannot be parsed correctly.
+.SS Quoting
+Input fields may be quoted
+either with single (\fB'\fR)
+or double apostrophes (\fB"\fR).
+This quoting character
+will be removed from the output.
+fields need not be quoted,
+except for multiple-line values
+(see option \fB\-b\fR).
+If the quoting character
+is present inside a quoted field,
+it must be doubled.
+.P
+For example,
+.br
+\fB"field""with""quotes"\fR
+will be interpreted as \fBfield"with"quotes\fR,
+whereas
+.br
+\fBfield""without""quotes"\fR
+will be interpreted as-is.
+.SS Single-Column CSV Files
+Single-column files can be used as input,
+but the separator auto-detection
+(in case of \(lq\fB\-d auto\fR\(rq
+or no \fB\-d\fR argument at all)
+will fail and terminate the program
+with exit\ code\ 3.
+.P
+To correctly read single-column files,
+use \(lq\fB\-d none\fR\(rq,
+which tells the program
+that the input does not contain any actual separator characters.
+.P
+Alternatively, use the \fB\-e\fR option,
+as a missing separator character can be ignored;
+however, this will cause malformed CSV input to be ignored as well.
+.SH EXIT CODES
+By default,
+the program will terminate with exit code zero (success).
+Other exit codes
+signify various error conditions:
+.TP
+.B 1
+Syntax error
+(invalid arguments, missing, or too many column names).
+.TP
+.B 2
+Input format error
+(too many column,
+no column match,
+empty header line,
+unexpected quote/EOL/EOF).
+Note that when the program exits with code\ 2,
+it will already have printed parts of the CSV contents.
+.TP
+.B 3
+No separator found on first line.
+.TP
+.B 4
+Empty input.
+(This is only an error in input modes \fB\-n\fR and \fB\-a\fR,
+whereas input modes \fB\-g\fR and \fB\-i\fR can handle empty input gracefully.)
+.TP
+.B 10
+Internal error
+(out of memory).
+.SH AUTHOR
+Maximilian Eul <maximilian@eul.cc>
+(https://github.com/mle86)

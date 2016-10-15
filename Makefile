@@ -41,6 +41,10 @@ install: $(BIN)
 	strip $(BIN)
 	cp $(BIN) $(DEST)
 	chown $(CHOWN) $(DEST)
+	
+	cp man/csv.1 /usr/local/share/man/man1/
+	chmod 0644 /usr/local/share/man/man1/csv.1
+	gzip -f /usr/local/share/man/man1/csv.1
 
 test:
 	git submodule update --init test/framework/
