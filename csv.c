@@ -47,7 +47,7 @@ int main (int argc, char** argv) {
 	bool   allow_breaks = false;
 	bool   do_flush     = false;
 
-	const char* options = "gnaihVvmjJXd:bes:l:FM";
+	const char* options = "gnaihVmjJXd:bes:l:FM";
 	const struct option long_options [] = {
 		{ "assigned-names",	0, NULL, 'g' },
 		{ "named-columns",	0, NULL, 'n' },
@@ -56,7 +56,7 @@ int main (int argc, char** argv) {
 
 		{ "help",		0, NULL, 'h' },
 		{ "version",		0, NULL, 'V' },
-		{ "verbose",		0, NULL, 'v' },
+//		{ "verbose",		0, NULL, 'v' },
 
 		{ "simple",		0, NULL, 'm' },
 		{ "compact-json",	0, NULL, 'j' },
@@ -100,7 +100,7 @@ int main (int argc, char** argv) {
 		case 'b': allow_breaks = true; break;
 		case 'e': IgnoreErrors = true; break;
 		case 'F': do_flush = true; break;
-		case 'v': Verbose = true; break;
+//		case 'v': Verbose = true; break;
 		case 'M': remove_bom = false; break;
 
 		case 's': int_arg(&skip_lines, c, optarg); break;

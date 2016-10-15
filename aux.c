@@ -65,8 +65,6 @@ void Help (void) { printf(
 	                       "Flush the output after every input line.\n"
 	"  "M1"-M"M0", "M1"--keep-bom"M0"  "
 	                  "Don't try to remove UTF-8/16 BOMs from the first line.\n"
-	"  "M1"-v"M0", "M1"--verbose"M0"   "
-	                  "Print parsing status output on stderr.\n"
 	"  "M1"-h"M0", "M1"--help"M0"      "
 	                  "This help\n"
 	"  "M1"-V"M0", "M1"--version"M0"   "
