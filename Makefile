@@ -37,7 +37,7 @@ $(BIN): $(OBJS)
 # All existing header files are prerequisites.
 	$(CC) -c -o ${*}.o $(CFLAGS) $<
 
-install:
+install: $(BIN)
 	strip $(BIN)
 	cp $(BIN) $(DEST)
 	chown $(CHOWN) $(DEST)
@@ -48,3 +48,4 @@ test:
 
 clean:
 	rm -f $(BIN) *.o a.out *~
+
