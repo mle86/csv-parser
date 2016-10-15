@@ -77,6 +77,7 @@ void Help (void) { printf(
 void Version (void) { printf(
 	PROGNAME " v" VERSION "\n"
 	"Written by Maximilian Eul <maximilian@eul.cc>, " VERDATE ".\n"
+	"MIT License <https://opensource.org/licenses/MIT>.\n"
 	"\n"
 ); }
 

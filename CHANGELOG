@@ -5,6 +5,7 @@ v2.0
 	- introduced option -d  (explicit separator)
 	- introduced option -M  (don't strip BOM)
 	- renamed option -f to -g  (assigned column names)
+	- licensed under MIT license terms
 	- code rewrite
 
 v1.5 (20120129)
