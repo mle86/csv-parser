@@ -37,6 +37,9 @@ $(BIN): $(OBJS)
 # All existing header files are prerequisites.
 	$(CC) -c -o ${*}.o $(CFLAGS) $<
 
+README.md: man/*
+	perl man/to-readme.pl --comment --paste-after DESCRIPTION:'Installation.md' <man/csv.1 >README.md
+
 install: $(BIN)
 	strip $(BIN)
 	cp $(BIN) $(DEST)
