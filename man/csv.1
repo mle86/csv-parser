@@ -106,6 +106,10 @@ An object with a \(lq\fIcolumns\fR\(rq and a \(lq\fIlines\fR\(rq key is returned
 The \(lq\fIcolumns\fR\(rq entry is an ordered array of the column names.
 The \(lq\fIlines\fR\(rq entry is an ordered array of ordered arrays,
 each of which represents one input line.
+.TP
+.B \-X, \-\-shell-vars
+Output in shell\ variable\ assignment format.
+See the \(lqExamples\(rq section below.
 .SH OTHER OPTIONS
 .TP
 \fB\-d\fR \fIC\fR, \fB\-\-separator\fR \fIC\fR
@@ -305,6 +309,47 @@ simplifying further JSON processing.
 ,["c1","c2","c3"]
 ,["ca","cb\\"","cc"]
 ,["cx","cy","cz"]]
+.cx
+Finally, the \fB\-X\fR output mode
+generates shell variable assignments
+like this:
+.cm "csv \-X < test.csv"
+CSV_COLNAME_0=h1
+CSV_COLNAME_1=h2
+CSV_COLNAME_2=h3
+CSV_0_0=c1
+CSV_0_1=c2
+CSV_0_2=c3
+CSV_1_0=ca
+CSV_1_1="cb\\""
+CSV_1_2=cc
+CSV_2_0=cx
+CSV_2_1=cy
+CSV_2_2=cz
+CSV_RECORDS=3
+.cx
+The varname scheme is
+\(lqCSV_\fIlineno\fR_\fIfieldno\fR\(rq,
+with lines and fields counted from zero.
+.P
+Again, there's a special case for the \fB\-i\fR input mode,
+because it has no relevant column names:
+The \(lqCSV_COLNANE_\fIcolno\fR\(rq assignments will be omitted,
+and the first input line is read as a regular record.
+.cm "csv \-i \-X < test.csv"
+CSV_0_0=h1
+CSV_0_1=h2
+CSV_0_2=h3
+CSV_1_0=c1
+CSV_1_1=c2
+CSV_1_2=c3
+CSV_2_0=ca
+CSV_2_1="cb\\""
+CSV_2_2=cc
+CSV_3_0=cx
+CSV_3_1=cy
+CSV_3_2=cz
+CSV_RECORDS=4
 .cx
 .SH INPUT
 .SS Encoding
