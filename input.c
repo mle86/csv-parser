@@ -122,10 +122,17 @@ bool is_lineend (const char* s) {
 }
 
 void find_separator (const char* s) {
-	while (*s && !issep(*s))
+	for (char q = '\0'; *s; s++) {
 		// this will stop at the first valid separator char,
 		// or at the trailing NUL if there are no sepchars.
-		s++;
+		// quoted fields will be skipped.
+		if (!q && isq(*s))
+			q = *s;
+		else if (q && *s == q)
+			q = '\0';
+		else if (!q && issep(*s))
+			break;
+	}
 
 	if (*s) {
 		separator = *s;
