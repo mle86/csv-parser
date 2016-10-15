@@ -1,4 +1,4 @@
-v2.0
+v2.0 (2016-10-15)
 	- introduced output mode -J  (compact JSON output)
 	- introduced output mode -X  (shell var output)
 	- introduced input mode -i  (auto-numbered columns)
@@ -8,29 +8,29 @@ v2.0
 	- licensed under MIT license terms
 	- code rewrite
 
-v1.5 (20120129)
+v1.5 (2012-01-29)
 	- introduced output mode -j  (JSON output)
 
-v1.4 (20110620)
+v1.4 (2011-06-20)
 	- introduced option -b  (allow breaks inside lines)
 	- fixed line length issues
 	- using ctype
 	- build cleanup
 
-v1.3.1 (20100427)
+v1.3.1 (2010-04-27)
 	- fixed double separator issue
 
-v1.3 (20081028)
+v1.3 (2008-10-28)
 	- introduced input mode -p  (preset field names)
 	- introduced option -l  (line limit)
 	- code cleanup
 
-v1.2 (20080929)
+v1.2 (2008-09-29)
 	- introduced option -a  (accept only arbitrary separator)
 	- code cleanup
 
-v1.1 (20080305)
+v1.1 (2008-03-05)
 	- introduced option -F  (always flush)
 	- introduced option -e  (ingore errors)
 
-v1.0 (20080129)
+v1.0 (2008-01-29)

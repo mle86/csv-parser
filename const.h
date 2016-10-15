@@ -3,7 +3,7 @@
 
 
 #define VERSION "2.0"
-#define VERDATE "September 2016"
+#define VERDATE "October 2016"
 
 #define EXIT_HELP	0
 #define EXIT_SYNTAX	1
