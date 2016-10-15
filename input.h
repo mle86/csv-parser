@@ -7,7 +7,7 @@
 /* Use this for set_input(separator) to auto-detect the separator on the first input line.  */
 #define SEP_AUTO '\0'
 /* Use this for set_input(separator) to use no separator, i.e. read the file as single-column.
- * This works because linebreaks are always read as record separator (fgets), never as cell separator.  */
+ * This works because linebreaks are always read as record separator (fgets), never as field separator.  */
 #define SEP_NONE '\n'
 
 

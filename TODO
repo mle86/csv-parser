@@ -1,3 +1,5 @@
 - Support LF and LFCR line ends
   (needs fgets() alternative).
 
+- Support NUL bytes in input?
+
