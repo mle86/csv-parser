@@ -437,6 +437,16 @@ that the input does not contain any actual separator characters.
 Alternatively, use the \fB\-e\fR option,
 as a missing separator character can be ignored;
 however, this will cause malformed CSV input to be ignored as well.
+.SS Multi-Line Column Names
+If the first input field contains linebreaks,
+the automatic separator\ detection
+won't be able to find the separator
+and terminate the program
+with exit\ code\ 3,
+as it only checks the first input line.
+In this case, it is necessary
+to manually specify the separator character
+with the \fB\-d\fR\ option.
 .SH EXIT CODES
 By default,
 the program will terminate with exit code zero (success).
