@@ -41,7 +41,7 @@ inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty, const cha
 	fields     = 0;
 	mode       = _mode;
 	do_flush   = _do_flush;
-	shvar_prefix = (_shvar_prefix) ? shvar_prefix : "";
+	shvar_prefix = (_shvar_prefix) ? _shvar_prefix : "";
 
 	pretty = _pretty;
 	if (pretty) {
