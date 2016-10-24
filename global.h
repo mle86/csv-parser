@@ -2,11 +2,12 @@
 #define GLOBAL_H
 #include <stdbool.h>
 #include "const.h"
+#include "nstr.h"
 
 
 extern bool Verbose;
 extern bool IgnoreErrors;
-extern const char* ColumnName [];
+extern const nstr* ColumnName [];
 
 
 /* Prints an error message.

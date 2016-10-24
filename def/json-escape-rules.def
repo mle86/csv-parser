@@ -1,4 +1,5 @@
 // plain escaping replacements:
+escape("\x00", "\\0");
 escape("\x08", "\\b");
 escape("\x09", "\\t");
 escape("\x0a", "\\n");

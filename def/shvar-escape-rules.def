@@ -4,5 +4,11 @@ escape("`",  "\\`" );
 escape("$",  "\\$" );
 escape("\\", "\\\\");
 
+// Many shells don't support NULs in variables. (zsh does.)
+// Still, we gotta do _something_.
+// To prevent conflicts with possible digit characters after the escape sequence,
+// we'll have to print "\000" instead of just "\0".
+escape("\0", "\\000");
+
 
 // vim: syntax=c

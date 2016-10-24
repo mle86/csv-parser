@@ -1,6 +1,7 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 #include <stdbool.h>
+#include "nstr.h"
 #include "const.h"
 
 
@@ -36,7 +37,7 @@ void output_empty (void);
 void output_line_begin (void);
 void output_line_end   (void);
 
-void output_kv (const char* key, const char* value);
+void output_kv (const nstr* key, const nstr* value);
 
 
 #endif  // OUTPUT_H

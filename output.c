@@ -2,6 +2,7 @@
 #include "global.h"
 #include "const.h"
 #include "escape.h"
+#include "nstr.h"
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -24,8 +25,6 @@ static size_t fields = 0;
 #define prints(s) fputs(s, stdout)
 #define printc(c) fputc(c, stdout)
 
-// Like prints(), but will pretty-print using PP_ESC.
-static void printx (const char* s, bool in_key);
 // Like prints(), but will pretty-print using PP_KEY.
 static void printk (const char* s);
 
@@ -175,26 +174,25 @@ void output_line_end (void) {
 		fflush(stdout);
 }
 
-void output_kv (const char* key, const char* value) {
+void output_kv (const nstr* key, const nstr* value) {
 	const bool is_colname = (!key && (mode == OM_JSON_COMPACT || mode == OM_SHELL_VARS));
+
 	switch (mode) {
 		case OM_SIMPLE:
-			printk(key),
+			printk(key->buffer);
 			prints(SIMPLE_KVSEP);
-			escape_nobr(value, pp_esc, (is_colname) ? pp_key : pp_rst);
+			escape_nobr(value, pp_esc, pp_rst);
 			printc('\n');
 			break;
 
 		case OM_JSON:
 			if (! first_kv)
 				prints(pretty ? (PP_SYM "," PP_RST) : ",");
-			if (pretty)
-				prints("\"" PP_KEY);
-			else	printc( '"'      );
+			printc('"');
+			PRETTY{ prints(PP_KEY); }
 			escape_json(key, pp_esc, pp_key);
-			if (pretty)
-				prints(PP_RST "\":\"");
-			else	prints(       "\":\"");
+			PRETTY{ prints(PP_RST); }
+			prints("\":\"");
 			escape_json(value, pp_esc, pp_rst);
 			printc('"');
 			break;
@@ -218,11 +216,13 @@ void output_kv (const char* key, const char* value) {
 		case OM_SHELL_VARS:
 		case OM_SHELL_VARS_NUMBERED:
 			if (is_colname) {
-				printf("%s%s" SHVAR_COLNAME "=",
+				printf("%s%s" SHVAR_COLNAME "=%s",
 						pp_sym,
 						shvar_prefix,
-						fields);
+						fields,
+						pp_key);
 				escape_shvar(value, pp_esc, pp_key);
+				PRETTY{ prints(PP_RST); }
 			} else {
 				printf("%s%s" SHVAR_CELL "=%s",
 						pp_sym,
@@ -240,15 +240,10 @@ void output_kv (const char* key, const char* value) {
 	fields++;
 }
 
-inline void printx (const char* s, bool in_key_name) {
-	PRETTY{ prints(PP_ESC); }
-	prints(s);
-	PRETTY{ prints((in_key_name) ? PP_KEY : PP_RST); }
-}
+
 inline void printk (const char* s) {
 	PRETTY{ prints(PP_KEY); }
 	prints(s);
 	PRETTY{ prints(PP_RST); }
 }
-
 

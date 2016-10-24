@@ -1,6 +1,7 @@
 #include "global.h"
 #include "input.h"
 #include "output.h"
+#include "nstr.h"
 #include "aux.h"
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,7 +11,7 @@
 // globals:
 bool        Verbose      = false;
 bool        IgnoreErrors = false;
-const char* ColumnName   [MAXCOLUMNS] = {0};
+const nstr* ColumnName   [MAXCOLUMNS] = {NULL};
 
 typedef struct coldef {
 	const char* name [MAXCOLALIASES];
@@ -174,7 +175,7 @@ void process_csv_input () {
 		output_line_begin();
 
 		size_t col = 0;
-		const char* field;
+		const nstr* field;
 		while ((field = next_field())) {
 			if (ColumnName[col])
 				output_kv(ColumnName[col], field);
@@ -225,7 +226,7 @@ void match_colnames (size_t argc, const char** argv) {
 
 	size_t found = 0;
 	size_t c = 0;
-	const char* s;
+	const nstr* s;
 	while ((s = next_field())) {
 		if (c >= MAXCOLUMNS) {
 			ERR(EXIT_FORMAT, "too many columns in header line\n");
@@ -235,14 +236,14 @@ void match_colnames (size_t argc, const char** argv) {
 		// got one actual input colname, now compare it against all known colname aliases
 		for (size_t cd = 0; cd < n_coldefs; cd++) {
 			#define has_name(ni) (ni < coldefs[cd].names)
-			#define name_equal(ni, s) (streq(coldefs[cd].name[ni], s))
+			#define name_equal(ni, s) (nstr_cmpsz(s, coldefs[cd].name[ni]))
 			for (size_t ni = 0; has_name(ni); ni++) {
 				if (!coldefs[cd].found && name_equal(ni, s)) {
 					// this coldef had the name!
 					// assign the coldef's basename:
-					ColumnName[c] = strdup(coldefs[cd].name[0]);
+					ColumnName[c] = nstr_fromsz(coldefs[cd].name[0]);
 					coldefs[cd].found = true;
-					VERBOSE("found column \"%s\" (%zu)\n", ColumnName[c], c);
+					VERBOSE("found column \"%s\" (%zu)\n", ColumnName[c]->buffer, c);
 					found++;
 					goto next_col;
 				}
@@ -251,7 +252,7 @@ void match_colnames (size_t argc, const char** argv) {
 			#undef has_name
 		}
 
-		VERBOSE("unknown column \"%s\" (%zu)\n", s, c);
+		VERBOSE("unknown column \"%s\" (%zu)\n", s->buffer, c);
 
 		next_col:
 		c++;
@@ -311,16 +312,16 @@ size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], s
 
 void find_colnames (void) {
 	size_t c = 0;
-	const char* s;
+	const nstr* s;
 	while ((s = next_field())) {
 		if (c >= MAXCOLUMNS) {
 			ERR(EXIT_FORMAT, "too many columns\n");
 			break;
 		}
 
-		ColumnName[c] = strdup(s);
+		ColumnName[c] = nstr_dup(s);
 
-		VERBOSE("found column name %zu: \"%s\"\n", c, s);
+		VERBOSE("found column name %zu: \"%s\"\n", c, s->buffer);
 
 		c++;
 	}
@@ -339,8 +340,8 @@ void read_colname_assignments (size_t args, const char** argv) {
 		if (streq(argv[c], OMIT_COLUMN)) {
 			// continue
 		} else {
-			ColumnName[c] = argv[c];
-			VERBOSE("got column name \"%s\" (%zu)\n", ColumnName[c], c);
+			ColumnName[c] = nstr_fromsz(argv[c]);
+			VERBOSE("got column name \"%s\" (%zu)\n", ColumnName[c]->buffer, c);
 		}
 	}
 }
@@ -352,13 +353,12 @@ void autonumber_columns (void) {
 	 * Because we don't know yet how many columns the longest input line has,
 	 * we'll fill up the entire array (indexes 0 .. MAXCOLUMNS-1).
 	 *
-	 * Instead of calling strdup() hundreds of times,
-	 * we use one big string buffer for that.
-	 * Its length is the column count times
-	 * the base-10 length of the highest possible field index (plus one NUL byte each).
-	 * Around 1~3% of that string buffer will be wasted (because of the shorter numbers),
-	 * but who cares.
-	 */
+	 * Instead of calling strdup() hundreds of times, we use one big buffer
+	 * and build nstr structures in there.
+	 * The buffer length is the max column count
+	 * multiplied with the memory size of the longest possible field index.
+	 * A lot of that buffer will be wasted because of the shorter numbers
+	 * and due to struct padding, but who cares.  */
 
 	#define str_(s) #s
 	#define str(s) str_(s)
@@ -366,14 +366,18 @@ void autonumber_columns (void) {
 	// length of longest possible field index,
 	// including terminating NUL byte:
 //	const unsigned int nlen = 1 + ceil(log10(MAXCOLUMNS - 1));
-	const unsigned int nlen = sizeof(str(MAXCOLUMNS));
+	const size_t nlen = sizeof(str(MAXCOLUMNS));
 
-	char* buf = Malloc(nlen * MAXCOLUMNS);
+	// memory size of longest possible field name,
+	// including terminating NUL byte:
+	const size_t nslen = nlen + sizeof(nstr);
+
+	char* buf = Malloc(nslen * MAXCOLUMNS);
 
 	for (size_t c = 0; c < MAXCOLUMNS; c++) {
-		const size_t bskip = 1 + snprintf(buf, nlen, "%zu", c);
-		ColumnName[c] = buf;
-		buf += bskip;
+		nstr* s = (nstr*)(buf + (nslen * c));
+		s->length = snprintf(s->buffer, nlen, "%zu", c);
+		ColumnName[c] = s;
 	}
 }
 

@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "escape.h"
+#include "nstr.h"
 #include "global.h"
 
 
-static bool is_shvar_safe (const char* str);
+static bool is_shvar_safe (const nstr* str);
 
 #define in_range(c, r0, r1) \
 	(((unsigned char)(c)) >= ((unsigned char)(r0)) && ((unsigned char)(c)) <= ((unsigned char)(r1)))
@@ -13,8 +14,8 @@ static bool is_shvar_safe (const char* str);
  * This macro begins the main loop for all escape_fn_t functions.
  * The loop body should include the ruleset file.
  */
-#define apply_rules(szp) \
-	for (register const char* raw = (szp); *raw; )
+#define apply_rules(nstrp) \
+	for (register const char* raw = (nstrp)->buffer; raw < (nstrp)->buffer + (nstrp)->length; )
 
 /**
  * This macro expands to a byte-for-byte string comparison:
@@ -86,10 +87,10 @@ static bool is_shvar_safe (const char* str);
 	}while(0)
 
 
-void escape_shvar (const char* input, const char* pp_esc, const char* pp_rst) {
+void escape_shvar (const nstr* input, const char* pp_esc, const char* pp_rst) {
 	if (is_shvar_safe(input)) {
 		// If a value consists of safe chars only, it does not need to be quoted or escaped
-		fputs(input, stdout);
+		fputs(input->buffer, stdout);
 		return;
 	}
 
@@ -101,14 +102,14 @@ void escape_shvar (const char* input, const char* pp_esc, const char* pp_rst) {
 	output_chr('"');
 }
 
-void escape_nobr (const char* input, const char* pp_esc, const char* pp_rst) {
+void escape_nobr (const nstr* input, const char* pp_esc, const char* pp_rst) {
 	apply_rules(input) {
 		#include "def/nobr-escape-rules.def"
 		cpyraw();
 	}
 }
 
-void escape_json (const char* input, const char* pp_esc, const char* pp_rst) {
+void escape_json (const nstr* input, const char* pp_esc, const char* pp_rst) {
 	apply_rules(input) {
 		#include "def/json-escape-rules.def"
 		cpyraw();
@@ -116,13 +117,13 @@ void escape_json (const char* input, const char* pp_esc, const char* pp_rst) {
 }
 
 
-inline bool is_shvar_safe (const char* str) {
+inline bool is_shvar_safe (const nstr* str) {
 	#define is_safe_chr(c) (									\
 			isalnum(c) ||									\
 			c == '_' || c == '-' || c == '+' || c == ',' || c == '.' || c == ':' ||		\
 			c == '@' || c == '/' || c == '[' || c == ']' || c == '{' || c == '}' )
-	while (*str)
-		if (!is_safe_chr(*(str++)))
+	for (register const char* s = str->buffer; s < str->buffer + str->length; s++)
+		if (!is_safe_chr(*s))
 			return false;
 	return true;
 }

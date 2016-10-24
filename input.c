@@ -14,25 +14,43 @@ static size_t limit_lines;
 static size_t skip_lines;
 static FILE*  input;
 
-static char   fieldbuffer [MAXLINELEN];
-static char   linebuffer  [MAXLINELEN];
-static char*  cur_line;
+/**
+ * This is where get_line() will store its results.
+ * set_input() will always clear it.
+ */
+static char*  cur_line = NULL;
+static size_t cur_line_len = 0;
+static size_t cur_line_bufsz = 0;
 
-// recognized separator characters for "--separator auto":
+/**
+ * While reading cur_line, we need a pointer to increase which keeps its position between next_field() calls.
+ * We cannot simply increase the cur_line pointer itself, because getline(3) might call realloc() on it;
+ * we use this pointer instead.  Our get_line() always must reset lp &curline[0] if successful.
+ */
+static const char* lp = NULL;
+
+/** recognized separator characters for "--separator auto" */
 #define issep(c) (c == ',' || c == ';' || c == '\t' || c == '|')
 // recognized quoting characters:
 #define isq(c) (c == '"' || c == '\'')
 
-static char* get_line (void);
+/**
+ * Reads one input line into the 'cur_line' structure and returns TRUE.
+ * 'line_number' will be increased by 1.
+ * Always returns FALSE (and does not read from input)
+ *  if 'line_number' has already reached 'limit_lines' (assuming it's set).
+ */
+static bool get_line (void);
+
 static void skip (size_t n);
 static unsigned short check_bom (const char* s);
 static bool is_lineend (const char* s);
-static void find_separator (const char* s);
+
+static void find_separator ();
 
 
 void set_input (FILE* file, char _separator, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines) {
 	input         = file;
-	cur_line      = NULL;
 	line_number   = 0;
 	first_line    = true;
 	allow_breaks  = _allow_breaks;
@@ -40,6 +58,9 @@ void set_input (FILE* file, char _separator, bool _allow_breaks, bool _remove_bo
 	remove_bom    = _remove_bom;
 	limit_lines   = _limit_lines;
 	skip_lines    = 0;
+
+	lp            = NULL;
+	cur_line_len  = 0;
 
 	if (_skip_lines) {
 		// Skip some lines.
@@ -70,23 +91,28 @@ inline void skip (size_t n) {
 		line_number++;
 }
 
-char* get_line (void) {
-	linebuffer[0] = '\0';
-
+bool get_line (void) {
 	if (limit_lines > 0 && line_number >= limit_lines)
-		// line limit reached, only return NULLs from here on
-		return NULL;
+		// line limit reached, don't read any more
+		return false;
 
-	if (! fgets(linebuffer, sizeof(linebuffer), input))
-		return NULL;
+	ssize_t len = getline(&cur_line, &cur_line_bufsz, input);
+	if (len < 0) {
+		// TODO: error message
+		cur_line_len = 0;
+		return false;
+	} else {
+		cur_line_len = len;
+	}
 
 	line_number++;
+	lp = cur_line;  // !
 
 	if (first_line) {
 		first_line = false;
 
 		if (separator == SEP_AUTO)
-			find_separator(linebuffer);
+			find_separator();
 
 		if (skip_lines)
 			// Looks like we just read the header line,
@@ -95,10 +121,10 @@ char* get_line (void) {
 
 		if (remove_bom)
 			// skip bom in returned input:
-			return linebuffer + check_bom(linebuffer);
+			lp += check_bom(cur_line);
 	}
 
-	return linebuffer;
+	return true;
 }
 
 unsigned short check_bom (const char* s) {
@@ -113,7 +139,8 @@ unsigned short check_bom (const char* s) {
 
 bool is_lineend (const char* s) {
 	return (
-	/* eol */	    s[0] == '\0'
+//	/* eol */	    s[0] == '\0'
+	/* eol */	   (s >= cur_line + cur_line_len)
 	/* CR */	|| (s[0] == '\n' && s[1] == '\0')
 	/* CRLF */	|| (s[0] == '\n' && s[1] == '\r' && s[2] == '\0')
 	/* LF */	|| (s[0] == '\r' && s[1] == '\0')
@@ -121,21 +148,22 @@ bool is_lineend (const char* s) {
 	);
 }
 
-void find_separator (const char* s) {
-	for (char q = '\0'; *s; s++) {
+void find_separator () {
+	register char* p = cur_line;
+	for (char q = '\0'; p < cur_line + cur_line_len; p++) {
 		// this will stop at the first valid separator char,
 		// or at the trailing NUL if there are no sepchars.
 		// quoted fields will be skipped.
-		if (!q && isq(*s))
-			q = *s;
-		else if (q && *s == q)
+		if (!q && isq(*p))
+			q = *p;
+		else if (q && *p == q)
 			q = '\0';
-		else if (!q && issep(*s))
+		else if (!q && issep(*p))
 			break;
 	}
 
-	if (*s) {
-		separator = *s;
+	if (*p) {
+		separator = *p;
 		VERBOSE("found separator \"%c\" on line %zu\n", separator, lineno());
 	} else {
 		ERR(EXIT_NOSEP, "no separator found on line %zu\n", lineno());
@@ -144,79 +172,89 @@ void find_separator (const char* s) {
 }
 
 bool next_line (void) {
-	cur_line = get_line();
-	return (cur_line != NULL);
+	return get_line();
 }
 
-const char* next_field (void) {
-	if (!cur_line || !cur_line[0])
-		return NULL;
+const nstr* next_field (void) {
+	static nstr* field = NULL;
+	static size_t bsz = 0;
+	#define BSZ_INITIAL 4095
+	#define BSZ_ADD 1024
 
-	fieldbuffer[0] = '\0';
-	size_t f = 0;
-	#define addf(c) do{ fieldbuffer[f++] = (c); }while(0)
-
-	bool toolong = false;
-
-	#define t cur_line  /* just an abbreviation */
-	#define quoted (quote != '\0')  /* if(quoted) looks better than if(quote) */
-
-	char quote = '\0';
-	if (isq(t[0])) {
-		quote = t[0];
-		t++;
+	if (field == NULL) {
+		// Initialize the field buffer
+		bsz   = BSZ_INITIAL;
+		field = nstr_init(bsz);
 	}
 
-	/* fin(nextptr)
-	 *  Usually, this macro will set cur_line to a suitable position for the following next_field() call,
-	 *  i.e. to the start of the next field (if there is one on the current line)
-	 *       or to NULL if cur_line's end is reached.
-	 *  After that, it will terminate fieldbuffer by writing a NUL to the current position (f)
-	 *  and return that array.
-	 *
-	 *  However, if toolong==true,
-	 *  we must not return the fieldbuffer, as it is an incomplete value.
-	 *  cur_line should still be advanced to the next field,
-	 *  but the macro will then clear the toolong flag and return an empty string.  */
-	#define fin(nextptr) (					\
-			(cur_line = (nextptr)),			\
-			(fieldbuffer[f] = '\0'),		\
-			(toolong ? ((toolong=false), "")	\
-			         : fieldbuffer)			\
-		)
+	if (!cur_line || !lp || lp >= cur_line + cur_line_len)
+		// EOL/EOF
+		return NULL;
 
+	char quote = '\0';
+	if (isq(lp[0])) {
+		// quoted field
+		quote = lp[0];
+		lp++;
+	}
+
+	nstr_truncate(field);
+
+	#define quoted (quote != '\0')  /* if(quoted) looks better than if(quote) */
+
+	/**
+	 * This addf() macro appends one character to the end of the 'field' nstr.
+	 * Resizing and NUL-terminating are handled automatically.  */
+//	#define addf(c) do{ nstr_appendc_a(&field, (c)); }while(0)
+	/**
+	 * This addf() macro appends one character to the end of the 'field' nstr,
+	 * assuming that it is long enough.  That's why there is a resize check
+	 * in the read loop.  It also does NOT nul-terminate the buffer --
+	 * the fin() macro will do it.  */
+	#define addf(c) do{ field->buffer[ field->length++ ] = (c); }while(0)
+
+        /* fin(nextptr)
+         *  This macro will set lp to a suitable position for the following next_field() call,
+         *  i.e. to the start of the next field (if there is one on the current line)
+         *       or to NULL if cur_line's end is reached.
+         *  After that, it will terminate the field buffer by writing a NUL to the current position
+	 *  (addf() might not have done that yet) and return the string.  */
+        #define fin(nextptr) (					\
+                        (lp = (nextptr)),			\
+			(field->buffer[field->length] = '\0'),	\
+			field					\
+                )
 
 	while (true) {
-		if (f >= sizeof(fieldbuffer) - 1) {
-			f = 0;  // this way, we'll never write past fieldbuffer's boundaries
-			if (! toolong) {
-				toolong = true;
-				// Only show this error once
-				ERR(EXIT_FORMAT, "field too long on line %zu\n", lineno());
-			}
+
+		if (field->length + 1 >= bsz) {
+			// Resize the input buffer.
+			// The nstr_append*_a() functions also do that, so if addf() uses them, this block is unreachable.
+			// But if addf() does the append operation itself, this block is needed for long fields!
+			nstr_resize(&field, (bsz += 1 + BSZ_ADD));
 		}
 
-		if (quoted && t[0] == quote) {
+		if (quoted && lp[0] == quote) {
 			// We just stumbled upon the quote char.
-			if (t[1] == quote) {
+			if (lp[1] == quote) {
 				// double quote means escaped quote.
 				// skip this one, only write second one to fieldbuffer:
-				t++;
-			} else if (t[1] == separator) {
+				lp++;
+			} else if (lp[1] == separator) {
 				// field end after the quote. place cur_line on next field start
-				return fin(t + 2);
-			} else if (is_lineend(t + 1)) {
+				return fin(lp + 2);
+			} else if (is_lineend(lp + 1)) {
 				// line end after the quote. clear cur_line so the following next_field() call will fail
 				return fin(NULL);
 			} else {
 				ERR(EXIT_FORMAT, "unexpected quote on line %zu\n", lineno());
 			}
 
-		} else if (!quoted && t[0] == separator) {
+		} else if (!quoted && lp[0] == separator) {
 			// field end. place cur_line on next field start
-			return fin(t + 1);
+			return fin(lp + 1);
 
-		} else if (quoted && is_lineend(t)) {
+		} else if (quoted && is_lineend(lp)) {
 			// line end in quoted string!
 
 			if (! allow_breaks) {
@@ -232,13 +270,13 @@ const char* next_field (void) {
 			}
 			continue;  // re-enter loop on next line
 
-		} else if (is_lineend(t)) {
+		} else if (is_lineend(lp)) {
 			// line end. clear cur_line so the following next_field() call will fail
 			return fin(NULL);
 		}
 
 		// append the current char to the fieldbuffer and continue.
-		addf(*(t++));
+		addf(*(lp++));
 	}
 }
 

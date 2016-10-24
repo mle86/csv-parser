@@ -1,6 +1,9 @@
 // double backslashes:
 escape("\\",   "\\\\");
 
+// NULs always need to be escaped ("\0")!
+escape("\0",   "\\0" );
+
 // collapse CRLF to single "\n":
 escape("\r\n", "\\n" );
 
