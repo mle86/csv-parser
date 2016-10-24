@@ -26,7 +26,7 @@ static size_t fields = 0;
 #define PRETTY if(pretty)
 
 #define prints(s) fputs(s, stdout)
-#define printc(c) fputc(c, stdout)
+#define printc(c) putchar(c)
 
 // Like prints(), but will pretty-print using PP_KEY.
 static void printk (const char* s);
@@ -186,7 +186,7 @@ void output_kv (const nstr* key, const nstr* value) {
 			break;
 
 		case OM_JSON:
-			if (! first_kv)
+			if (likely(!first_kv))
 				prints(pretty ? (PP_SYM "," PP_RST) : ",");
 			printc('"');
 			printk(key->buffer);
@@ -197,7 +197,7 @@ void output_kv (const nstr* key, const nstr* value) {
 
 		case OM_JSON_NUMBERED:
 		case OM_JSON_COMPACT:;
-			if (! first_kv) {
+			if (likely(!first_kv)) {
 				if (pretty && !is_colname)
 					prints(PP_SYM "," PP_RST);
 				else	printc(       ','       );
@@ -213,7 +213,7 @@ void output_kv (const nstr* key, const nstr* value) {
 
 		case OM_SHELL_VARS:
 		case OM_SHELL_VARS_NUMBERED:
-			if (is_colname) {
+			if (unlikely(is_colname)) {
 				printf("%s%s" SHVAR_COLNAME "=%s%s%s\n",
 						pp_sym,
 						shvar_prefix,
