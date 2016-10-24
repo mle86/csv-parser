@@ -179,7 +179,9 @@ void output_kv (const nstr* key, const nstr* value) {
 
 	switch (mode) {
 		case OM_SIMPLE:
-			printk(key->buffer);
+			PRETTY{ prints(PP_KEY); }
+			escape_nobr(key, pp_esc, pp_key);
+			PRETTY{ prints(PP_RST); }
 			prints(SIMPLE_KVSEP);
 			escape_nobr(value, pp_esc, pp_rst);
 			printc('\n');
