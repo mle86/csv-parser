@@ -1,6 +1,8 @@
 #include "aux.h"
 #include "const.h"
+#include "global.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void Help (void) { printf(
 	"Reads a CSV file from standard input and outputs a cleaner format.\n"
@@ -78,4 +80,20 @@ void Version (void) { printf(
 	"MIT License <https://opensource.org/licenses/MIT>.\n"
 	"\n"
 ); }
+
+inline void* Malloc (size_t size) {
+	void* ptr = malloc(size);
+	if (ptr == NULL && size > 0) {
+		FAIL(EXIT_INTERNAL, "out of memory\n");
+	}
+	return ptr;
+}
+
+inline void* Realloc (void* origptr, size_t newsize) {
+	void* ptr = realloc(origptr, newsize);
+	if (ptr == NULL && newsize > 0) {
+		FAIL(EXIT_INTERNAL, "out of memory\n");
+	}
+	return ptr;
+}
 

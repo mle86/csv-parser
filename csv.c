@@ -368,9 +368,7 @@ void autonumber_columns (void) {
 //	const unsigned int nlen = 1 + ceil(log10(MAXCOLUMNS - 1));
 	const unsigned int nlen = sizeof(str(MAXCOLUMNS));
 
-	char* buf = malloc(nlen * MAXCOLUMNS);
-	if (! buf)
-		FAIL(EXIT_INTERNAL, "out of memory");
+	char* buf = Malloc(nlen * MAXCOLUMNS);
 
 	for (size_t c = 0; c < MAXCOLUMNS; c++) {
 		const size_t bskip = 1 + snprintf(buf, nlen, "%zu", c);
