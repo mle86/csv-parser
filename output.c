@@ -11,8 +11,11 @@ static bool do_flush = false;
 static bool pretty = false;
 static const char* shvar_prefix = "";
 
+static void reformat_all_colnames (void);
+
 static const char
-	*pp_key, *pp_sym, *pp_esc, *pp_rst;
+	*pp_key, *pp_sym, *pp_esc, *pp_rst,
+	*pp0_key, *pp0_sym, *pp0_esc, *pp0_rst;
 
 static bool first_line = true;
 static bool first_kv   = true;
@@ -39,19 +42,27 @@ inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty, const cha
 	shvar_prefix = (_shvar_prefix) ? _shvar_prefix : "";
 
 	pretty = _pretty;
+
 	if (pretty) {
-		pp_sym = PP_SYM;
-		pp_key = PP_KEY;
-		pp_esc = PP_ESC;
-		pp_rst = PP_RST;
+		pp_sym  = PP_SYM;
+		pp_esc  = PP_ESC;
+		pp_key  = PP_KEY;
+		pp_rst  = PP_RST;
+		pp0_sym = PP_SYM;
+		pp0_esc = PP_ESC;
+		pp0_key = PP_KEY;
+		pp0_rst = PP_RST;
 	} else {
-		pp_sym = "";
-		pp_key = "";
-		pp_esc = "";
-		pp_rst = "";
+		pp_sym  = "";
+		pp_esc  = "";
+		pp_key  = "";
+		pp_rst  = "";
+		pp0_sym = NULL;
+		pp0_esc = NULL;
+		pp0_key = NULL;
+		pp0_rst = NULL;
 	}
 }
-
 
 void output_begin (void) {
   switch (mode) {
@@ -60,7 +71,7 @@ void output_begin (void) {
 	case OM_JSON:
 	case OM_JSON_NUMBERED:
 		printc('[');
-		prints(pp_sym);
+		PRETTY{ prints(PP_SYM); }
 		break;
 	case OM_JSON_COMPACT:
 		prints("{\"columns\": [");
@@ -69,7 +80,7 @@ void output_begin (void) {
 				output_kv(NULL, ColumnName[c]);
 		}
 		prints("],\n\"lines\": [\n ");
-		prints(pp_sym);
+		PRETTY{ prints(PP_SYM); }
 		first_kv = true;  // output_kv() has cleared it
 		break;
 	case OM_SHELL_VARS:
@@ -123,23 +134,15 @@ void output_line_begin (void) {
 			}
 			break;
 		case OM_JSON:
-			if (!first_line)
-				prints("\n,");
-			if (pretty)
-				prints(PP_SYM "{" PP_RST);
-			else	printc(       '{'       );
+			printf("%s%s{%s",
+					(first_line) ? "" : "\n,",
+					pp_sym, pp_rst);
 			break;
 		case OM_JSON_COMPACT:
 		case OM_JSON_NUMBERED:
-			if (pretty) {
-				if (first_line)
-					prints(      PP_SYM "[" PP_RST);
-				else	prints("\n," PP_SYM "[" PP_RST);
-			} else {
-				if (first_line)
-					printc(   '[');
-				else	prints("\n,[");
-			}
+			printf("%s%s[%s",
+					(first_line) ? "" : "\n,",
+					pp_sym, pp_rst);
 			break;
 		case OM_SHELL_VARS:
 		case OM_SHELL_VARS_NUMBERED:
@@ -156,15 +159,11 @@ void output_line_end (void) {
 		case OM_SHELL_VARS_NUMBERED:
 			break;
 		case OM_JSON:
-			if (pretty)
-				prints(PP_SYM "}" PP_RST);
-			else	printc(       '}'       );
+			printf("%s}%s", pp_sym, pp_rst);
 			break;
 		case OM_JSON_NUMBERED:
 		case OM_JSON_COMPACT:
-			if (pretty)
-				prints(PP_SYM "]" PP_RST);
-			else	printc(       ']'       );
+			printf("%s]%s", pp_sym, pp_rst);
 			break;
 	}
 
@@ -183,19 +182,20 @@ void output_kv (const nstr* key, const nstr* value) {
 			escape_nobr(key, pp_esc, pp_key);
 			PRETTY{ prints(PP_RST); }
 			prints(SIMPLE_KVSEP);
-			escape_nobr(value, pp_esc, pp_rst);
+			escape_nobr(value, pp0_esc, pp0_rst);
 			printc('\n');
 			break;
 
 		case OM_JSON:
 			if (! first_kv)
 				prints(pretty ? (PP_SYM "," PP_RST) : ",");
-			printc('"');
-			PRETTY{ prints(PP_KEY); }
+			if (pretty)
+				prints("\"" PP_KEY);
+			else
+				printc('"');
 			escape_json(key, pp_esc, pp_key);
-			PRETTY{ prints(PP_RST); }
-			prints("\":\"");
-			escape_json(value, pp_esc, pp_rst);
+			prints((pretty) ? PP_RST "\":\"" : "\":\"");
+			escape_json(value, pp0_esc, pp0_rst);
 			printc('"');
 			break;
 
@@ -209,7 +209,7 @@ void output_kv (const nstr* key, const nstr* value) {
 			if (pretty && is_colname)
 				prints("\"" PP_KEY);
 			else	printc( '"'       );
-			escape_json(value, pp_esc, (is_colname) ? pp_key : pp_rst);
+			escape_json(value, pp_esc, (is_colname) ? pp0_key : pp0_rst);
 			if (pretty && is_colname)
 				prints(PP_RST "\"");
 			else	printc(        '"');
@@ -223,7 +223,7 @@ void output_kv (const nstr* key, const nstr* value) {
 						shvar_prefix,
 						fields,
 						pp_key);
-				escape_shvar(value, pp_esc, pp_key);
+				escape_shvar(value, pp0_esc, pp0_key);
 				PRETTY{ prints(PP_RST); }
 			} else {
 				printf("%s%s" SHVAR_CELL "=%s",
@@ -232,7 +232,7 @@ void output_kv (const nstr* key, const nstr* value) {
 						records,
 						fields,
 						pp_rst);
-				escape_shvar(value, pp_esc, pp_rst);
+				escape_shvar(value, pp0_esc, pp0_rst);
 			}
 			printc('\n');
 			break;
