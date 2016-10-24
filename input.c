@@ -31,7 +31,7 @@ static const char* lp = NULL;
 
 /** recognized separator characters for "--separator auto" */
 #define issep(c) (c == ',' || c == ';' || c == '\t' || c == '|')
-// recognized quoting characters:
+/** recognized quoting characters */
 #define isq(c) (c == '"' || c == '\'')
 
 /**
@@ -42,10 +42,25 @@ static const char* lp = NULL;
  */
 static bool get_line (void);
 
+/** Reads and discards 'n' input lines, updating 'line_number'.  */
 static void skip (size_t n);
+
+/**
+ * Tries to find a UTF-x BOM on the 's' line and return the length of the found BOM.
+ * If no BOM is found, zero is returned.
+ */
 static unsigned short check_bom (const char* s);
+
+/**
+ * Determines whether s currently points to the line-end of cur_line.buffer.
+ * This can mean an LF, CRLF, or just the end of the buffer.
+ */
 static bool is_lineend (const char* s);
 
+/**
+ * Tried to find a separator character on the current line and store it in 'separator'.
+ * If nothing is found, 'separator' won't be changed.
+ */
 static void find_separator ();
 
 
