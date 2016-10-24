@@ -1,0 +1,8 @@
+// dangerous characters that need to be backslash-escaped:
+escape("\"", "\\\"");
+escape("`",  "\\`" );
+escape("$",  "\\$" );
+escape("\\", "\\\\");
+
+
+// vim: syntax=c

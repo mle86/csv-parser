@@ -1,9 +1,9 @@
 #include "output.h"
 #include "global.h"
 #include "const.h"
+#include "escape.h"
 #include <stdio.h>
 #include <stdbool.h>
-#include <ctype.h>
 
 static outmode_t mode = OM_SIMPLE;
 static bool do_flush = false;
@@ -18,10 +18,6 @@ static bool first_kv   = true;
 
 static size_t records = 0;
 static size_t fields = 0;
-
-static void json_print  (const char* value, bool is_key);
-static void nobr_print  (const char* value, bool is_key);
-static void shvar_print (const char* value, bool is_key);
 
 #define PRETTY if(pretty)
 
@@ -185,7 +181,7 @@ void output_kv (const char* key, const char* value) {
 		case OM_SIMPLE:
 			printk(key),
 			prints(SIMPLE_KVSEP);
-			nobr_print(value, is_colname);
+			escape_nobr(value, pp_esc, (is_colname) ? pp_key : pp_rst);
 			printc('\n');
 			break;
 
@@ -195,11 +191,11 @@ void output_kv (const char* key, const char* value) {
 			if (pretty)
 				prints("\"" PP_KEY);
 			else	printc( '"'      );
-			json_print(key, true);
+			escape_json(key, pp_esc, pp_key);
 			if (pretty)
 				prints(PP_RST "\":\"");
 			else	prints(       "\":\"");
-			json_print(value, false);
+			escape_json(value, pp_esc, pp_rst);
 			printc('"');
 			break;
 
@@ -213,7 +209,7 @@ void output_kv (const char* key, const char* value) {
 			if (pretty && is_colname)
 				prints("\"" PP_KEY);
 			else	printc( '"'       );
-			json_print(value, is_colname);
+			escape_json(value, pp_esc, (is_colname) ? pp_key : pp_rst);
 			if (pretty && is_colname)
 				prints(PP_RST "\"");
 			else	printc(        '"');
@@ -226,7 +222,7 @@ void output_kv (const char* key, const char* value) {
 						pp_sym,
 						shvar_prefix,
 						fields);
-				shvar_print(value, true);
+				escape_shvar(value, pp_esc, pp_key);
 			} else {
 				printf("%s%s" SHVAR_CELL "=%s",
 						pp_sym,
@@ -234,7 +230,7 @@ void output_kv (const char* key, const char* value) {
 						records,
 						fields,
 						pp_rst);
-				shvar_print(value, false);
+				escape_shvar(value, pp_esc, pp_rst);
 			}
 			printc('\n');
 			break;
@@ -242,107 +238,6 @@ void output_kv (const char* key, const char* value) {
 
 	first_kv = false;
 	fields++;
-}
-
-
-void json_print (const char* value, bool is_key) {
-	for (register const unsigned char* c = (const unsigned char*)value; *c; c++)
-	switch (*c) {
-		case 0x08: printx("\\b",  is_key); break;
-		case 0x09: printx("\\t",  is_key); break;
-		case 0x0a: printx("\\n",  is_key); break;
-		case 0x0c: printx("\\f",  is_key); break;
-		case 0x0d: printx("\\r",  is_key); break;
-		case '/':  printx("\\/",  is_key); break;  // http://stackoverflow.com/questions/1580647/json-why-are-forward-slashes-escaped
-		case '\\': printx("\\\\", is_key); break;
-		case '"':  printx("\\\"", is_key); break;
-		default:
-			if (*c <= 31) {
-				// control character
-				char buf [sizeof "\\uFFFF"];
-				snprintf(buf, sizeof(buf), "\\u%04X", (unsigned int)*c);
-				printx(buf, is_key);
-			} else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa8) {
-				// JS does not like these.
-				// http://timelessrepo.com/json-isnt-a-javascript-subset
-				printx("\\u2028", is_key);
-				c += 2;
-			} else if (c[0]==0xe2 && c[1]==0x80 && c[2]==0xa9) {
-				printx("\\u2029", is_key);
-				c += 2;
-			} else
-				printc(*c);
-	}
-}
-
-void nobr_print (const char* value, bool is_key) {
-	register const char* c = value;
-	while (*c) {
-		if (*c == '\\')
-			// print an extra backslash
-			printx("\\\\", is_key);
-		else if (c[0] == '\r' && c[1] == '\n') {
-			// collapse CRLF to single "\n"
-			printx("\\n", is_key);
-			c++;
-		} else if (c[0] == '\r' || c[0] == '\n') {
-			// output single linebreaks as "\n"
-			printx("\\n", is_key);
-		} else
-			printc(*c);
-		
-		c++;
-	}
-}
-
-void shvar_print (const char* value, bool is_key) {
-	// If a value consists of safe chars only, it does not need to be quoted or escaped:
-	#define is_safe_chr(c) (									\
-			isalnum(c) ||									\
-			c == '_' || c == '-' || c == '+' || c == ',' || c == '.' || c == ':' ||		\
-			c == '@' || c == '/' || c == '[' || c == ']' || c == '{' || c == '}' )
-
-	bool is_safe = true;
-	for (register const char* c = value; *c; c++)
-		if (!is_safe_chr(*c)) {
-			is_safe = false;
-			break;
-		}
-
-	if (is_safe) {
-		// no escaping and quoting necessary, just print the value itself
-		if (pretty && is_key)
-			prints(PP_KEY);
-		prints(value);
-		if (pretty && is_key)
-			prints(PP_RST);
-		return;
-	}
-	
-	// Characters which MUST be backslash-escaped in a quoted string:
-	#define is_quotable_chr(c) (c == '"' || c == '`' || c == '$' || c == '\\')
-
-	PRETTY{ prints(PP_SYM); }
-	printc('"');
-	PRETTY{ prints((is_key) ? PP_KEY : PP_RST); }
-	
-	char buf [sizeof "\\x"];
-	buf[0] = '\\';
-	buf[1] = '\0';  // changed in loop
-	buf[2] = '\0';
-
-	for (register const char* c = value; *c; c++) {
-		if (is_quotable_chr(*c)) {
-			buf[1] = *c;
-			printx(buf, is_key);
-		} else {
-			printc(*c);
-		}
-	}
-
-	PRETTY{ prints(PP_SYM); }
-	printc('"');
-	PRETTY{ prints(PP_RST); }
 }
 
 inline void printx (const char* s, bool in_key_name) {

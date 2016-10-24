@@ -8,8 +8,9 @@ OBJS =csv.o
 OBJS+=aux.o
 OBJS+=input.o
 OBJS+=output.o
+OBJS+=escape.o
 
-DEP=*.h
+DEP=*.h def/*.def
 
 CC=gcc
 LD=gcc

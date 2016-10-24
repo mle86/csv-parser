@@ -1,0 +1,19 @@
+// plain escaping replacements:
+escape("\x08", "\\b");
+escape("\x09", "\\t");
+escape("\x0a", "\\n");
+escape("\x0c", "\\f");
+escape("\x0d", "\\r");
+escape("/" ,   "\\/");  /* http://stackoverflow.com/questions/1580647/json-why-are-forward-slashes-escaped */
+escape("\\",   "\\\\");
+escape("\"",   "\\\"");
+
+// JS does not like these.
+// http://timelessrepo.com/json-isnt-a-javascript-subset
+escape("\xe2\x80\xa8", "\\u2028");
+escape("\xe2\x80\xa9", "\\u2029");
+
+// other control characters:
+escape_other(0x01, 0x1f, 6, "\\u%04X");
+
+// vim: syntax=c

@@ -1,0 +1,11 @@
+// double backslashes:
+escape("\\",   "\\\\");
+
+// collapse CRLF to single "\n":
+escape("\r\n", "\\n" );
+
+// output linebreaks as "\n":
+escape("\n",   "\\n" );
+
+
+// vim: syntax=c
