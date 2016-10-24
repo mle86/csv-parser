@@ -354,21 +354,19 @@ and the first input line is read as a regular record.
 
 The program is encoding-agnostic,
 so long as
-a single-byte character is used as field separator,
-LF (**\n**) or CRLF (**\r\n**) is used as record separator,
-and there are no NUL bytes (**\0**) in the input.
+a single-byte character is used as field separator
+and LF (**\n**) or CRLF (**\r\n**) is used as record separator.
 
 NB:
 Some encodings,
 like UTF-16 and UTF-32,
-may use NUL/CR/LF bytes
-to represent other (non-NUL) characters.
+may use CR/LF bytes
+to represent other characters.
 This will result in unexpected output,
-since the program cannot handle NUL bytes correctly yet
-and is not wide character-aware.
+since the program is not wide character-aware.
 Plain ASCII or UTF-8 are safer choices,
 because they never use a low byte
-for the representation of another non-NUL character.
+for the representation of another character.
 
 It is recommended that input
 in an encoding
@@ -442,6 +440,18 @@ that the input does not contain any actual separator characters.
 Alternatively, use the **-e** option,
 as a missing separator character can be ignored;
 however, this will cause malformed CSV input to be ignored as well.
+
+## Multi-Line Column Names
+
+If the first input field contains linebreaks,
+the automatic separator detection
+won't be able to find the separator
+and terminate the program
+with exit code 3,
+as it only checks the first input line.
+In this case, it is necessary
+to manually specify the separator character
+with the **-d** option.
 
 # Exit codes
 

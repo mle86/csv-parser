@@ -355,21 +355,19 @@ CSV_RECORDS=4
 .SS Encoding
 The program is encoding-agnostic,
 so long as
-a single-byte character is used as field separator,
-LF\ (\fB\\n\fR) or CRLF\ (\fB\\r\\n\fR) is used as record separator,
-and there are no NUL\ bytes (\fB\\0\fR) in the input.
+a single-byte character is used as field separator
+and LF\ (\fB\\n\fR) or CRLF\ (\fB\\r\\n\fR) is used as record separator.
 .P
 NB:
 Some encodings,
 like UTF\-16 and UTF\-32,
-may use NUL/CR/LF bytes
-to represent other (non\-NUL) characters.
+may use CR/LF bytes
+to represent other characters.
 This will result in unexpected output,
-since the program cannot handle NUL\ bytes correctly yet
-and is not wide\ character-aware.
+since the program is not wide\ character-aware.
 Plain ASCII or UTF\-8 are safer choices,
 because they never use a low byte
-for the representation of another non\-NUL\ character.
+for the representation of another character.
 .P
 It is recommended that input
 in an encoding
