@@ -65,6 +65,7 @@ inline void set_output (outmode_t _mode, bool _do_flush, bool _pretty, const cha
 }
 
 void output_begin (void) {
+  reformat_all_colnames();
   switch (mode) {
 	case OM_SIMPLE:
 		break;
@@ -178,9 +179,7 @@ void output_kv (const nstr* key, const nstr* value) {
 
 	switch (mode) {
 		case OM_SIMPLE:
-			PRETTY{ prints(PP_KEY); }
-			escape_nobr(key, pp_esc, pp_key);
-			PRETTY{ prints(PP_RST); }
+			printk(key->buffer);
 			prints(SIMPLE_KVSEP);
 			escape_nobr(value, pp0_esc, pp0_rst);
 			printc('\n');
@@ -189,12 +188,9 @@ void output_kv (const nstr* key, const nstr* value) {
 		case OM_JSON:
 			if (! first_kv)
 				prints(pretty ? (PP_SYM "," PP_RST) : ",");
-			if (pretty)
-				prints("\"" PP_KEY);
-			else
-				printc('"');
-			escape_json(key, pp_esc, pp_key);
-			prints((pretty) ? PP_RST "\":\"" : "\":\"");
+			printc('"');
+			printk(key->buffer);
+			prints("\":\"");
 			escape_json(value, pp0_esc, pp0_rst);
 			printc('"');
 			break;
@@ -206,25 +202,25 @@ void output_kv (const nstr* key, const nstr* value) {
 					prints(PP_SYM "," PP_RST);
 				else	printc(       ','       );
 			}
-			if (pretty && is_colname)
-				prints("\"" PP_KEY);
-			else	printc( '"'       );
-			escape_json(value, pp_esc, (is_colname) ? pp0_key : pp0_rst);
-			if (pretty && is_colname)
-				prints(PP_RST "\"");
-			else	printc(        '"');
+			printc('"');
+			if (is_colname) {
+				printk(value->buffer);
+			} else {
+				escape_json(value, pp0_esc, pp0_rst);
+			}
+			printc('"');
 			break;
 
 		case OM_SHELL_VARS:
 		case OM_SHELL_VARS_NUMBERED:
 			if (is_colname) {
-				printf("%s%s" SHVAR_COLNAME "=%s",
+				printf("%s%s" SHVAR_COLNAME "=%s%s%s\n",
 						pp_sym,
 						shvar_prefix,
 						fields,
-						pp_key);
-				escape_shvar(value, pp0_esc, pp0_key);
-				PRETTY{ prints(PP_RST); }
+						pp_key,
+						value->buffer,
+						pp_rst);
 			} else {
 				printf("%s%s" SHVAR_CELL "=%s",
 						pp_sym,
@@ -233,8 +229,8 @@ void output_kv (const nstr* key, const nstr* value) {
 						fields,
 						pp_rst);
 				escape_shvar(value, pp0_esc, pp0_rst);
+				printc('\n');
 			}
-			printc('\n');
 			break;
 	}
 
@@ -247,5 +243,40 @@ inline void printk (const char* s) {
 	PRETTY{ prints(PP_KEY); }
 	prints(s);
 	PRETTY{ prints(PP_RST); }
+}
+
+
+/**
+ * Column names are read only once,
+ * but will be printed often (at least in output modes -m and -j).
+ * We can gain performance by reformatting them only once
+ * instead of doing it every time they get printed.
+ * All outmodes escape the NUL character.
+ * Therefore, the result is a regular NUL-terminated string.
+ * This function does NOT prepend pp_key or append pp_rst.
+ */
+inline void reformat_all_colnames () {
+	for (size_t c = 0; c < MAXCOLUMNS; c++) {
+		if (ColumnName[c]) {
+			const nstr* orig = ColumnName[c];
+			switch (mode) {
+				case OM_SIMPLE:
+					ColumnName[c] = reformat_nobr(orig, pp_esc, pp_key);
+					break;
+				case OM_JSON:
+				case OM_JSON_NUMBERED:
+				case OM_JSON_COMPACT:
+					ColumnName[c] = reformat_json(orig, pp_esc, pp_key);
+					break;
+				case OM_SHELL_VARS:
+				case OM_SHELL_VARS_NUMBERED:
+					ColumnName[c] = reformat_shvar(orig, pp_esc, pp_key);
+					break;
+			}
+
+			if (ColumnName[c] != orig)
+				free((void*)orig);
+		}
+	}
 }
 

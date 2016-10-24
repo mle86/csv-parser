@@ -7,11 +7,13 @@
 
 static bool is_shvar_safe (const nstr* str);
 
+#define reformat_init_bsz_add 1024
+
 #define in_range(c, r0, r1) \
 	(((unsigned char)(c)) >= ((unsigned char)(r0)) && ((unsigned char)(c)) <= ((unsigned char)(r1)))
 
 /**
- * This macro begins the main loop for all escape_fn_t functions.
+ * This macro begins the main loop for all escape_fn_t and reformat_fn_t functions.
  * The loop body should include the ruleset file.
  */
 #define apply_rules(nstrp) \
@@ -114,6 +116,76 @@ void escape_json (const nstr* input, const char* pp_esc, const char* pp_rst) {
 		#include "def/json-escape-rules.def"
 		cpyraw();
 	}
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Preparations for the reformat_fn_t functions,
+// which write into an nstr named 'output' while maintaining a size variable 'outputsz':
+
+#undef output_chr
+#undef output_escape_sequence
+#undef output_fmt_escape_sequence
+
+#define output_chr(c)  nstr_appendc_a(&output, c, &outputsz)
+
+#define output_escape_sequence(es)  do{  \
+		if (pp_esc != NULL) { nstr_appendsz_a(&output, pp_esc, &outputsz); }		\
+		nstr_appendsz_a(&output, es, &outputsz);					\
+		if (pp_rst != NULL) { nstr_appendsz_a(&output, pp_rst, &outputsz); }		\
+	}while(0)
+
+#define output_fmt_escape_sequence(el, ef)  do{  \
+		char buf [el + 1];								\
+		snprintf(buf, el, ef, raw[0]);							\
+		if (pp_esc != NULL) { nstr_appendsz_a(&output, pp_esc, &outputsz); }		\
+		nstr_appendsz_a(&output, buf, &outputsz);					\
+		if (pp_rst != NULL) { nstr_appendsz_a(&output, pp_rst, &outputsz); }		\
+	}while(0)
+
+
+nstr* reformat_shvar (const nstr* input, const char* pp_esc, const char* pp_rst) {
+	if (is_shvar_safe(input)) {
+		// If a value consists of safe chars only, it does not need to be quoted or escaped
+		return nstr_dup(input);
+	}
+
+	size_t outputsz = input->length + reformat_init_bsz_add;
+	nstr* output    = nstr_init(outputsz);
+
+	output_chr('"');
+	apply_rules(input) {
+		#include "def/shvar-escape-rules.def"
+		cpyraw();
+	}
+	output_chr('"');
+
+	return output;
+}
+
+nstr* reformat_nobr (const nstr* input, const char* pp_esc, const char* pp_rst) {
+	size_t outputsz = input->length + reformat_init_bsz_add;
+	nstr* output    = nstr_init(outputsz);
+
+	apply_rules(input) {
+		#include "def/nobr-escape-rules.def"
+		cpyraw();
+	}
+
+	return output;
+}
+
+nstr* reformat_json (const nstr* input, const char* pp_esc, const char* pp_rst) {
+	size_t outputsz = input->length + reformat_init_bsz_add;
+	nstr* output    = nstr_init(outputsz);
+
+	apply_rules(input) {
+		#include "def/json-escape-rules.def"
+		cpyraw();
+	}
+
+	return output;
 }
 
 
