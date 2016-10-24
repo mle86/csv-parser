@@ -273,9 +273,6 @@ inline void reformat_all_colnames () {
 					ColumnName[c] = reformat_shvar(orig, pp_esc, pp_key);
 					break;
 			}
-
-			if (ColumnName[c] != orig)
-				free((void*)orig);
 		}
 	}
 }
