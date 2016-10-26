@@ -57,7 +57,7 @@ void Help (void) { printf(
 	                      "Allow linebreaks within doublequoted fields.\n"
 	"  "M1"-s"M0", "M1"--skip "M0 Mu "N"M0"  "
 	                "Skip the first "Mu "N"M0" input lines.\n"
-	"                In modes "M1"-n"M0" and "M1"-a"M0", skip the first N input lines\n"
+	"                In modes "M1"-n"M0" and "M1"-a"M0", skip the first "Mu "N"M0" input lines\n"
 	"                after the header line.\n"
 	"                Setting "Mu "N"M0" to zero means no skip (this is the default).\n"
 	"  "M1"-l"M0", "M1"--limit "M0 Mu "N"M0"  "
