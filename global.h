@@ -1,5 +1,6 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
+#include <string.h>
 #include <stdbool.h>
 #include "const.h"
 #include "nstr.h"
