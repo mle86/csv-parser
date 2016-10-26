@@ -1,5 +1,5 @@
-#ifndef _ESCAPE_H
-#define _ESCAPE_H
+#ifndef ESCAPE_H
+#define ESCAPE_H
 #include "nstr.h"
 
 
@@ -19,4 +19,4 @@ reformat_fn_t reformat_json;
 reformat_fn_t reformat_shvar;
 
 
-#endif  //  _ESCAPE_H
+#endif  //  ESCAPE_H

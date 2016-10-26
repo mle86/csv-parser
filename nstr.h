@@ -1,5 +1,5 @@
-#ifndef _NSTR_H
-#define _NSTR_H
+#ifndef NSTR_H
+#define NSTR_H
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -157,4 +157,4 @@ bool nstr_cmpsz (const nstr* a, const char* b);
 	for (char* cvar = (nstrp)->buffer; cvar < (nstrp)->buffer + (nstrp)->length; cvar++)
 
 
-#endif  // _NSTR_H
+#endif  // NSTR_H
