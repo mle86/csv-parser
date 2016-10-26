@@ -67,6 +67,9 @@ void Help (void) { printf(
 	"\n"
 	"  "M1"-e"M0", "M1"--ignore-errors"M0"  "
 	                       "Don't stop on encountering malformed CSV input.\n"
+	"  "M1"--color"M0"[="Mu "WHEN"M0"]       "
+	                       "Colorize output: "M1"always"M0" (default if "Mu "WHEN"M0" is missing),\n"
+	"                       "M1"auto"M0" (default), or "M1"never"M0".\n"
 	"  "M1"-F"M0", "M1"--flush"M0"          "
 	                       "Flush the output after every input line.\n"
 	"  "M1"-M"M0", "M1"--keep-bom"M0"  "
@@ -129,11 +132,21 @@ void int_arg (size_t *var, const char* option, const char* value) {
 }
 
 void sep_arg (char *separator, const char* option, const char* value) {
-	  if (streq(optarg, "auto"))
-		  separator = SEP_AUTO;
-	  else if (streq(optarg, "none"))
-		  separator = SEP_NONE;
+	  if (streq(value, "auto"))
+		  *separator = SEP_AUTO;
+	  else if (streq(value, "none"))
+		  *separator = SEP_NONE;
 	  else
-		  chr_arg(&separator, c, optarg);
+		  chr_arg(separator, option, value);
+}
+
+void color_arg (colormode_t *mode, const char* option, const char* value) {
+	  if (value == NULL || streq(value, "on") || streq(value, "force") || streq(value, "always"))
+		  *mode = COLOR_ON;
+	  else if (streq(value, "off") || streq(value, "never"))
+		  *mode = COLOR_OFF;
+	  else if (streq(value, "auto"))
+		  *mode = COLOR_AUTO;
+	  else invalid_arg(option, value);
 }
 

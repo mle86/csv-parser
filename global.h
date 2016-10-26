@@ -10,6 +10,13 @@ extern bool IgnoreErrors;
 extern const nstr* ColumnName [];
 
 
+typedef enum colormode {
+	COLOR_OFF,  // no coloring
+	COLOR_ON,  // always color output
+	COLOR_AUTO,  // color output if stdout is a terminal
+} colormode_t;
+
+
 /* Prints an error message.
  * If IgnoreErrors is not set, the program ends here with 'status'.  */
 #define ERR(status, ...) do {				\

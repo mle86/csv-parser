@@ -165,6 +165,27 @@ unexpected end-of-file (within a quoted field)
 .RE
 .PD
 .TP
+\fB\-\-color\fR[=\fIWHEN\fR], \fB\-\-colour\fR[=\fIWHEN\fR]
+Enables or disables colorized output.
+Possible values for \fIWHEN\fR:
+.PD 0
+.RS
+.IP - 2
+.BR auto :
+Colorize output if \fIstdout\fR is a terminal.
+This is the default setting if the option is missing.
+.IP - 2
+.BR always / force / on :
+Always colorize the output,
+even if it's redirected to a file.
+Useful if the output gets directed to a pager like \fBless\fR(1).
+This is the default if the option is given without \fIWHEN\fR.
+.IP - 2
+.BR never / off :
+Don't colorize the output.
+.RE
+.PD
+.TP
 .B \-F, \-\-flush
 Flush the output after every input line.
 .TP

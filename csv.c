@@ -38,6 +38,8 @@ int main (int argc, char** argv) {
 
 	outmode_t outmode = OM_SIMPLE;
 
+	colormode_t colormode = COLOR_AUTO;
+
 	size_t skip_lines  = 0;
 	size_t limit_lines = 0;
 	char   separator   = '\0';
@@ -54,6 +56,8 @@ int main (int argc, char** argv) {
 
 		{ "help",		0, NULL, 'h' },
 		{ "version",		0, NULL, 'V' },
+		{ "color",		2, NULL,   1 },
+		{ "colour",		2, NULL,   1 },
 //		{ "verbose",		0, NULL, 'v' },
 
 		{ "simple",		0, NULL, 'm' },
@@ -82,6 +86,7 @@ int main (int argc, char** argv) {
 		case 'V': Version(); return EXIT_HELP;
 
 		case 'd': sep_arg(&separator, "-d", optarg); break;
+		case   1: color_arg(&colormode, "--color", optarg); break;
 
 		case 'm': outmode = OM_SIMPLE; break;
 		case 'j': outmode = OM_JSON; break;
@@ -107,9 +112,10 @@ int main (int argc, char** argv) {
 			outmode = OM_JSON_NUMBERED;
 	}
 
-	bool pretty_print = isatty(fileno(stdout));
+	bool pretty_print = (colormode == COLOR_ON) || (colormode == COLOR_AUTO && isatty(fileno(stdout)));
 	bool file_has_header = (mode == MODE_NAMED_COLUMNS || mode == MODE_AUTO_COLUMNS);
 	bool skip_after_header = skip_lines && file_has_header;
+
 	if (limit_lines && file_has_header)
 		limit_lines += 1;
 

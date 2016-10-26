@@ -146,6 +146,19 @@ The default output mode is **-m**.
     * unexpected quote characters
     * unexpected end-of-line (within a quoted field)
     * unexpected end-of-file (within a quoted field)
+* **--color**[=*WHEN*], **--colour**[=*WHEN*]  
+  Enables or disables colorized output.
+  Possible values for *WHEN*:
+    * **auto**:
+      Colorize output if *stdout* is a terminal.
+      This is the default setting if the option is missing.
+    * **always**/**force**/**on**:
+      Always colorize the output,
+      even if it's redirected to a file.
+      Useful if the output gets directed to a pager like **less**(1).
+      This is the default if the option is given without *WHEN*.
+    * **never**/**off**:
+      Don't colorize the output.
 * **-F, --flush**  
   Flush the output after every input line.
 * **-M, --keep-bom**  
