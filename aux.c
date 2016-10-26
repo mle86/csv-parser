@@ -1,8 +1,12 @@
 #include "aux.h"
 #include "const.h"
+#include "input.h"
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+static void invalid_arg (const char* option, const char* value);
+
 
 void Help (void) { printf(
 	"Reads a CSV file from standard input and outputs a cleaner format.\n"
@@ -81,6 +85,7 @@ void Version (void) { printf(
 	"\n"
 ); }
 
+
 inline void* Malloc (size_t size) {
 	void* ptr = malloc(size);
 	if (ptr == NULL && size > 0) {
@@ -95,5 +100,40 @@ inline void* Realloc (void* origptr, size_t newsize) {
 		FAIL(EXIT_INTERNAL, "out of memory\n");
 	}
 	return ptr;
+}
+
+
+// cmdline argument handling:
+
+void invalid_arg (const char* option, const char* value) {
+	FAIL(EXIT_SYNTAX, "invalid argument for option %s: %s\n", option, value);
+}
+
+void chr_arg (char *var, const char* option, const char* value) {
+	if (value && value[0] && !value[1])
+		// single character
+		*var = value[0];
+	else if (value && value[0] && value[1] == value[0] && !value[2])
+		// single character, repeated once
+		*var = value[0];
+	else invalid_arg(option, value);
+}
+
+void int_arg (size_t *var, const char* option, const char* value) {
+	char* endptr = NULL;
+	long long int out = strtoll(value, &endptr, 10);
+
+	if ((*value && !*endptr) && out >= 0)
+		*var = out;
+	else invalid_arg(option, value);
+}
+
+void sep_arg (char *separator, const char* option, const char* value) {
+	  if (streq(optarg, "auto"))
+		  separator = SEP_AUTO;
+	  else if (streq(optarg, "none"))
+		  separator = SEP_NONE;
+	  else
+		  chr_arg(&separator, c, optarg);
 }
 

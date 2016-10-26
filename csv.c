@@ -19,9 +19,6 @@ typedef struct coldef {
 	bool found;
 } coldef_t;
 
-static void int_arg (size_t *var, char option, const char* value);
-static void chr_arg (char   *var, char option, const char* value);
-static void invalid_arg (char option, const char* value);
 static void find_colnames (void);
 static void read_colname_assignments (size_t args, const char** fieldname);
 static size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max);
@@ -84,14 +81,7 @@ int main (int argc, char** argv) {
 		case 'h': Help();    return EXIT_HELP;
 		case 'V': Version(); return EXIT_HELP;
 
-		case 'd':
-			  if (streq(optarg, "auto"))
-				  separator = SEP_AUTO;
-			  else if (streq(optarg, "none"))
-				  separator = SEP_NONE;
-			  else
-				  chr_arg(&separator, c, optarg);
-			  break;
+		case 'd': sep_arg(&separator, "-d", optarg); break;
 
 		case 'm': outmode = OM_SIMPLE; break;
 		case 'j': outmode = OM_JSON; break;
@@ -104,8 +94,8 @@ int main (int argc, char** argv) {
 //		case 'v': Verbose = true; break;
 		case 'M': remove_bom = false; break;
 
-		case 's': int_arg(&skip_lines, c, optarg); break;
-		case 'l': int_arg(&limit_lines, c, optarg); break;
+		case 's': int_arg(&skip_lines, "-s", optarg); break;
+		case 'l': int_arg(&limit_lines, "-l", optarg); break;
 	}
 
 	if (mode == MODE_NUMBERED_COLUMNS) {
@@ -187,32 +177,6 @@ void process_csv_input () {
 	} while (next_line());
 
 	output_end();
-}
-
-
-// cmdline argument handling:
-
-void invalid_arg (char option, const char* value) {
-	FAIL(EXIT_SYNTAX, "invalid argument for option -%c: %s\n", option, value);
-}
-
-void chr_arg (char *var, char option, const char* value) {
-	if (value && value[0] && !value[1])
-		// single character
-		*var = value[0];
-	else if (value && value[0] && value[1] == value[0] && !value[2])
-		// single character, repeated once
-		*var = value[0];
-	else invalid_arg(option, value);
-}
-
-void int_arg (size_t *var, char option, const char* value) {
-	char* endptr = NULL;
-	long long int out = strtoll(value, &endptr, 10);
-
-	if ((*value && !*endptr) && out >= 0)
-		*var = out;
-	else invalid_arg(option, value);
 }
 
 
