@@ -24,8 +24,7 @@ static void read_colname_assignments (size_t args, const char** fieldname);
 static size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max);
 static void match_colnames (size_t argc, const char** argv);
 static void autonumber_columns (void);
-static void process_csv_input ();
-
+static void process_csv_input (void);
 
 
 int main (int argc, char** argv) {
@@ -164,7 +163,7 @@ int main (int argc, char** argv) {
 }
 
 
-void process_csv_input () {
+void process_csv_input (void) {
 	output_begin();
 
 	do {
