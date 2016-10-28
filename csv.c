@@ -104,6 +104,8 @@ int main (int argc, char** argv) {
 
 		case 's': int_arg(&skip_lines, "-s", optarg); break;
 		case 'l': int_arg(&limit_lines, "-l", optarg); break;
+
+		case '?': return EXIT_SYNTAX;
 	}
 
 	if (mode == MODE_NUMBERED_COLUMNS) {

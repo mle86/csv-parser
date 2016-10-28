@@ -1,5 +1,6 @@
 next
 	- introduced option --trim  (enable line trim)
+	- fix option handling
 
 v2.1 (2016-10-26)
 	- support NUL bytes in input
