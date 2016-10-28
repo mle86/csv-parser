@@ -67,7 +67,7 @@ int main (int argc, char** argv) {
 		{ "json",		0, NULL, 'J' },
 		{ "shell-vars",		0, NULL, 'X' },
 
-		{ "separator",		0, NULL, 'd' },
+		{ "separator",		1, NULL, 'd' },
 		{ "allow-breaks",	0, NULL, 'b' },
 		{ "ignore-errors",	0, NULL, 'e' },
 		{ "skip",		1, NULL, 's' },
