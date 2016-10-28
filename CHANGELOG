@@ -1,3 +1,6 @@
+next
+	- introduced option --trim  (enable line trim)
+
 v2.1 (2016-10-26)
 	- support NUL bytes in input
 	- introduced option --color  (set color mode)

@@ -150,3 +150,11 @@ void color_arg (colormode_t *mode, const char* option, const char* value) {
 	  else invalid_arg(option, value);
 }
 
+void trim_arg (trimmode_t *mode, const char* option, const char* value) {
+	if (value == NULL || streq(value, "lines") || streq(value, "line") || streq(value, "records") || streq(value, "record"))
+		*mode = TRIM_LINES;
+	else if (streq(value, "none") || streq(value, "no") || streq(value, "off"))
+		*mode = TRIM_NONE;
+	else invalid_arg(option, value);
+}
+

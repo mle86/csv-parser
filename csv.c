@@ -39,6 +39,8 @@ int main (int argc, char** argv) {
 
 	colormode_t colormode = COLOR_AUTO;
 
+	trimmode_t trimmode = TRIM_NONE;
+
 	size_t skip_lines  = 0;
 	size_t limit_lines = 0;
 	char   separator   = '\0';
@@ -57,6 +59,7 @@ int main (int argc, char** argv) {
 		{ "version",		0, NULL, 'V' },
 		{ "color",		2, NULL,   1 },
 		{ "colour",		2, NULL,   1 },
+		{ "trim",		2, NULL,   2 },
 //		{ "verbose",		0, NULL, 'v' },
 
 		{ "simple",		0, NULL, 'm' },
@@ -86,6 +89,7 @@ int main (int argc, char** argv) {
 
 		case 'd': sep_arg(&separator, "-d", optarg); break;
 		case   1: color_arg(&colormode, "--color", optarg); break;
+		case   2: trim_arg(&trimmode, "--trim", optarg); break;
 
 		case 'm': outmode = OM_SIMPLE; break;
 		case 'j': outmode = OM_JSON; break;
@@ -118,7 +122,7 @@ int main (int argc, char** argv) {
 	if (limit_lines && file_has_header)
 		limit_lines += 1;
 
-	set_input(stdin, separator, allow_breaks, remove_bom, skip_after_header, skip_lines, limit_lines);
+	set_input(stdin, separator, allow_breaks, remove_bom, skip_after_header, skip_lines, limit_lines, trimmode);
 	set_output(outmode, do_flush, pretty_print, "");
 
 	if (! next_line()) {

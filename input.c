@@ -5,14 +5,15 @@
 #include <string.h>
 #include <stdlib.h>
 
-static char   separator;
-static size_t line_number;
-static bool   first_line;
-static bool   remove_bom;
-static bool   allow_breaks;
-static size_t limit_lines;
-static size_t skip_lines;
-static FILE*  input;
+static char       separator;
+static size_t     line_number;
+static bool       first_line;
+static bool       remove_bom;
+static bool       allow_breaks;
+static size_t     limit_lines;
+static size_t     skip_lines;
+static FILE*      input;
+static trimmode_t trim;
 
 /**
  * This is where get_line() will store its results.
@@ -33,6 +34,8 @@ static const char* lp = NULL;
 #define issep(c) (c == ',' || c == ';' || c == '\t' || c == '|')
 /** recognized quoting characters */
 #define isq(c) (c == '"' || c == '\'')
+/** recognized trimmable characters */
+#define istrim(c) (c != separator && (c == ' ' || c == '\t'))
 
 /**
  * Reads one input line into the 'cur_line' structure and returns TRUE.
@@ -64,7 +67,7 @@ static bool is_lineend (const char* s);
 static void find_separator ();
 
 
-void set_input (FILE* file, char _separator, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines) {
+void set_input (FILE* file, char _separator, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines, trimmode_t _trim) {
 	input         = file;
 	line_number   = 0;
 	first_line    = true;
@@ -72,6 +75,7 @@ void set_input (FILE* file, char _separator, bool _allow_breaks, bool _remove_bo
 	separator     = _separator;
 	remove_bom    = _remove_bom;
 	limit_lines   = _limit_lines;
+	trim          = _trim;
 	skip_lines    = 0;
 
 	lp            = NULL;
@@ -137,6 +141,23 @@ bool get_line (void) {
 		if (remove_bom)
 			// skip bom in returned input:
 			lp += check_bom(cur_line);
+	}
+
+	if (trim & TRIM_LINES_L) {
+		while (istrim(*lp))
+			lp++;
+	}
+	if (trim & TRIM_LINES_R) {
+		char* endptr = cur_line + cur_line_len - 1;
+		char* ep = endptr;
+		if (*ep == '\n')  ep--;
+		if (*ep == '\r')  ep--;
+		while (ep >= lp && istrim(*ep))
+			ep--;
+		if (ep != endptr) {
+			ep[1] = '\0';
+			cur_line_len -= (endptr - ep);
+		}
 	}
 
 	return true;
