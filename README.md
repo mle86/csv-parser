@@ -422,7 +422,8 @@ This quoting character
 will be removed from the output.
 Fields need not be quoted,
 except for multiple-line values
-(see option **-b**).
+(see option **-b**)
+or fields containing the separator character.
 If the quoting character
 is present inside a quoted field,
 it must be doubled.
