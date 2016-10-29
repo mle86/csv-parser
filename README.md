@@ -128,7 +128,7 @@ The default output mode is **-m**.
   In modes **-n** and **-a**,
   skip the first *N* input lines
   after the header line.
-  Setting *N* to zero mean no skip,
+  Setting *N* to zero means no skip,
   which is the default.
 * **-l** *N*, **--limit** *N*  
   Stop after the *N*th input line.
@@ -211,7 +211,7 @@ under one of several possible name variants.
 # Pretty-printing
 
 The program has limited pretty-printing capabilities:
-if the output (**stdout**) is a tty,
+if the output (*stdout*) is a tty,
 the output will be colorized.
 Indentation will not be changed in any way.
 
@@ -420,7 +420,7 @@ either with single (**'**)
 or double apostrophes (**"**).
 This quoting character
 will be removed from the output.
-fields need not be quoted,
+Fields need not be quoted,
 except for multiple-line values
 (see option **-b**).
 If the quoting character
