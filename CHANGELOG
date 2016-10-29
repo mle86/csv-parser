@@ -1,4 +1,4 @@
-next
+v2.2 (2016-11-01)
 	- introduced option --trim  (enable line trim)
 	- fix --skip line length limitation
 	- fix option handling
