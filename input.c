@@ -116,6 +116,11 @@ inline void skip (size_t n) {
 	while (n-- > 0 && getline(&buf, &bufsz, input))
 		line_number++;
 
+	if (ferror(input)) {
+		ERR(EXIT_INTERNAL, "read error");
+		clearerr(input);
+	}
+
 	free(buf);
 }
 
@@ -126,7 +131,10 @@ bool get_line (void) {
 
 	ssize_t len = getline(&cur_line, &cur_line_bufsz, input);
 	if (len < 0) {
-		// TODO: error message
+		if (ferror(input)) {
+			ERR(EXIT_INTERNAL, "read error");
+			clearerr(input);
+		}
 		cur_line_len = 0;
 		return false;
 	} else {

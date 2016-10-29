@@ -492,7 +492,7 @@ signify various error conditions:
   whereas input modes **-g** and **-i** can handle empty input gracefully.)
 * **10**
   Internal error
-  (out of memory).
+  (out of memory or getline(3) read error).
 
 # License
 
