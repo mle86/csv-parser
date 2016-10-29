@@ -214,6 +214,9 @@ The program has limited pretty-printing capabilities:
 if the output (*stdout*) is a tty,
 the output will be colorized.
 Indentation will not be changed in any way.
+(See the **--color** option
+to force pretty-printing if *stdout* is not a tty
+or to disable it completely.)
 
 * Column names will be printed in green.
 * Structural elements,
