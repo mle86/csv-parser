@@ -38,14 +38,19 @@ static const char* lp = NULL;
 #define istrim(c) (c != separator && (c == ' ' || c == '\t'))
 
 /**
- * Reads one input line into the 'cur_line' structure and returns TRUE.
+ * Reads one input line into 'cur_line', stores the line length in 'cur_line_len'
+ *  (including the trailing linebreak but excluding the trailing NUL byte),
+ *  and returns TRUE.
  * 'line_number' will be increased by 1.
  * Always returns FALSE (and does not read from input)
  *  if 'line_number' has already reached 'limit_lines' (assuming it's set).
  */
 static bool get_line (void);
 
-/** Reads and discards 'n' input lines, updating 'line_number'.  */
+/**
+ * Reads and discards 'n' input lines, updating 'line_number'.
+ * Does not change 'cur_line' or 'cur_line_len' in any way.
+ */
 static void skip (size_t n);
 
 /**
@@ -105,9 +110,13 @@ inline size_t lineno (void) {
 }
 
 inline void skip (size_t n) {
-	char buf [MAXLINELEN];
-	while (n-- > 0 && fgets(buf, sizeof(buf), input))
+	char* buf = NULL;
+	size_t bufsz = 0;
+
+	while (n-- > 0 && getline(&buf, &bufsz, input))
 		line_number++;
+
+	free(buf);
 }
 
 bool get_line (void) {

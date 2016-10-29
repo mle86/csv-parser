@@ -19,7 +19,6 @@
   #define PROGNAME "csv"
 #endif
 
-#define MAXLINELEN	16384
 #define MAXCOLUMNS	  512
 #define MAXCOLDEFS	 1024
 #define MAXCOLALIASES	   40
