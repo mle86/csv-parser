@@ -49,7 +49,7 @@ typedef struct nstr {
 nstr* nstr_init (size_t size);
 
 /**
- * Reallocated an nstr structure so that it can hold 'newsize' payload bytes
+ * Reallocates an nstr structure so that it can hold 'newsize' payload bytes
  * (plus one trailing NUL byte).  The last byte of the reallocated buffer will be set to NUL.
  * If this function is used to grow an existing nstr,
  * the memory between the earlier NUL and the new trailing NUL will be uninitialized.  */
