@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 1
 #include "global.h"
 #include "input.h"
 #include "output.h"
