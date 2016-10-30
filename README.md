@@ -512,3 +512,15 @@ signify various error conditions:
 
 Maximilian Eul <[maximilian@eul.cc](mailto:maximilian@eul.cc)>
 (https://github.com/mle86)
+
+# Standards
+
+Y. Shafranovich,
+*Common Format and MIME Type for Comma-Separated Values (CSV) Files*,
+[RFC 4180](https://tools.ietf.org/html/rfc4180),
+October 2005.
+
+T. Bray,
+*The JavaScript Object Notation (JSON) Data Interchange Format*,
+[RFC 7159](https://tools.ietf.org/html/rfc7159),
+March 2014.
