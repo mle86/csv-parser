@@ -90,8 +90,8 @@ The default output mode is **-m**.
   For every input field, one line will be printed,
   with the column name, a colon and a space, and the content.
   Input lines will be separated with an extra line containing only a dash.
-  Backslashes in the input will be replaced with a literal **\\**,
-  while linebreaks in the input will be replaced with a literal **\n**
+  Backslashes in the input will be replaced with a literal **\\\\**,
+  while linebreaks in the input will be replaced with a literal **\\n**
   (if the **-b** option is given).
 * **-j, --json**  
   Long JSON output:
@@ -377,7 +377,7 @@ and the first input line is read as a regular record.
 The program is encoding-agnostic,
 so long as
 a single-byte character is used as field separator
-and LF (**\n**) or CRLF (**\r\n**) is used as record separator.
+and LF (**\\n**) or CRLF (**\\r\\n**) is used as record separator.
 
 NB:
 Some encodings,
@@ -407,7 +407,7 @@ will be used for the rest of the input.
 Accepted separator characters are
 comma (**,**),
 semicolon (**;**),
-tabulator (**\t**),
+tabulator (**\\t**),
 and
 pipe (**|**).
 If the input uses a different separator character,
