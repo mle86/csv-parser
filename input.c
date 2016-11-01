@@ -241,7 +241,7 @@ const nstr* next_field (void) {
 		field = nstr_init(bsz);
 	}
 
-	if (!cur_line || !lp || lp >= cur_line + cur_line_len)
+	if (!cur_line || !lp || lp > cur_line + cur_line_len)
 		// EOL/EOF
 		return NULL;
 
@@ -304,6 +304,10 @@ const nstr* next_field (void) {
 				ERR(EXIT_FORMAT, "unexpected quote on line %zu\n", lineno());
 			}
 
+		} else if (!quoted && is_lineend(lp)) {
+			// line end. clear cur_line so the following next_field() call will fail
+			return fin(NULL);
+
 		} else if (!quoted && lp[0] == separator) {
 			// field end. place cur_line on next field start
 			return fin(lp + 1);
@@ -323,10 +327,6 @@ const nstr* next_field (void) {
 				return fin(NULL);  // end quoted field here
 			}
 			continue;  // re-enter loop on next line
-
-		} else if (is_lineend(lp)) {
-			// line end. clear cur_line so the following next_field() call will fail
-			return fin(NULL);
 		}
 
 		// append the current char to the fieldbuffer and continue.
