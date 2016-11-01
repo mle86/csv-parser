@@ -165,6 +165,18 @@ The default output mode is **-m**.
       This is the default if the option is given without *WHEN*.
     * **never**/**off**:
       Don't colorize the output.
+* **--trim**[=*MODE*]  
+  Enables or disables input whitespace trimming.
+  Whitespace in this context refers only to tabs (**\\t**) and spaces.
+  Possible values for *MODE*:
+    * **lines**/**records**:
+      Removes whitespace from the start and end of every input line.
+      This is the default if the option is given without *MODE*.
+    * **none**/**off**:
+      No whitespace removal.
+      Whitespace at the start/end of a line
+      is considered to be part of the first/last field's value.
+      This is the default setting if the option is missing.
 * **-F, --flush**  
   Flush the output after every input line.
 * **-M, --keep-bom**  

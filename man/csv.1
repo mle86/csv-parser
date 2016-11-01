@@ -186,6 +186,25 @@ Don't colorize the output.
 .RE
 .PD
 .TP
+\fB\-\-trim\fR[=\fIMODE\fR]
+Enables or disables input whitespace trimming.
+Whitespace in this context refers only to tabs (\fB\\t\fR) and spaces.
+Possible values for \fIMODE\fR:
+.PD 0
+.RS
+.IP - 2
+.BR lines / records :
+Removes whitespace from the start and end of every input line.
+This is the default if the option is given without \fIMODE\fR.
+.IP - 2
+.BR none / off :
+No whitespace removal.
+Whitespace at the start/end of a line
+is considered to be part of the first/last field's value.
+This is the default setting if the option is missing.
+.RE
+.PD
+.TP
 .B \-F, \-\-flush
 Flush the output after every input line.
 .TP
