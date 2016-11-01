@@ -4,7 +4,7 @@
 # The --trim options remove unwanted whitespace from the input.
 # This tests verifies that trimming works correctly and does not remove any data.
 
-# This test depends on test-noeol.
+# This test depends on test-noeol and test-whitespace.
 
 define expectedOutput <<-EOT
 	[["   c1 "," c2   "]
@@ -41,6 +41,19 @@ assertCmdEq "$CSV --trim -aij < $SAMPLE/trim-noeol.csv" "$expectedOutput_trim" \
 # >>  " field "  << should get converted to >> field <<.
 assertCmdEq "$CSV -aij --trim=lines < $SAMPLE/trim-q-noeol.csv" "$expectedOutput_trim_q" \
 	"csv --trim=lines produced incorrect output reading trim-q-noeol.csv!"
+
+# What about an input file containing only whitespace and empty fields?
+define expectedOutput_ws <<-EOT
+	[["",""]
+	,["",""]
+	,[""]
+	,[""]
+	,[""]
+	,[""]
+	,[""]]
+EOT
+assertCmdEq "$CSV -aij --trim=lines < $SAMPLE/whitespace.csv" "$expectedOutput_ws" \
+	"csv --trim=lines had problems with whitespace.csv!"
 
 
 success
