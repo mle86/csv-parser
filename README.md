@@ -361,7 +361,7 @@ with lines and fields counted from zero.
 
 Again, there's a special case for the **-i** input mode,
 because it has no relevant column names:
-The "CSV_COLNANE_*colno*" assignments will be omitted,
+The "CSV_COLNAME_*colno*" assignments will be omitted,
 and the first input line is read as a regular record.
 
 **`csv -i -X < test.csv`**
