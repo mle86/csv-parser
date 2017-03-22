@@ -23,7 +23,7 @@ typedef struct coldef {
 static void find_colnames (void);
 static void read_colname_assignments (size_t args, const char** fieldname);
 static size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max);
-static void match_colnames (size_t argc, const char** argv);
+static void match_colnames (size_t argc, const char** argv, bool with_unknowns);
 static void autonumber_columns (void);
 static void process_csv_input (void);
 
@@ -48,8 +48,9 @@ int main (int argc, char** argv) {
 	bool   remove_bom  = true;
 	bool   allow_breaks = false;
 	bool   do_flush     = false;
+	bool   with_unknowns = false;
 
-	const char* options = "gnaihVmjJXd:bes:l:FM";
+	const char* options = "gnaihVmjJXd:bes:l:FMuU";
 	const struct option long_options [] = {
 		{ "assigned-names",	0, NULL, 'g' },
 		{ "named-columns",	0, NULL, 'n' },
@@ -75,6 +76,9 @@ int main (int argc, char** argv) {
 		{ "limit",		1, NULL, 'l' },
 		{ "flush",		0, NULL, 'F' },
 		{ "keep-bom",		0, NULL, 'M' },
+		{ "unknowns",		0, NULL, 'u' },
+		{ "with-unknowns",	0, NULL, 'u' },
+		{ "no-unknowns",	0, NULL, 'U' },
 
 		{ 0, 0, 0, 0 }};
 	signed char c;
@@ -102,6 +106,8 @@ int main (int argc, char** argv) {
 		case 'F': do_flush = true; break;
 //		case 'v': Verbose = true; break;
 		case 'M': remove_bom = false; break;
+		case 'u': with_unknowns = true; break;
+		case 'U': with_unknowns = false; break;
 
 		case 's': int_arg(&skip_lines, "-s", optarg); break;
 		case 'l': int_arg(&limit_lines, "-l", optarg); break;
@@ -116,6 +122,9 @@ int main (int argc, char** argv) {
 			outmode = OM_SHELL_VARS_NUMBERED;
 		else if (outmode == OM_JSON)
 			outmode = OM_JSON_NUMBERED;
+	}
+	if (with_unknowns && mode != MODE_NAMED_COLUMNS) {
+		FAIL(EXIT_SYNTAX, "option -u can only be used with input mode -n\n");
 	}
 
 	bool pretty_print = (colormode == COLOR_ON) || (colormode == COLOR_AUTO && isatty(fileno(stdout)));
@@ -142,7 +151,7 @@ int main (int argc, char** argv) {
 	if (mode == MODE_NAMED_COLUMNS) {
 		/* Read actual column names from first line,
 		 * compare with cmdline arguments and reword them.  */
-		match_colnames(argc - optind, (const char**)(argv + optind));
+		match_colnames(argc - optind, (const char**)(argv + optind), with_unknowns);
 
 	} else if (mode == MODE_ASSIGNED_NAMES) {
 		/* Read column names from cmdline arguments.
@@ -194,7 +203,7 @@ void process_csv_input (void) {
 
 // reading column names:
 
-void match_colnames (size_t argc, const char** argv) {
+void match_colnames (size_t argc, const char** argv, bool with_unknowns) {
 	coldef_t coldefs [MAXCOLDEFS];
 	size_t n_coldefs = read_coldefs(argc, argv, coldefs, MAXCOLDEFS);
 	if (! n_coldefs)
@@ -228,7 +237,12 @@ void match_colnames (size_t argc, const char** argv) {
 			#undef has_name
 		}
 
-		VERBOSE("unknown column \"%s\" (%zu)\n", s->buffer, c);
+		if (with_unknowns) {
+			ColumnName[c] = nstr_dup(s);
+			VERBOSE("found unknown column \"%s\" (%zu)\n", ColumnName[c]->buffer, c);
+		} else {
+			VERBOSE("ignored unknown column \"%s\" (%zu)\n", s->buffer, c);
+		}
 
 		next_col:
 		c++;

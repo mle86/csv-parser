@@ -183,6 +183,10 @@ The default output mode is **-m**.
   Don't try to remove UTF-8/16 BOMs from the first line.
   (By default, the program will strip the BOM from the first line,
   if there is one.)
+* **-u, --unknowns**  
+  With this option, the **-n** mode will include all unknown columns,
+  like a combination of the **-n** and **-a** modes.
+  (By default, the **-n** input mode will discard all unknown columns.)
 * **-h, --help**  
   Show command line usage information.
 * **-V, --version**  
