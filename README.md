@@ -230,6 +230,13 @@ from the input
 but will also recognize them
 under one of several possible name variants.
 
+Keep in mind that the program
+will do byte-wise string comparisons
+between the arguments and the input column names,
+without any encoding conversion,
+case normalization,
+or canonization.
+
 # Pretty-printing
 
 The program has limited pretty-printing capabilities:

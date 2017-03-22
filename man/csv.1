@@ -259,6 +259,13 @@ from the input
 (and will always call them thus in the output),
 but will also recognize them
 under one of several possible name variants.
+.P
+Keep in mind that the program
+will do byte-wise string comparisons
+between the arguments and the input column names,
+without any encoding conversion,
+case normalization,
+or canonization.
 .SH PRETTY-PRINTING
 The program has limited pretty-printing capabilities:
 if the output (\fIstdout\fR) is a tty,
