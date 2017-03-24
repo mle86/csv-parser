@@ -65,8 +65,8 @@ int main (int argc, char** argv) {
 //		{ "verbose",		0, NULL, 'v' },
 
 		{ "simple",		0, NULL, 'm' },
-		{ "compact-json",	0, NULL, 'j' },
-		{ "json",		0, NULL, 'J' },
+		{ "compact-json",	0, NULL, 'J' },
+		{ "json",		0, NULL, 'j' },
 		{ "shell-vars",		0, NULL, 'X' },
 
 		{ "separator",		1, NULL, 'd' },

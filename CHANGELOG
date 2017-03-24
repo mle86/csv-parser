@@ -1,5 +1,6 @@
 next (2017-03)
 	- introduced option -u  (include unknown columns in -n mode)
+	- fix -jJ long options
 	- fix trailing separator on EOF issue
 
 v2.2 (2016-11-01)
