@@ -2,7 +2,6 @@
 #include <ctype.h>
 #include "escape.h"
 #include "nstr.h"
-#include "global.h"
 
 
 static bool is_shvar_safe (const nstr* str);

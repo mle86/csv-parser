@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "const.h"
 #include "aux.h"
 #include "nstr.h"
 
