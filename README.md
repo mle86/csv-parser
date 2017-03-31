@@ -245,15 +245,15 @@ or canonization.
 # CSV output mode
 
 In CSV output mode (**-C**), the program will print valid CSV.
-It tries to follow RFC-4180 as closely as possible:
+It tries to follow RFC 4180 as closely as possible:
 it uses a plain comma as field separator,
 uses CRLF as record separator,
 quotes fields with double-quotes
 and escapes double-quotes in fields by doubling them,
 and only quotes fields that contain a special character.
-LF Linebreaks in fields will always be printed as CRLF.
+LF linebreaks in fields will always be printed as CRLF.
 
-However in contrast to RFC-4180
+However in contrast to RFC 4180
 which mandates plain 7-bit ASCII input
 and forbids use of control characters below 0x1F,
 this mode will accept any encoding
