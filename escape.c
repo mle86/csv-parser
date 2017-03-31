@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "escape.h"
+#include "global.h"
 #include "nstr.h"
 
 
@@ -82,9 +83,11 @@ static bool is_shvar_safe (const nstr* str);
 	}while(0)
 
 #define output_fmt_escape_sequence(el, ef)  do{  \
-		if (pp_esc != NULL) { fputs(pp_esc, stdout); }			\
-		printf(ef, raw[0]);						\
-		if (pp_rst != NULL) { fputs(pp_rst, stdout); }			\
+		if (likely(ef[0])) {						\
+			if (pp_esc != NULL) { fputs(pp_esc, stdout); }		\
+			printf(ef, raw[0]);					\
+			if (pp_rst != NULL) { fputs(pp_rst, stdout); }		\
+		}								\
 	}while(0)
 
 
@@ -136,11 +139,13 @@ void escape_json (const nstr* input, const char* pp_esc, const char* pp_rst) {
 	}while(0)
 
 #define output_fmt_escape_sequence(el, ef)  do{  \
-		char buf [el + 1];								\
-		snprintf(buf, el + 1, ef, raw[0]);						\
-		if (pp_esc != NULL) { nstr_appendsz_a(&output, pp_esc, &outputsz); }		\
-		nstr_appendsz_a(&output, buf, &outputsz);					\
-		if (pp_rst != NULL) { nstr_appendsz_a(&output, pp_rst, &outputsz); }		\
+		if (likely(ef[0])) {								\
+			char buf [el + 1];							\
+			snprintf(buf, el + 1, ef, raw[0]);					\
+			if (pp_esc != NULL) { nstr_appendsz_a(&output, pp_esc, &outputsz); }	\
+			nstr_appendsz_a(&output, buf, &outputsz);				\
+			if (pp_rst != NULL) { nstr_appendsz_a(&output, pp_rst, &outputsz); }	\
+		}										\
 	}while(0)
 
 
