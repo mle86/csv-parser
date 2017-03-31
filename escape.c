@@ -137,7 +137,7 @@ void escape_json (const nstr* input, const char* pp_esc, const char* pp_rst) {
 
 #define output_fmt_escape_sequence(el, ef)  do{  \
 		char buf [el + 1];								\
-		snprintf(buf, el, ef, raw[0]);							\
+		snprintf(buf, el + 1, ef, raw[0]);						\
 		if (pp_esc != NULL) { nstr_appendsz_a(&output, pp_esc, &outputsz); }		\
 		nstr_appendsz_a(&output, buf, &outputsz);					\
 		if (pp_rst != NULL) { nstr_appendsz_a(&output, pp_rst, &outputsz); }		\
