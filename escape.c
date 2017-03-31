@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "escape.h"
+#include "output.h"
 #include "global.h"
 #include "nstr.h"
 
 
 static bool is_shvar_safe (const nstr* str);
+static bool is_csv_safe   (const nstr* str);
 
 #define reformat_init_bsz_add 1024
 
@@ -120,6 +122,21 @@ void escape_json (const nstr* input, const char* pp_esc, const char* pp_rst) {
 	}
 }
 
+void escape_csv (const nstr* input, const char* pp_esc, const char* pp_rst) {
+	if (is_csv_safe(input)) {
+		// If a value consists of safe chars only, it does not need to be quoted or escaped
+		fputs(input->buffer, stdout);
+		return;
+	}
+
+	output_chr(CSV_FIELDENC);
+	apply_rules(input) {
+		#include "def/csv-escape-rules.def"
+		cpyraw();
+	}
+	output_chr(CSV_FIELDENC);
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +209,25 @@ nstr* reformat_json (const nstr* input, const char* pp_esc, const char* pp_rst) 
 	return output;
 }
 
+nstr* reformat_csv (const nstr* input, const char* pp_esc, const char* pp_rst) {
+	if (is_csv_safe(input)) {
+		// If a value consists of safe chars only, it does not need to be quoted or escaped
+		return nstr_dup(input);
+	}
+
+	size_t outputsz = input->length + reformat_init_bsz_add;
+	nstr* output    = nstr_init(outputsz);
+
+	output_chr(CSV_FIELDENC);
+	apply_rules(input) {
+		#include "def/csv-escape-rules.def"
+		cpyraw();
+	}
+	output_chr(CSV_FIELDENC);
+
+	return output;
+}
+
 
 inline bool is_shvar_safe (const nstr* str) {
 	#define is_safe_chr(c) (									\
@@ -200,6 +236,15 @@ inline bool is_shvar_safe (const nstr* str) {
 			c == '@' || c == '/' || c == '[' || c == ']' || c == '{' || c == '}' )
 	for (register const char* s = str->buffer; s < str->buffer + str->length; s++)
 		if (!is_safe_chr(*s))
+			return false;
+	return true;
+}
+
+inline bool is_csv_safe (const nstr* str) {
+	#define is_unsafe_chr(c) \
+			(c <= 0x1f || c == '\'' || c == CSV_FIELDSEP || c == CSV_FIELDENC || c >= 0x7f)
+	for (register const char* s = str->buffer; s < str->buffer + str->length; s++)
+		if (is_unsafe_chr(*s))
 			return false;
 	return true;
 }

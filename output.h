@@ -8,6 +8,10 @@
 #define SIMPLE_LINESEP "-\n"
 #define SIMPLE_KVSEP ": "
 
+#define CSV_FIELDSEP ','
+#define CSV_FIELDENC '"'
+#define CSV_LINESEP "\r\n"
+
 // pretty-printing colors:
 #define PP_KEY Mgreen
 #define PP_SYM Myellow
@@ -26,6 +30,7 @@ typedef enum outmode {
 	OM_JSON_COMPACT,
 	OM_SHELL_VARS,
 	OM_SHELL_VARS_NUMBERED,  // special mode, only reachable with mode combination -iX.
+	OM_CSV,
 } outmode_t;
 
 

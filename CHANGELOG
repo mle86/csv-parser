@@ -1,4 +1,5 @@
 next (2017-03)
+	- introduced output mode -C  (csv output)
 	- introduced option -u  (include unknown columns in -n mode)
 	- fix -jJ long options
 	- fix trailing separator on EOF issue

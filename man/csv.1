@@ -73,7 +73,7 @@ starting from zero.
 Similar to \(lq\fB\-g 0 1 2 3\fR...\(rq,
 but will force the \fB\-j\fR output mode to print each line
 as an array instead of an object.
-Not compatible with \fB\-J\fR mode.
+Not compatible with \fB\-J\fR and \fB-C\fR output modes.
 In this mode,
 \fICOLUMNNAME\fR specifications are
 neither needed nor possible.
@@ -110,6 +110,10 @@ each of which represents one input line.
 .B \-X, \-\-shell-vars
 Output in shell\ variable\ assignment format.
 See the \(lqExamples\(rq section below.
+.TP
+.B \-C, \-\-csv-output
+Standardized CSV output.
+See the \(lqCSV output mode\(rq section below for more details.
 .SH OTHER OPTIONS
 .TP
 \fB\-d\fR \fIC\fR, \fB\-\-separator\fR \fIC\fR
@@ -266,6 +270,27 @@ between the arguments and the input column names,
 without any encoding conversion,
 case normalization,
 or canonization.
+.SH CSV OUTPUT MODE
+In CSV output mode (\fB\-C\fR), the program will print valid CSV.
+It tries to follow RFC\-4180 as closely as possible:
+it uses a plain comma as field separator,
+uses CRLF as record separator,
+quotes fields with double-quotes
+and escapes double-quotes in fields by doubling them,
+and only quotes fields that contain a special character.
+LF Linebreaks in fields will always be printed as CRLF.
+.P
+However in contrast to RFC\-4180
+which mandates plain 7-bit ASCII input
+and forbids use of control characters below 0x1F,
+this mode will accept any encoding
+and all special characters
+and output everything as-is.
+.P
+This mode may be useful to filter or rename columns in existing CSV files
+and to change unusual separator characters in existing CSV files to the standard comma.
+.P
+This mode will remove all NUL bytes from the input.
 .SH PRETTY-PRINTING
 The program has limited pretty-printing capabilities:
 if the output (\fIstdout\fR) is a tty,

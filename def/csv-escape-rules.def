@@ -1,0 +1,10 @@
+// double quotes:
+escape("\"", "\"\"");
+
+// convert LF to CRLF:
+escape("\n", "\r\n");
+
+// Remove NUL bytes, fputs() cannot handle them:
+escape("\0", "");
+
+// vim: syntax=c

@@ -50,7 +50,7 @@ int main (int argc, char** argv) {
 	bool   do_flush     = false;
 	bool   with_unknowns = false;
 
-	const char* options = "gnaihVmjJXd:bes:l:FMuU";
+	const char* options = "gnaihVmjJXCd:bes:l:FMuU";
 	const struct option long_options [] = {
 		{ "assigned-names",	0, NULL, 'g' },
 		{ "named-columns",	0, NULL, 'n' },
@@ -68,6 +68,7 @@ int main (int argc, char** argv) {
 		{ "compact-json",	0, NULL, 'J' },
 		{ "json",		0, NULL, 'j' },
 		{ "shell-vars",		0, NULL, 'X' },
+		{ "csv-output",		0, NULL, 'C' },
 
 		{ "separator",		1, NULL, 'd' },
 		{ "allow-breaks",	0, NULL, 'b' },
@@ -100,6 +101,7 @@ int main (int argc, char** argv) {
 		case 'j': outmode = OM_JSON; break;
 		case 'J': outmode = OM_JSON_COMPACT; break;
 		case 'X': outmode = OM_SHELL_VARS; break;
+		case 'C': outmode = OM_CSV; break;
 
 		case 'b': allow_breaks = true; break;
 		case 'e': IgnoreErrors = true; break;
@@ -118,6 +120,8 @@ int main (int argc, char** argv) {
 	if (mode == MODE_NUMBERED_COLUMNS) {
 		if (outmode == OM_JSON_COMPACT)
 			FAIL(EXIT_SYNTAX, "input mode -i is not compatible with output mode -J\n");
+		else if (outmode == OM_CSV)
+			FAIL(EXIT_SYNTAX, "input mode -i is not compatible with output mode -C\n");
 		else if (outmode == OM_SHELL_VARS)
 			outmode = OM_SHELL_VARS_NUMBERED;
 		else if (outmode == OM_JSON)

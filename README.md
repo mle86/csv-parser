@@ -73,7 +73,7 @@ The default input mode is **-a**.
   Similar to "**-g 0 1 2 3**...",
   but will force the **-j** output mode to print each line
   as an array instead of an object.
-  Not compatible with **-J** mode.
+  Not compatible with **-J** and **-C** output modes.
   In this mode,
   *COLUMNNAME* specifications are
   neither needed nor possible.
@@ -109,6 +109,9 @@ The default output mode is **-m**.
 * **-X, --shell-vars**  
   Output in shell variable assignment format.
   See the "Examples" section below.
+* **-C, --csv-output**  
+  Standardized CSV output.
+  See the "CSV output mode" section below for more details.
 
 # Other options
 
@@ -236,6 +239,29 @@ between the arguments and the input column names,
 without any encoding conversion,
 case normalization,
 or canonization.
+
+# CSV output mode
+
+In CSV output mode (**-C**), the program will print valid CSV.
+It tries to follow RFC-4180 as closely as possible:
+it uses a plain comma as field separator,
+uses CRLF as record separator,
+quotes fields with double-quotes
+and escapes double-quotes in fields by doubling them,
+and only quotes fields that contain a special character.
+LF Linebreaks in fields will always be printed as CRLF.
+
+However in contrast to RFC-4180
+which mandates plain 7-bit ASCII input
+and forbids use of control characters below 0x1F,
+this mode will accept any encoding
+and all special characters
+and output everything as-is.
+
+This mode may be useful to filter or rename columns in existing CSV files
+and to change unusual separator characters in existing CSV files to the standard comma.
+
+This mode will remove all NUL bytes from the input.
 
 # Pretty-printing
 

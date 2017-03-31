@@ -90,6 +90,14 @@ void output_begin (void) {
 				output_kv(NULL, ColumnName[c]);
 		}
 		break;
+	case OM_CSV:
+		for (size_t c = 0; c < MAXCOLUMNS; c++) {
+			if (ColumnName[c])
+				output_kv(NULL, ColumnName[c]);
+		}
+		prints(CSV_LINESEP);
+		first_kv = true;  // output_kv() has cleared it
+		break;
 	case OM_SHELL_VARS_NUMBERED:
 		// don't print column names!
 		break;
@@ -100,6 +108,7 @@ void output_end (void) {
 
 	switch (mode) {
 		case OM_SIMPLE:
+		case OM_CSV:
 			break;
 		case OM_JSON:
 		case OM_JSON_NUMBERED:
@@ -147,6 +156,7 @@ void output_line_begin (void) {
 			break;
 		case OM_SHELL_VARS:
 		case OM_SHELL_VARS_NUMBERED:
+		case OM_CSV:
 			break;
 	}
 	first_line = false;
@@ -166,6 +176,9 @@ void output_line_end (void) {
 		case OM_JSON_COMPACT:
 			printf("%s]%s", pp_sym, pp_rst);
 			break;
+		case OM_CSV:
+			prints(CSV_LINESEP);
+			break;
 	}
 
 	records++;
@@ -175,7 +188,7 @@ void output_line_end (void) {
 }
 
 void output_kv (const nstr* key, const nstr* value) {
-	const bool is_colname = (!key && (mode == OM_JSON_COMPACT || mode == OM_SHELL_VARS));
+	const bool is_colname = (!key && (mode == OM_JSON_COMPACT || mode == OM_SHELL_VARS || mode == OM_CSV));
 
 	switch (mode) {
 		case OM_SIMPLE:
@@ -232,6 +245,20 @@ void output_kv (const nstr* key, const nstr* value) {
 				printc('\n');
 			}
 			break;
+
+		case OM_CSV:
+			if (likely(!first_kv)) {
+				printf("%s%c%s",
+					pp_sym,
+					CSV_FIELDSEP,
+					pp_rst);
+			}
+			if (unlikely(is_colname)) {
+				printk(value->buffer);
+			} else {
+				escape_csv(value, pp0_esc, pp0_rst);
+			}
+			break;
 	}
 
 	first_kv = false;
@@ -271,6 +298,9 @@ inline void reformat_all_colnames () {
 				case OM_SHELL_VARS:
 				case OM_SHELL_VARS_NUMBERED:
 					ColumnName[c] = reformat_shvar(orig, pp_esc, pp_key);
+					break;
+				case OM_CSV:
+					ColumnName[c] = reformat_csv(orig, pp_esc, pp_key);
 					break;
 			}
 		}
