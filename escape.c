@@ -3,6 +3,7 @@
 #include "escape.h"
 #include "output.h"
 #include "global.h"
+#include "chars.h"
 #include "nstr.h"
 
 
@@ -241,8 +242,16 @@ inline bool is_shvar_safe (const nstr* str) {
 }
 
 inline bool is_csv_safe (const nstr* str) {
-	#define is_unsafe_chr(c) \
-			(c <= 0x1f || c == '\'' || c == CSV_FIELDSEP || c == CSV_FIELDENC || c >= 0x7f)
+	/* Not all fields need to be quoted,
+	 * but it's necessary as soon as a field contains a linebreak,
+	 * a comma (or any other possible field separator!),
+	 * or a quote (no matter which kind!).  */
+	#define is_unsafe_chr(c) ( \
+			c == '\r' || c == '\n' || /* linebreaks */			\
+			isq(c) || c == CSV_FIELDENC || /* quotes */			\
+			issep(c) || c == CSV_FIELDSEP || /* separators */		\
+			c <= 0x1f || /* special characters */				\
+			c >= 0x7f )  /* special characters */
 	for (register const char* s = str->buffer; s < str->buffer + str->length; s++)
 		if (is_unsafe_chr(*s))
 			return false;
