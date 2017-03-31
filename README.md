@@ -39,6 +39,7 @@ It also uses the GNU **getopt_long**(3) function.
 The program operates in one of several
 **input modes**
 to read its input.
+
 The default input mode is **-a**.
 
 * **-a, --auto-columns**  
@@ -83,6 +84,7 @@ The default input mode is **-a**.
 
 The program operates in one of several
 **output modes.**
+
 The default output mode is **-m**.
 
 * **-m, --simple**  
