@@ -2,6 +2,7 @@
 #include "input.h"
 #include "const.h"
 #include "global.h"
+#include "chars.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -31,10 +32,6 @@ static size_t cur_line_bufsz = 0;
  */
 static const char* lp = NULL;
 
-/** recognized separator characters for "--separator auto" */
-#define issep(c) (c == ',' || c == ';' || c == '\t' || c == '|')
-/** recognized quoting characters */
-#define isq(c) (c == '"' || c == '\'')
 /** recognized trimmable characters */
 #define istrim(c) (c != separator && (c == ' ' || c == '\t'))
 
