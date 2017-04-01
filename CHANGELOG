@@ -4,6 +4,7 @@ next (2017-03)
 	- fix -jJ long options
 	- fix trailing separator on EOF issue
 	- fix column name escaping
+	- correct semantic versioning
 
 v2.2 (2016-11-01)
 	- introduced option --trim  (enable line trim)
