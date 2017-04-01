@@ -2,8 +2,8 @@
 #define CONST_H
 
 
-#define VERSION "2.2.0"
-#define VERDATE "November 2016"
+#define VERSION "2.3.0"
+#define VERDATE "April 2017"
 
 #define EXIT_HELP	0
 #define EXIT_SYNTAX	1
