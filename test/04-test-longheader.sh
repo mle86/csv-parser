@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 # The separator auto-detection only works on the very first input line;

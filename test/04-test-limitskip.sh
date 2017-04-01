@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 # In -a mode, a header line is expected;

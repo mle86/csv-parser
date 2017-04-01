@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 # Auto-numbered columns:

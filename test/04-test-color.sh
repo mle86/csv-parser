@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 # Verify that the program can do colored output,

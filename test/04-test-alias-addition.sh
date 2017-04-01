@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 # The -n mode should allow multiple alias lists for the same column name. That is,

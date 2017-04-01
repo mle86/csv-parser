@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 # If an input line ends with a separator character, it means there's a trailing empty field.

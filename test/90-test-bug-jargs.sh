@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 # The -j option (long json output) was falsely assigned the long option --compact-json,

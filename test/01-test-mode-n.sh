@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . $(dirname "$0")/init.sh
 
 target_fn1="COLN1" ; aliases_fn1="l1c1 foo-bar"
