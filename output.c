@@ -282,7 +282,7 @@ inline void printk (const char* s) {
  * Therefore, the result is a regular NUL-terminated string.
  * This function does NOT prepend pp_key or append pp_rst.
  */
-inline void reformat_all_colnames () {
+inline void reformat_all_colnames (void) {
 	for (size_t c = 0; c < MAXCOLUMNS; c++) {
 		if (ColumnName[c]) {
 			const nstr* orig = ColumnName[c];

@@ -67,7 +67,7 @@ static bool is_lineend (const char* s);
  * Tried to find a separator character on the current line and store it in 'separator'.
  * If nothing is found, 'separator' won't be changed.
  */
-static void find_separator ();
+static void find_separator (void);
 
 
 void set_input (FILE* file, char _separator, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines, trimmode_t _trim) {
@@ -199,7 +199,7 @@ bool is_lineend (const char* s) {
 	);
 }
 
-void find_separator () {
+void find_separator (void) {
 	register char* p = cur_line;
 	for (char q = '\0'; p < cur_line + cur_line_len; p++) {
 		// this will stop at the first valid separator char,
