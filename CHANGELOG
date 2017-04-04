@@ -1,3 +1,6 @@
+v2.3.1 (2017-04-04)
+	- fixed -n column name case sensitivity
+
 v2.3.0 (2017-04-02)
 	- introduced output mode -C  (csv output)
 	- introduced option -u  (include unknown columns in -n mode)

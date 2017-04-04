@@ -238,9 +238,11 @@ under one of several possible name variants.
 Keep in mind that the program
 will do byte-wise string comparisons
 between the arguments and the input column names,
-without any encoding conversion,
-case normalization,
+without any encoding conversion
 or canonization.
+The only normalization done
+is lower-casing with **tolower**(3),
+which only works on plain ascii letters (A..Z).
 
 # CSV output mode
 
