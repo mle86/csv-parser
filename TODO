@@ -1,3 +1,10 @@
 - Support LF and LFCR line ends
   (needs fgets() alternative).
 
+- -U option (without unknown columns) for -n mode
+  (is default anyway)
+
+- remove -n input mode,
+  add its functionality (column aliasing) to -a mode,
+  have "-n" option as legacy alias for "-U -a" (with coldef requirement)
+
