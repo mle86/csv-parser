@@ -2,7 +2,7 @@
 #define CONST_H
 
 
-#define VERSION "2.3.0"
+#define VERSION "2.3.1"
 #define VERDATE "April 2017"
 
 #define EXIT_HELP	0
