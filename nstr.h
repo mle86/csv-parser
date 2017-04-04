@@ -22,11 +22,11 @@
  * to a { .length=0, .buffer={'\0'} } structure.
  *
  * The char[] buffer in an nstr can be modified directly.
- * Ususally, its size is exactly sufficient to accomodate length+1 bytes
+ * Usually, its size is exactly sufficient to accommodate length+1 bytes
  * (the string's length plus the trailing NUL byte),
  * which makes writing past the buffer's boundary inadvisable.
  * One exception to this are nstr structures returned by nstr_init(size),
- * which have length=0 but can accomodate size+1 bytes.
+ * which have length=0 but can accommodate size+1 bytes.
  *
  * Existing nstr can be grown with nstr_resize(), which dynamically reallocates the nstr pointer,
  * or with the nstr_append*_a() function family which also appends another string to the resized buffer.
@@ -63,7 +63,7 @@ void nstr_resize (nstr* *dest, size_t newsize);
 bool nstr_append (nstr* dest, const nstr* src, size_t maxdestsize);
 
 /**
- * Appends the 'src' string onto *dest, resizing *dest if there's not enough space lfet.
+ * Appends the 'src' string onto *dest, resizing *dest if there's not enough space left.
  * The buffer's current size must be passed in *maxdestsize.
  * That value will be changed to the new buffer size if the buffer gets resized.
  */
@@ -112,7 +112,7 @@ void nstr_truncate (nstr* s);
 
 /**
  * Destroys an nstr structure.
- * The 's' pointer should not be uesd in any way after this call.
+ * The 's' pointer should not be used in any way after this call.
  */
 void nstr_destroy (nstr* s);
 

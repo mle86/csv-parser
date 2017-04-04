@@ -28,7 +28,7 @@ static size_t cur_line_bufsz = 0;
 /**
  * While reading cur_line, we need a pointer to increase which keeps its position between next_field() calls.
  * We cannot simply increase the cur_line pointer itself, because getline(3) might call realloc() on it;
- * we use this pointer instead.  Our get_line() always must reset lp &curline[0] if successful.
+ * we use this pointer instead.  Our get_line() always must reset lp to &cur_line[0] if successful.
  */
 static const char* lp = NULL;
 
