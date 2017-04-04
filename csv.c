@@ -225,7 +225,7 @@ void match_colnames (size_t argc, const char** argv, bool with_unknowns) {
 		// got one actual input colname, now compare it against all known colname aliases
 		for (size_t cd = 0; cd < n_coldefs; cd++) {
 			#define has_name(ni) (ni < coldefs[cd].names)
-			#define name_equal(ni, s) (nstr_cmpsz(s, coldefs[cd].name[ni]))
+			#define name_equal(ni, s) (nstr_icmpsz(s, coldefs[cd].name[ni]))
 			for (size_t ni = 0; has_name(ni); ni++) {
 				if (!coldefs[cd].found && name_equal(ni, s)) {
 					// this coldef had the name!

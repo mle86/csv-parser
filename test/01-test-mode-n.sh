@@ -25,4 +25,19 @@ EOT
 assertCmdEq "$CSV -nm $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -n did not read sample1.csv correctly!"
 
+
+aliases_uc_fn1="$(printf '%s' "$aliases_fn1" | tr '[:lower:]' '[:upper:]')"
+aliases_uc_fn2="$(printf '%s' "$aliases_fn2" | tr '[:lower:]' '[:upper:]')"
+aliases_uc_fn3="$(printf '%s' "$aliases_fn3" | tr '[:lower:]' '[:upper:]')"
+aliases_uc_fn5="$(printf '%s' "$aliases_fn5" | tr '[:lower:]' '[:upper:]')"
+
+collist=\
+"$target_fn1 $aliases_uc_fn1 . "\
+"$target_fn2 $aliases_uc_fn2 . "\
+"$target_fn3 $aliases_uc_fn3 . "\
+"$target_fn5 $aliases_uc_fn5 . "
+
+assertCmdEq "$CSV -nm $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
+	"csv -n is not case-insensitive!"
+
 success
