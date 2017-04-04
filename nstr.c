@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "aux.h"
 #include "nstr.h"
 
@@ -268,6 +269,34 @@ bool nstr_cmpsz (const nstr* a, const char* b) {
 	const char* aa = a->buffer;
 	while (*b) {
 		if (*(aa++) != *(b++))
+			// Byte mismatch.
+			return false;
+	}
+
+	// Strings match up until b's final NUL byte.
+	// But is this the end of a as well?
+	
+	return (*aa == '\0' && (size_t)(aa - a->buffer) == a->length);
+}
+
+bool nstr_icmpsz (const nstr* a, const char* b) {
+	if (!a || !b)
+		// No string to compare.
+		// Even if _both_ pointers are NULL, that's still not a match.
+		return false;
+
+	if (a->buffer == b)
+		// Rare special case:
+		// if the char* string points to the nstr buffer,
+		// then of course the strings are equal.
+		return true;
+	
+	// Since 'b' is a NUL-terminated string,
+	// we can just walk it until the first NUL occurs:
+	
+	const char* aa = a->buffer;
+	while (*b) {
+		if (tolower(*(aa++)) != tolower(*(b++)))
 			// Byte mismatch.
 			return false;
 	}

@@ -149,6 +149,16 @@ bool nstr_cmp (const nstr* a, const nstr* b);
 bool nstr_cmpsz (const nstr* a, const char* b);
 
 /**
+ * Case-insensitive comparison of an nstr to a plain NUL-terminated string.
+ * Returns true iff a is equal to b (up until b's first NUL byte).
+ * Uses tolower(3) on every character prior to comparison.
+ *
+ * If a or b are NULL, the function always returns FALSE,
+ * even if both a and b are NULL.
+ */
+bool nstr_icmpsz (const nstr* a, const char* b);
+
+/**
  * Iterates over an nstr's buffer array,
  * assigning each contained char to a loop-local (char*)'cvar' variable.
  * The final NUL byte won't be processed.
