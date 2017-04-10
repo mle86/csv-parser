@@ -80,6 +80,7 @@ int main (int argc, char** argv) {
 		{ "unknowns",		0, NULL, 'u' },
 		{ "with-unknowns",	0, NULL, 'u' },
 		{ "no-unknowns",	0, NULL, 'U' },
+		{ "without-unknowns",	0, NULL, 'U' },
 
 		{ 0, 0, 0, 0 }};
 	signed char c;
