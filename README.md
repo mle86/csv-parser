@@ -192,6 +192,11 @@ The default output mode is **-m**.
   With this option, the **-n** mode will include all unknown columns,
   like a combination of the **-n** and **-a** modes.
   (By default, the **-n** input mode will discard all unknown columns.)
+* **-U, --no-unknowns**  
+  With this option, the **-n** mode will output only explicitly named columns.
+  This is the default behavior.
+  The option is the opposite of the **-u** option
+  and has no effect in other input modes.
 * **-h, --help**  
   Show command line usage information.
 * **-V, --version**  

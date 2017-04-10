@@ -1,3 +1,6 @@
+next (2017-04)
+	- introduced option -U  (don't include unknown columns in -n mode)
+
 v2.3.1 (2017-04-04)
 	- fixed -n column name case sensitivity
 
