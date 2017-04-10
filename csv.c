@@ -49,6 +49,7 @@ int main (int argc, char** argv) {
 	bool   allow_breaks = false;
 	bool   do_flush     = false;
 	bool   with_unknowns = false;
+	bool   has_U_option = false;
 
 	const char* options = "gnaihVmjJXCd:bes:l:FMuU";
 	const struct option long_options [] = {
@@ -110,7 +111,7 @@ int main (int argc, char** argv) {
 //		case 'v': Verbose = true; break;
 		case 'M': remove_bom = false; break;
 		case 'u': with_unknowns = true; break;
-		case 'U': with_unknowns = false; break;
+		case 'U': with_unknowns = false; has_U_option = true; break;
 
 		case 's': int_arg(&skip_lines, "-s", optarg); break;
 		case 'l': int_arg(&limit_lines, "-l", optarg); break;
@@ -130,6 +131,9 @@ int main (int argc, char** argv) {
 	}
 	if (with_unknowns && mode != MODE_NAMED_COLUMNS) {
 		FAIL(EXIT_SYNTAX, "option -u can only be used with input mode -n\n");
+	}
+	if (!with_unknowns && has_U_option && mode != MODE_NAMED_COLUMNS) {
+		WARN("option -U has no effect in input modes other than -n\n");
 	}
 
 	bool pretty_print = (colormode == COLOR_ON) || (colormode == COLOR_AUTO && isatty(fileno(stdout)));
