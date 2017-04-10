@@ -295,10 +295,7 @@ size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], s
 		// last NAME_SEPARATOR argument missing, we'll accept it
 		n++;
 		if (n == 1)
-			fprintf(stderr,
-				PROGNAME": warning: "
-				"no \"%s\" separator arguments, using only one column name\n",
-				NAME_SEPARATOR);
+			WARN("no \"%s\" separator arguments, using only one column name\n", NAME_SEPARATOR);
 	}
 
 	return n;

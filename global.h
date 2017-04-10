@@ -33,6 +33,11 @@ typedef enum colormode {
 	exit(status);					\
   }while(0)
 
+/* Prints a warning. Does not end the program.  */
+#define WARN(...) do {						\
+	fprintf(stderr, PROGNAME": warning: "__VA_ARGS__);	\
+  }while(0)
+
 /* Prints a message on stderr, but only if Verbose is true.  */
 #define VERBOSE(...) do {					\
 	if (Verbose) {						\
