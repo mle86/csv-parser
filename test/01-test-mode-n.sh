@@ -40,4 +40,7 @@ collist=\
 assertCmdEq "$CSV -nm $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -n is not case-insensitive!"
 
+assertCmdEq "$CSV -nmU $collist < $SAMPLE/sample1.csv" "$expectedOutput" \
+	"csv -n produced different output than csv -nU, should have been equal!"
+
 success
