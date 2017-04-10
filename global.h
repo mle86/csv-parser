@@ -33,6 +33,7 @@ typedef enum colormode {
 	exit(status);					\
   }while(0)
 
+/* Prints a message on stderr, but only if Verbose is true.  */
 #define VERBOSE(...) do {					\
 	if (Verbose) {						\
 		fprintf(stderr, PROGNAME": " __VA_ARGS__);	\
