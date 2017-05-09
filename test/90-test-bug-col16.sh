@@ -3,7 +3,8 @@
 
 # There's a problem with column names
 # of length 16 or 32 (and higher powers of two as well)
-# in -X input mode -- extra characters are printed at the end.
+# in -X input mode -- extra characters are printed at the end
+# due to an insufficiently-sized nstr buffer.
 
 input="1111111111222222,\na,"
 expec="1111111111222222"

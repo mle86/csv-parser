@@ -189,7 +189,7 @@ nstr* nstr_dup (const nstr* src) {
 	if (!src)
 		return NULL;
 
-	const size_t slen = sizeof(size_t) + src->length;
+	const size_t slen = sizeof(size_t) + src->length + 1;
 	return memcpy(Malloc(slen), src, slen);
 }
 
