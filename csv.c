@@ -317,7 +317,7 @@ void find_colnames (void) {
 
 		ColumnName[c] = nstr_dup(s);
 
-		VERBOSE("found column name %zu: \"%s\"\n", c, s->buffer);
+		VERBOSE("found column name %zu: \"%s\"\n", c, ColumnName[c]->buffer);
 
 		c++;
 	}
