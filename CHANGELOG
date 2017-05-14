@@ -1,4 +1,4 @@
-next (2017-05)
+v2.4.0 (2017-05-14)
 	- switched default quoting style from "mixed" to "doublequotes"
 	- introduced option -q  (set field quoting character)
 
