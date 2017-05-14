@@ -1,3 +1,6 @@
+next (2017-05)
+	- introduced option -q  (set field quoting character)
+
 v2.3.3 (2017-05-09)
 	- fixed column string buffer issue
 

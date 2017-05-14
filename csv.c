@@ -52,7 +52,7 @@ int main (int argc, char** argv) {
 	bool   with_unknowns = false;
 	bool   has_U_option = false;
 
-	const char* options = "gnaihVmjJXCd:bes:l:FMuU";
+	const char* options = "gnaihVmjJXCd:q:bes:l:FMuU";
 	const struct option long_options [] = {
 		{ "assigned-names",	0, NULL, 'g' },
 		{ "named-columns",	0, NULL, 'n' },
@@ -73,6 +73,7 @@ int main (int argc, char** argv) {
 		{ "csv-output",		0, NULL, 'C' },
 
 		{ "separator",		1, NULL, 'd' },
+		{ "quotes",		1, NULL, 'q' },
 		{ "allow-breaks",	0, NULL, 'b' },
 		{ "ignore-errors",	0, NULL, 'e' },
 		{ "skip",		1, NULL, 's' },
@@ -97,6 +98,7 @@ int main (int argc, char** argv) {
 		case 'V': Version(); return EXIT_HELP;
 
 		case 'd': sep_arg(&separator, "-d", optarg); break;
+		case 'q': enc_arg(&enclosure, "-q", optarg); break;
 		case   1: color_arg(&colormode, "--color", optarg); break;
 		case   2: trim_arg(&trimmode, "--trim", optarg); break;
 

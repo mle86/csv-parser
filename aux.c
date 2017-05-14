@@ -147,6 +147,15 @@ void sep_arg (char *separator, const char* option, const char* value) {
 		  chr_arg(separator, option, value);
 }
 
+void enc_arg (char *enclosure, const char* option, const char* value) {
+	  if (streq(value, "auto"))
+		  *enclosure = ENC_AUTO;
+	  else if (streq(value, "mixed"))
+		  *enclosure = ENC_MIXED;
+	  else
+		  chr_arg(enclosure, option, value);
+}
+
 void color_arg (colormode_t *mode, const char* option, const char* value) {
 	  if (value == NULL || streq(value, "on") || streq(value, "force") || streq(value, "always"))
 		  *mode = COLOR_ON;
