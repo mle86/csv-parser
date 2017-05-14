@@ -40,7 +40,7 @@ $(BIN): $(OBJS)
 	$(CC) -c -o ${*}.o $(CFLAGS) $<
 
 README.md: man/*
-	perl man/to-readme.pl --comment --paste-after DESCRIPTION:'Installation.md' --paste-after DESCRIPTION:'Code Standard.md' <man/csv.1 >$@
+	perl man/to-readme.pl --word CSV --comment --paste-after DESCRIPTION:'Installation.md' --paste-after DESCRIPTION:'Code Standard.md' <man/csv.1 >$@
 
 install: $(BIN)
 	strip $(BIN)
