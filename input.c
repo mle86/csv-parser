@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 static char       separator;
+static char       enclosure;
 static size_t     line_number;
 static bool       first_line;
 static bool       remove_bom;
@@ -70,12 +71,13 @@ static bool is_lineend (const char* s);
 static void find_separator (void);
 
 
-void set_input (FILE* file, char _separator, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines, trimmode_t _trim) {
+void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines, trimmode_t _trim) {
 	input         = file;
 	line_number   = 0;
 	first_line    = true;
 	allow_breaks  = _allow_breaks;
 	separator     = _separator;
+	enclosure     = _enclosure;
 	remove_bom    = _remove_bom;
 	limit_lines   = _limit_lines;
 	trim          = _trim;
@@ -243,7 +245,19 @@ const nstr* next_field (void) {
 		return NULL;
 
 	char quote = '\0';
-	if (isq(lp[0])) {
+
+	if (enclosure == ENC_AUTO || enclosure == ENC_MIXED) {
+		if (isq(lp[0])) {
+			// quoted field
+			quote = lp[0];
+			lp++;
+
+			if (enclosure == ENC_AUTO) {
+				enclosure = quote;
+				VERBOSE("found field enclosure character %c on line %zu\n", enclosure, lineno());
+			}
+		}
+	} else if (lp[0] == enclosure) {
 		// quoted field
 		quote = lp[0];
 		lp++;

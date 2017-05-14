@@ -11,6 +11,11 @@
  * This works because linebreaks are always read as record separator (fgets/getline), never as field separator.  */
 #define SEP_NONE '\n'
 
+/* Use this for set_input(enclosure) to auto-detect the enclosure.  */
+#define ENC_AUTO '\0'
+/* Use this for set_input(enclosure) if the input may contain mixed enclosure characters.  */
+#define ENC_MIXED '\xff'
+
 
 typedef enum trimmode {
 	TRIM_NONE	= 0,
@@ -21,7 +26,7 @@ typedef enum trimmode {
 } trimmode_t;
 
 
-void set_input (FILE* file, char separator, bool allow_breaks, bool remove_bom, bool skip_after_header, size_t skip_lines, size_t limit_lines, trimmode_t trim);
+void set_input (FILE* file, char separator, char enclosure, bool allow_breaks, bool remove_bom, bool skip_after_header, size_t skip_lines, size_t limit_lines, trimmode_t trim);
 
 size_t lineno (void);
 

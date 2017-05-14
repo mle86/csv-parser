@@ -5,7 +5,3 @@
   add its functionality (column aliasing) to -a mode,
   have "-n" option as legacy alias for "-U -a" (with coldef requirement)
 
-- strict delimiter mode
-  for cases like this:
-  	"long column",'t Gude,12345
-
