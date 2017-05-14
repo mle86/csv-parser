@@ -44,7 +44,7 @@ int main (int argc, char** argv) {
 
 	size_t skip_lines  = 0;
 	size_t limit_lines = 0;
-	char   separator   = '\0';
+	char   separator   = SEP_AUTO;
 	bool   remove_bom  = true;
 	bool   allow_breaks = false;
 	bool   do_flush     = false;
