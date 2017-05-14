@@ -1,0 +1,4 @@
+col1;"long ""col name"
+1k;'first value'
+2k;"backslash=\ separator=; apos=' dq="" eot"
+3k;'backslash=\ separator=; apos='' dq=" eot'

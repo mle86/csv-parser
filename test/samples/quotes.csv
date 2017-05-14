@@ -1,4 +1,4 @@
 col1;"long ""col name"
 first key;"first value"
 second key;"quote="" eot"
-third key;"backslash=\ separator=; eot"
+third key;"backslash=\ separator=; apos=' dq="" eot"
