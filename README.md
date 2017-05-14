@@ -11,7 +11,7 @@ Version 2.3.3, May 2017
 This program reads CSV from its standard input (*stdin*)
 and outputs the contents in a different format.
 
-CSV ("Comma Separated Values")
+CSV (“Comma Separated Values”)
 is a simple, tabular, widely-used data exchange format
 mostly used for textual and numeric data.
 Unfortunately, there are many different implementations.
@@ -34,7 +34,7 @@ The program source is valid ISO **C99**.
 It sets the `_POSIX_C_SOURCE = 200809L` feature macro for the **getline**(3) function.
 It also uses the GNU **getopt_long**(3) function.
 
-# Input modes
+# Input Modes
 
 The program operates in one of several
 **input modes**
@@ -53,15 +53,15 @@ The default input mode is **-a**.
   The program reads column names from the argument list
   and compares them to the first line of the CSV input,
   printing only the named columns.
-  Separate column names with a single "**.**" argument!
+  Separate column names with a single “**.**” argument!
   The name order is irrelevant, as is case.
-  See the section "Named Columns Mode" below
+  See the section “Named Columns Mode” below
   for more information about this input mode.
 * **-g, --assigned-names**  
   Names assigned to column positions:
   The program reads column names from the argument list and
   applies them to all lines.
-  The special name "**@**"
+  The special name “**@**”
   causes columns to be ignored.
   The argument order represents
   the column order in the CSV input.
@@ -71,7 +71,7 @@ The default input mode is **-a**.
   In this mode,
   the columns will be automatically numbered,
   starting from zero.
-  Similar to "**-g 0 1 2 3**...",
+  Similar to “**-g 0 1 2 3**...”,
   but will force the **-j** output mode to print each line
   as an array instead of an object.
   Not compatible with **-J** and **-C** output modes.
@@ -80,7 +80,7 @@ The default input mode is **-a**.
   neither needed nor possible.
   The first input line will not be treated specially.
 
-# Output modes
+# Output Modes
 
 The program operates in one of several
 **output modes.**
@@ -104,27 +104,27 @@ The default output mode is **-m**.
   every line is represented as an ordered array instead.)
 * **-J, --compact-json**  
   Compact JSON output:
-  An object with a "*columns*" and a "*lines*" key is returned.
-  The "*columns*" entry is an ordered array of the column names.
-  The "*lines*" entry is an ordered array of ordered arrays,
+  An object with a “*columns*” and a “*lines*” key is returned.
+  The “*columns*” entry is an ordered array of the column names.
+  The “*lines*” entry is an ordered array of ordered arrays,
   each of which represents one input line.
 * **-X, --shell-vars**  
   Output in shell variable assignment format.
-  See the "Examples" section below.
+  See the “Examples” section below.
 * **-C, --csv-output**  
   Standardized CSV output.
-  See the "CSV output mode" section below for more details.
+  See the “CSV output mode” section below for more details.
 
-# Other options
+# Other Options
 
 
 * **-d** *C*, **--separator** *C*  
   Use field separator character *C*.
-  The special value "*auto*"
+  The special value “*auto*”
   causes auto-detection
   on the first input line
   (this is the default mode).
-  The special value "*none*"
+  The special value “*none*”
   disables separator character detection
   (use this for single-column input files).
 * **-b, --allow-breaks**  
@@ -202,7 +202,7 @@ The default output mode is **-m**.
 * **-V, --version**  
   Show program version and licensing information.
 
-# Named columns mode
+# Named Columns Mode
 
 The **-n** input mode is useful
 if the input column names are known in advance,
@@ -210,10 +210,10 @@ but not their position.
 
 For example,
 calling the program with the arguments
-"**-n phone . fax .**"
+“**-n phone . fax .**”
 will extract the columns
-"*phone*"
-and "*fax*"
+“*phone*”
+and “*fax*”
 from the input (if they exist),
 regardless of their position.
 All other columns will be ignored.
@@ -225,16 +225,16 @@ are acceptable for one column.
 To use this feature,
 list the accepted column aliases
 after the column name.
-The "**.**" argument
+The “**.**” argument
 separates the column aliases
 from the next column definition.
 
 For example,
 the invocation
-"**-n phone tel telephone telno . fax telefax faxno .**"
+“**-n phone tel telephone telno . fax telefax faxno .**”
 will again extract the columns 
-"*phone*"
-and "*fax*"
+“*phone*”
+and “*fax*”
 from the input
 (and will always call them thus in the output),
 but will also recognize them
@@ -249,7 +249,7 @@ The only normalization done
 is lower-casing with **tolower**(3),
 which only works on plain ascii letters (A..Z).
 
-# CSV output mode
+# CSV Output Mode
 
 In CSV output mode (**-C**), the program will print valid CSV.
 It tries to follow RFC 4180 as closely as possible:
@@ -272,7 +272,7 @@ and to change unusual separator characters in existing CSV files to the standard
 
 This mode will remove all NUL bytes from the input.
 
-# Pretty-printing
+# Pretty-Printing
 
 The program has limited pretty-printing capabilities:
 if the output (*stdout*) is a tty,
@@ -402,12 +402,12 @@ like this:
     CSV_RECORDS=3
 
 The varname scheme is
-"CSV_*lineno*_*fieldno*",
+“CSV_*lineno*_*fieldno*”,
 with lines and fields counted from zero.
 
 Again, there's a special case for the **-i** input mode,
 because it has no relevant column names:
-The "CSV_COLNAME_*colno*" assignments will be omitted,
+The “CSV_COLNAME_*colno*” assignments will be omitted,
 and the first input line is read as a regular record.
 
 **`csv -i -X < test.csv`**
@@ -508,13 +508,13 @@ will be interpreted as-is.
 
 Single-column files can be used as input,
 but the separator auto-detection
-(in case of "**-d auto**"
+(in case of “**-d auto**”
 or no **-d** argument at all)
 will fail and terminate the program
 with exit code 3.
 
 To correctly read single-column files,
-use "**-d none**",
+use “**-d none**”,
 which tells the program
 that the input does not contain any actual separator characters.
 
@@ -534,7 +534,7 @@ In this case, it is necessary
 to manually specify the separator character
 with the **-d** option.
 
-# Exit codes
+# Exit Codes
 
 By default,
 the program will terminate with exit code zero (success).
