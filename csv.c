@@ -45,7 +45,7 @@ int main (int argc, char** argv) {
 	size_t skip_lines  = 0;
 	size_t limit_lines = 0;
 	char   separator   = SEP_AUTO;
-	char   enclosure   = ENC_MIXED;
+	char   enclosure   = '"';
 	bool   remove_bom  = true;
 	bool   allow_breaks = false;
 	bool   do_flush     = false;

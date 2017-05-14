@@ -49,10 +49,6 @@ EOT
 assertCmdEq "$CSV -am -q mixed < $SAMPLE/mixed-quotes.csv" "$expectedOutput" \
 	"csv --quotes=mixed did not handle mixed-quoted values correctly!"
 
-# mixed mode is default!
-assertCmdEq "$CSV -am < $SAMPLE/mixed-quotes.csv" "$expectedOutput" \
-	"csv (without -q option) did not handle mixed-quoted values correctly!"
-
 
 # samples/quotes2.csv contains a mixed-quote style as well.
 # It contains no "+" characters, so we can use that to test manual quotes setting.
@@ -77,6 +73,10 @@ EOT
 
 assertCmdEq "$CSV -am -q auto < $SAMPLE/quotes2.csv" "$expectedOutput" \
 	"csv --quotes=auto did not handle mixed-quoted values correctly!"
+
+# The default is -q" -- that should have the same effect for this input.
+assertCmdEq "$CSV -am < $SAMPLE/quotes2.csv" "$expectedOutput" \
+	"csv (without -q option) did not handle mixed-quoted values correctly!"
 
 # Lastly, let's see if -q' works as expected:
 
