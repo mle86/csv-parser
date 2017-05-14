@@ -128,6 +128,17 @@ The special value \(lq\fInone\fR\(rq
 disables separator character detection
 (use this for single-column input files).
 .TP
+\fB\-q\fR \fIC\fR, \fB\-\-quotes\fR \fIC\fR
+Use field quoting character \fIC\fR.
+By default, only doublequotes\ (\fB"\fR)
+may be used.
+The special value \(lq\fIauto\fR\(rq
+causes auto-detection
+on the first quoted field in the input
+(recognized quoting characters are "doublequotes" and 'singlequotes').
+The special value \(lq\fImixed\fR\(rq
+allows the input to use both quoting characters.
+.TP
 .B \-b, \-\-allow\-breaks
 By default,
 every record is assumed to span exactly one line.
@@ -489,15 +500,16 @@ Input files using multiple different separators
 and/or multibyte separators
 cannot be parsed correctly.
 .SS Quoting
-Input fields may be quoted
-either with single (\fB'\fR)
-or double apostrophes (\fB"\fR).
-This quoting character
+By default, this program recognizes double-quotes (\fB"\fR)
+as the field enclosure character.
+This can be changed with the \fB-q\fR option
+if your input uses a different quoting character.
+The quoting character
 will be removed from the output.
 Fields need not be quoted,
 except for multiple-line values
 (see option \fB\-b\fR)
-or fields containing the separator character.
+or fields containing the separator or quoting character.
 If the quoting character
 is present inside a quoted field,
 it must be doubled.
@@ -510,6 +522,12 @@ whereas
 .br
 \fBfield""without""quotes"\fR
 will be interpreted as-is.
+.P
+The special setting \fB-q\ mixed\fR
+allows input files
+to use both single-quotes (\fB'\fR)
+and double-quotes (\fB"\fR)
+as field enclosures.
 .SS Single-Column CSV Files
 Single-column files can be used as input,
 but the separator auto-detection

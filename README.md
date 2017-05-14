@@ -127,6 +127,16 @@ The default output mode is **-m**.
   The special value “*none*”
   disables separator character detection
   (use this for single-column input files).
+* **-q** *C*, **--quotes** *C*  
+  Use field quoting character *C*.
+  By default, only doublequotes (**"**)
+  may be used.
+  The special value “*auto*”
+  causes auto-detection
+  on the first quoted field in the input
+  (recognized quoting characters are "doublequotes" and 'singlequotes').
+  The special value “*mixed*”
+  allows the input to use both quoting characters.
 * **-b, --allow-breaks**  
   By default,
   every record is assumed to span exactly one line.
@@ -482,15 +492,16 @@ cannot be parsed correctly.
 
 ## Quoting
 
-Input fields may be quoted
-either with single (**'**)
-or double apostrophes (**"**).
-This quoting character
+By default, this program recognizes double-quotes (**"**)
+as the field enclosure character.
+This can be changed with the **-q** option
+if your input uses a different quoting character.
+The quoting character
 will be removed from the output.
 Fields need not be quoted,
 except for multiple-line values
 (see option **-b**)
-or fields containing the separator character.
+or fields containing the separator or quoting character.
 If the quoting character
 is present inside a quoted field,
 it must be doubled.
@@ -503,6 +514,12 @@ whereas
 
 **field""without""quotes"**
 will be interpreted as-is.
+
+The special setting **-q mixed**
+allows input files
+to use both single-quotes (**'**)
+and double-quotes (**"**)
+as field enclosures.
 
 ## Single-Column CSV Files
 
