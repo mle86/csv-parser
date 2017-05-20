@@ -12,7 +12,7 @@ EOT
 
 testeol () {
 	local errmsg="$1"
-	assertCmdEq "printf 'c1;c2${rs}v1;v2${rs}' | $CSV -aij" "$expectedOutput" "$errmsg"
+	assertCmdEq "printf 'c1;c2${rs}v1;v2${rs}' | $CSV -ij" "$expectedOutput" "$errmsg"
 }
 
 rs="\\n"  # business as usual

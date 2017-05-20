@@ -15,7 +15,7 @@ define expectedOutput <<-EOT
 	,["\\t"]]
 EOT
 
-assertCmdEq "$CSV -aij < $SAMPLE/whitespace.csv" "$expectedOutput" \
+assertCmdEq "$CSV -ij < $SAMPLE/whitespace.csv" "$expectedOutput" \
 	"csv produced unexpected output reading whitespace.csv!"
 
 success

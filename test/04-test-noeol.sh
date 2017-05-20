@@ -10,10 +10,10 @@ define expectedOutput <<-EOT
 	,["v1","v2"]]
 EOT
 
-assertCmdEq "( cat $SAMPLE/noeol.csv ; echo ) | $CSV -aij" "$expectedOutput" \
+assertCmdEq "( cat $SAMPLE/noeol.csv ; echo ) | $CSV -ij" "$expectedOutput" \
 	"csv produced unexpected output reading noeol.csv with an added linebreak!"
 
-assertCmdEq "( cat $SAMPLE/noeol.csv        ) | $CSV -aij" "$expectedOutput" \
+assertCmdEq "( cat $SAMPLE/noeol.csv        ) | $CSV -ij" "$expectedOutput" \
 	"csv produced incorrect output reading noeol.csv, which has no trailing linebreak!"
 
 success

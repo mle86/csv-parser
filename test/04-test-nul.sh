@@ -8,7 +8,7 @@ define expectedOutput <<-EOT
 	,["n3","\\0n4"]]
 EOT
 
-assertCmdEq "$CSV -aij < $SAMPLE/nul.csv" "$expectedOutput" \
+assertCmdEq "$CSV -ij < $SAMPLE/nul.csv" "$expectedOutput" \
 	"csv did not handle input NUL bytes correctly!"
 
 
