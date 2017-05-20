@@ -5,3 +5,8 @@
   add its functionality (column aliasing) to -a mode,
   have "-n" option as legacy alias for "-U -a" (with coldef requirement)
 
+- fix line limit (-l) in -b mode.
+  For example, -l1 fails if the first record does not fit in the first line.
+  Same problem might exist with -s as well.
+  This means that -l and -s should work with the _record_ counter, not the line counter.
+
