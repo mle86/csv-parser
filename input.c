@@ -316,14 +316,14 @@ const nstr* next_field (void) {
 				return fin(lp + 2);
 			} else if (is_lineend(lp + 1)) {
 				// line end after the quote. clear cur_line so the following next_field() call will fail
-				return fin(NULL);
+				break;
 			} else {
 				ERR(EXIT_FORMAT, "unexpected quote on line %zu\n", lineno());
 			}
 
 		} else if (!quoted && is_lineend(lp)) {
 			// line end. clear cur_line so the following next_field() call will fail
-			return fin(NULL);
+			break;
 
 		} else if (!quoted && lp[0] == separator) {
 			// field end. place cur_line on next field start
@@ -334,14 +334,14 @@ const nstr* next_field (void) {
 
 			if (! allow_breaks) {
 				ERR(EXIT_FORMAT, "unexpected end of line on line %zu\n", lineno());
-				return fin(NULL);  // end quoted field here
+				break;  // end quoted field here
 			}
 
 			addf('\n');
 
 			if (! next_line()) {
 				ERR(EXIT_FORMAT, "unexpected end of file on line %zu\n", lineno());
-				return fin(NULL);  // end quoted field here
+				break;  // end quoted field here
 			}
 			continue;  // re-enter loop on next line
 		}
@@ -349,5 +349,9 @@ const nstr* next_field (void) {
 		// append the current char to the fieldbuffer and continue.
 		addf(*(lp++));
 	}
+
+	// Record end.
+	// Return the last field and clear cur_line:
+	return fin(NULL);
 }
 
