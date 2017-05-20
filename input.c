@@ -27,7 +27,7 @@ static bool       first_line;
 static bool       remove_bom;
 static bool       allow_breaks;
 static size_t     limit_records;
-static size_t     skip_lines;
+static size_t     skip_records;
 static FILE*      input;
 static trimmode_t trim;
 
@@ -60,7 +60,7 @@ static const char* lp = NULL;
 static bool get_line (void);
 
 /**
- * Reads and discards 'n' input lines, updating 'line_number'.
+ * Reads and discards 'n' input records, updating 'line_number'.
  * Does not change 'cur_line' or 'cur_line_len' in any way.
  */
 static void skip (size_t n);
@@ -84,7 +84,7 @@ static bool is_lineend (const char* s);
 static void find_separator (void);
 
 
-void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_records, trimmode_t _trim) {
+void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_records, size_t _limit_records, trimmode_t _trim) {
 	input         = file;
 	line_number   = 0;
 	record_number = 0;
@@ -95,22 +95,22 @@ void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks
 	remove_bom    = _remove_bom;
 	limit_records = _limit_records;
 	trim          = _trim;
-	skip_lines    = 0;
+	skip_records  = 0;
 
 	lp            = NULL;
 	cur_line_len  = 0;
 
-	if (_skip_lines) {
-		// Skip some lines.
+	if (_skip_records) {
+		// Skip some records.
 
 		if (skip_after_header) {
 			// Don't skip the initial header line!
 			// get_line() will do the skipping after reading the header line.
-			skip_lines = _skip_lines;
+			skip_records = _skip_records;
 		} else {
 			// Skip first N lines right now,
 			// including the header line (if there is one).
-			skip(_skip_lines);
+			skip(_skip_records);
 		}
 	}
 }
@@ -123,8 +123,23 @@ inline void skip (size_t n) {
 	char* buf = NULL;
 	size_t bufsz = 0;
 
-	while (n-- > 0 && getline(&buf, &bufsz, input))
-		line_number++;
+	if (!allow_breaks) {
+		// Each line is one record.
+		// We can easily skip N records by skipping N lines:
+		while (n-- > 0 && getline(&buf, &bufsz, input))
+			line_number++;
+
+	} else {
+		// Records may span multiple lines.
+		// We have to read and process them correctly:
+		while (n-- > 0) {
+			if (!next_line()) {
+				FAIL(EXIT_FORMAT, "unexpected end of file on line %zu\n", lineno());
+			}
+			while (next_field()) ;
+			record_number--;  // next_field() has increased it, but we don't want to count skipped records
+		}
+	}
 
 	if (ferror(input)) {
 		ERR(EXIT_INTERNAL, "read error");
@@ -159,12 +174,6 @@ bool get_line (void) {
 
 		if (separator == SEP_AUTO)
 			find_separator();
-
-		if (skip_lines)
-			// Looks like we just read the header line,
-			// and now we're supposed to skip some content lines.
-			skip(skip_lines);
-
 		if (remove_bom)
 			// skip bom in returned input:
 			lp += check_bom(cur_line);
