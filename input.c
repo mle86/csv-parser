@@ -14,6 +14,13 @@
  */
 static size_t line_number;
 
+/**
+ * Number of the last complete record, indexed by 1.
+ * Increased by next_field() after EOR.
+ * Does NOT include skipped records.
+ */
+static size_t record_number;
+
 static char       separator;
 static char       enclosure;
 static bool       first_line;
@@ -80,6 +87,7 @@ static void find_separator (void);
 void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines, trimmode_t _trim) {
 	input         = file;
 	line_number   = 0;
+	record_number = 0;
 	first_line    = true;
 	allow_breaks  = _allow_breaks;
 	separator     = _separator;
@@ -351,6 +359,8 @@ const nstr* next_field (void) {
 	}
 
 	// Record end.
+	record_number++;
+
 	// Return the last field and clear cur_line:
 	return fin(NULL);
 }
