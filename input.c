@@ -136,7 +136,7 @@ inline void skip (size_t n) {
 		// We have to read and process them correctly:
 		while (n-- > 0) {
 			if (!next_line()) {
-				FAIL(EXIT_FORMAT, "unexpected end of file on line %zu\n", lineno());
+				return;  // eof
 			}
 			while (next_field()) ;
 			record_number--;  // next_field() has increased it, but we don't want to count skipped records
