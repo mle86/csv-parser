@@ -146,7 +146,10 @@ The default output mode is **-m**.
   multi-line field values will cause an error.
   This option causes
   the **--skip** and **--limit** options
-  to count records instead of lines.
+  to count records instead of lines,
+  which means that you cannot use **--skip** anymore
+  to skip over malformed input lines
+  when using the **-b** option.
 * **-s** *N*, **--skip** *N*  
   Skip the first *N* input lines.
   In modes **-n** and **-a**,

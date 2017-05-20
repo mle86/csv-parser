@@ -148,7 +148,10 @@ Without this option,
 multi-line field values will cause an error.
 This option causes
 the \fB\-\-skip\fR and \fB\-\-limit\fR options
-to count records instead of lines.
+to count records instead of lines,
+which means that you cannot use \fB\-\-skip\fR anymore
+to skip over malformed input lines
+when using the \fB\-b\fR option.
 .TP
 \fB\-s\fR \fIN\fR, \fB\fB\-\-skip\fR \fIN\fR
 Skip the first \fIN\fR input lines.
