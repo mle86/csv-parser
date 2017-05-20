@@ -7,9 +7,15 @@
 #include <string.h>
 #include <stdlib.h>
 
+/**
+ * Number of the last-read line, indexed by 1.
+ * Increased by get_line() after EOL.
+ * This includes skipped lines.
+ */
+static size_t line_number;
+
 static char       separator;
 static char       enclosure;
-static size_t     line_number;
 static bool       first_line;
 static bool       remove_bom;
 static bool       allow_breaks;
