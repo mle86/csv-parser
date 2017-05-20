@@ -26,7 +26,7 @@ static char       enclosure;
 static bool       first_line;
 static bool       remove_bom;
 static bool       allow_breaks;
-static size_t     limit_lines;
+static size_t     limit_records;
 static size_t     skip_lines;
 static FILE*      input;
 static trimmode_t trim;
@@ -55,7 +55,7 @@ static const char* lp = NULL;
  *  and returns TRUE.
  * 'line_number' will be increased by 1.
  * Always returns FALSE (and does not read from input)
- *  if 'line_number' has already reached 'limit_lines' (assuming it's set).
+ *  if 'record_number' has already reached 'limit_records' (assuming it's set).
  */
 static bool get_line (void);
 
@@ -84,7 +84,7 @@ static bool is_lineend (const char* s);
 static void find_separator (void);
 
 
-void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_lines, trimmode_t _trim) {
+void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_lines, size_t _limit_records, trimmode_t _trim) {
 	input         = file;
 	line_number   = 0;
 	record_number = 0;
@@ -93,7 +93,7 @@ void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks
 	separator     = _separator;
 	enclosure     = _enclosure;
 	remove_bom    = _remove_bom;
-	limit_lines   = _limit_lines;
+	limit_records = _limit_records;
 	trim          = _trim;
 	skip_lines    = 0;
 
@@ -102,10 +102,6 @@ void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks
 
 	if (_skip_lines) {
 		// Skip some lines.
-
-		if (limit_lines)
-			// skipped lines count towards line_number
-			limit_lines += _skip_lines;
 
 		if (skip_after_header) {
 			// Don't skip the initial header line!
@@ -139,7 +135,7 @@ inline void skip (size_t n) {
 }
 
 bool get_line (void) {
-	if (limit_lines > 0 && line_number >= limit_lines)
+	if (limit_records > 0 && record_number >= limit_records)
 		// line limit reached, don't read any more
 		return false;
 
