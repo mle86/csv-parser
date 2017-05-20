@@ -24,6 +24,7 @@ static size_t record_number;
 static char       separator;
 static char       enclosure;
 static bool       first_line;
+static bool       do_skip;
 static bool       remove_bom;
 static bool       allow_breaks;
 static size_t     limit_records;
@@ -89,6 +90,7 @@ void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks
 	line_number   = 0;
 	record_number = 0;
 	first_line    = true;
+	do_skip       = false;
 	allow_breaks  = _allow_breaks;
 	separator     = _separator;
 	enclosure     = _enclosure;
@@ -153,6 +155,13 @@ bool get_line (void) {
 	if (limit_records > 0 && record_number >= limit_records)
 		// line limit reached, don't read any more
 		return false;
+
+	if (do_skip && skip_records > 0) {
+		// This flag has been set by next_field()
+		// after it read the entire first record (header).
+		do_skip = false;
+		skip(skip_records);
+	}
 
 	ssize_t len = getline(&cur_line, &cur_line_bufsz, input);
 	if (len < 0) {
@@ -365,6 +374,13 @@ const nstr* next_field (void) {
 
 	// Record end.
 	record_number++;
+
+	if (record_number == 1 && skip_records > 0) {
+		// This was the header record and now we're supposed to skip some records.
+		// We cannot do it right here, or we'll overwrite our 'field' buffer and return garbage.
+		// But we can leave a flag for the next get_line() call:
+		do_skip = true;
+	}
 
 	// Return the last field and clear cur_line:
 	return fin(NULL);
