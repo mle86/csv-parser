@@ -2,7 +2,7 @@
 
 # csv(1) - convert csv files to json and other formats
 
-Version 2.4.0, May 2017
+Version 2.4.1, May 2017
 
 ```csv [MODE] [OPTIONS] [--] [COLUMNNAME...]```
 

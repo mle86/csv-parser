@@ -1,4 +1,4 @@
-next (2017-05)
+v2.4.1 (2017-05)
 	- fixed --limit on multi-line records
 	- fixed --skip on multi-line records
 
