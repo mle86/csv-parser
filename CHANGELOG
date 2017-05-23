@@ -1,6 +1,6 @@
 v2.4.1 (2017-05)
-	- fixed --limit on multi-line records
-	- fixed --skip on multi-line records
+	- fixed --limit when reading multi-line records (-b)
+	- fixed --skip when reading multi-line records (-b)
 
 v2.4.0 (2017-05-14)
 	- switched default quoting style from "mixed" to "doublequotes"
