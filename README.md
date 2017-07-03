@@ -4,7 +4,7 @@
 
 Version 2.4.1, May 2017
 
-```csv [MODE] [OPTIONS] [--] [COLUMNNAME...]```
+<pre><code><b>csv</b> [<i>MODE</i>] [<i>OPTIONS</i>] [<b>--</b>] [<i>COLUMNNAME</i>...]</code></pre>
 
 # Description
 
@@ -15,8 +15,8 @@ CSV (“Comma Separated Values”)
 is a simple, tabular, widely-used data exchange format
 mostly used for textual and numeric data.
 Unfortunately, there are many different implementations.
-This program aims to be fully RFC 4180-compliant
-while supporting many common standard violations as well.
+This program aims to be fully RFC&nbsp;4180-compliant
+while supporting many common standard&nbsp;violations as well.
 
 # Installation
 
@@ -38,8 +38,7 @@ It also uses the GNU **getopt_long**(3) function.
 
 The program operates in one of several
 **input modes**
-to read its input.
-
+to read its input.  
 The default input mode is **-a**.
 
 * **-a, --auto-columns**  
@@ -83,8 +82,7 @@ The default input mode is **-a**.
 # Output Modes
 
 The program operates in one of several
-**output modes.**
-
+**output modes.**  
 The default output mode is **-m**.
 
 * **-m, --simple**  
@@ -109,7 +107,7 @@ The default output mode is **-m**.
   The “*lines*” entry is an ordered array of ordered arrays,
   each of which represents one input line.
 * **-X, --shell-vars**  
-  Output in shell variable assignment format.
+  Output in shell&nbsp;variable&nbsp;assignment format.
   See the “Examples” section below.
 * **-C, --csv-output**  
   Standardized CSV output.
@@ -129,7 +127,7 @@ The default output mode is **-m**.
   (use this for single-column input files).
 * **-q** *C*, **--quotes** *C*  
   Use field quoting character *C*.
-  By default, only doublequotes (**"**)
+  By default, only doublequotes&nbsp;(**"**)
   may be used.
   The special value “*auto*”
   causes auto-detection
@@ -155,7 +153,7 @@ The default output mode is **-m**.
   In modes **-n** and **-a**,
   skip the first *N* input lines
   after the header line.
-  Setting *N* to zero means no skip,
+  Setting *N* to zero means no&nbsp;skip,
   which is the default.
 * **-l** *N*, **--limit** *N*  
   Stop after the *N*th input line.
@@ -222,8 +220,7 @@ The default output mode is **-m**.
 
 The **-n** input mode is useful
 if the input column names are known in advance,
-but not their position.
-
+but not their position.  
 For example,
 calling the program with the arguments
 “**-n phone . fax .**”
@@ -241,13 +238,12 @@ are acceptable for one column.
 To use this feature,
 list the accepted column aliases
 after the column name.
-The “**.**” argument
+The&nbsp;“**.**”&nbsp;argument
 separates the column aliases
-from the next column definition.
-
+from the next column definition.  
 For example,
 the invocation
-“**-n phone tel telephone telno . fax telefax faxno .**”
+“**-n&nbsp;phone tel telephone telno&nbsp;. fax telefax faxno&nbsp;.**”
 will again extract the columns 
 “*phone*”
 and “*fax*”
@@ -268,15 +264,15 @@ which only works on plain ascii letters (A..Z).
 # CSV Output Mode
 
 In CSV output mode (**-C**), the program will print valid CSV.
-It tries to follow RFC 4180 as closely as possible:
+It tries to follow RFC&nbsp;4180 as closely as possible:
 it uses a plain comma as field separator,
 uses CRLF as record separator,
 quotes fields with double-quotes
 and escapes double-quotes in fields by doubling them,
 and only quotes fields that contain a special character.
-LF linebreaks in fields will always be printed as CRLF.
+LF&nbsp;linebreaks in fields will always be printed as CRLF.
 
-However in contrast to RFC 4180
+However in contrast to RFC&nbsp;4180
 which mandates plain 7-bit ASCII input
 and forbids use of control characters below 0x1F,
 this mode will accept any encoding
@@ -294,8 +290,8 @@ The program has limited pretty-printing capabilities:
 if the output (*stdout*) is a tty,
 the output will be colorized.
 Indentation will not be changed in any way.
-(See the **--color** option
-to force pretty-printing if *stdout* is not a tty
+(See the **--color**&nbsp;option
+to force pretty-printing if *stdout* is not a&nbsp;tty
 or to disable it completely.)
 
 * Column names will be printed in green.
@@ -313,10 +309,11 @@ or to disable it completely.)
 
 All examples assume this CSV file as input:
 
-    h1;h2;h3
-    c1;c2;c3
-    ca;"cb""";cc
-    cx;cy;cz
+<pre><code>h1;h2;h3
+c1;c2;c3
+ca;"cb""";cc
+cx;cy;cz
+</code></pre>
 
 The default input mode is **-a**
 (get column names automatically from first line).
@@ -326,37 +323,40 @@ This is what is looks like:
 
 **`csv < test.csv`**
 
-    h1: c1
-    h2: c2
-    h3: c3
-    -
-    h1: ca
-    h2: cb"
-    h3: cc
-    -
-    h1: cx
-    h2: cy
-    h3: cz
+<pre><code>h1: c1
+h2: c2
+h3: c3
+-
+h1: ca
+h2: cb"
+h3: cc
+-
+h1: cx
+h2: cy
+h3: cz
+</code></pre>
 
 In contrast, this is what the **-j** (JSON) output mode
 looks like with the same input:
 
 **`csv -j < test.csv`**
 
-    [{"h1":"c1","h2":"c2","h3":"c3"}
-    ,{"h1":"ca","h2":"cb\"","h3":"cc"}
-    ,{"h1":"cx","h2":"cy","h3":"cz"}]
+<pre><code>[{"h1":"c1","h2":"c2","h3":"c3"}
+,{"h1":"ca","h2":"cb\"","h3":"cc"}
+,{"h1":"cx","h2":"cy","h3":"cz"}]
+</code></pre>
 
 The **-J** output mode (compact JSON)
 only prints the column names once:
 
 **`csv -J < test.csv`**
 
-    {"columns": ["h1","h2","h3"],
-    "lines": [
-     ["c1","c2","c3"]
-    ,["ca","cb\"","cc"]
-    ,["cx","cy","cz"]]}
+<pre><code>{"columns": ["h1","h2","h3"],
+"lines": [
+ ["c1","c2","c3"]
+,["ca","cb\"","cc"]
+,["cx","cy","cz"]]}
+</code></pre>
 
 In the **-i** input mode,
 the first line is not considered special.
@@ -364,24 +364,25 @@ Instead, all columns are automatically numbered:
 
 **`csv -i < test.csv`**
 
-    0: h1
-    1: h2
-    2: h3
-    -
-    0: c1
-    1: c2
-    2: c3
-    -
-    0: ca
-    1: cb"
-    2: cc
-    -
-    0: cx
-    1: cy
-    2: cz
+<pre><code>0: h1
+1: h2
+2: h3
+-
+0: c1
+1: c2
+2: c3
+-
+0: ca
+1: cb"
+2: cc
+-
+0: cx
+1: cy
+2: cz
+</code></pre>
 
 As a special case,
-the long JSON mode (**-j**) omits the auto-numbered column names
+the long JSON mode&nbsp;(**-j**) omits the auto-numbered column names
 of the **-i** input mode.
 Thus,
 an array
@@ -392,10 +393,11 @@ simplifying further JSON processing.
 
 **`csv -i -j < test.csv`**
 
-    [["h1","h2","h3"]
-    ,["c1","c2","c3"]
-    ,["ca","cb\"","cc"]
-    ,["cx","cy","cz"]]
+<pre><code>[["h1","h2","h3"]
+,["c1","c2","c3"]
+,["ca","cb\"","cc"]
+,["cx","cy","cz"]]
+</code></pre>
 
 Finally, the **-X** output mode
 generates shell variable assignments
@@ -403,19 +405,20 @@ like this:
 
 **`csv -X < test.csv`**
 
-    CSV_COLNAME_0=h1
-    CSV_COLNAME_1=h2
-    CSV_COLNAME_2=h3
-    CSV_0_0=c1
-    CSV_0_1=c2
-    CSV_0_2=c3
-    CSV_1_0=ca
-    CSV_1_1="cb\""
-    CSV_1_2=cc
-    CSV_2_0=cx
-    CSV_2_1=cy
-    CSV_2_2=cz
-    CSV_RECORDS=3
+<pre><code>CSV_COLNAME_0=h1
+CSV_COLNAME_1=h2
+CSV_COLNAME_2=h3
+CSV_0_0=c1
+CSV_0_1=c2
+CSV_0_2=c3
+CSV_1_0=ca
+CSV_1_1="cb\""
+CSV_1_2=cc
+CSV_2_0=cx
+CSV_2_1=cy
+CSV_2_2=cz
+CSV_RECORDS=3
+</code></pre>
 
 The varname scheme is
 “CSV_*lineno*_*fieldno*”,
@@ -428,19 +431,20 @@ and the first input line is read as a regular record.
 
 **`csv -i -X < test.csv`**
 
-    CSV_0_0=h1
-    CSV_0_1=h2
-    CSV_0_2=h3
-    CSV_1_0=c1
-    CSV_1_1=c2
-    CSV_1_2=c3
-    CSV_2_0=ca
-    CSV_2_1="cb\""
-    CSV_2_2=cc
-    CSV_3_0=cx
-    CSV_3_1=cy
-    CSV_3_2=cz
-    CSV_RECORDS=4
+<pre><code>CSV_0_0=h1
+CSV_0_1=h2
+CSV_0_2=h3
+CSV_1_0=c1
+CSV_1_1=c2
+CSV_1_2=c3
+CSV_2_0=ca
+CSV_2_1="cb\""
+CSV_2_2=cc
+CSV_3_0=cx
+CSV_3_1=cy
+CSV_3_2=cz
+CSV_RECORDS=4
+</code></pre>
 
 
 # Input
@@ -451,7 +455,7 @@ and the first input line is read as a regular record.
 The program is encoding-agnostic,
 so long as
 a single-byte character is used as field separator
-and LF (**\\n**) or CRLF (**\\r\\n**) is used as record separator.
+and LF&nbsp;(**\\n**) or CRLF&nbsp;(**\\r\\n**) is used as record separator.
 
 NB:
 Some encodings,
@@ -459,7 +463,7 @@ like UTF-16 and UTF-32,
 may use CR/LF bytes
 to represent other characters.
 This will result in unexpected output,
-since the program is not wide character-aware.
+since the program is not wide&nbsp;character-aware.
 Plain ASCII or UTF-8 are safer choices,
 because they never use a low byte
 for the representation of another character.
@@ -479,11 +483,11 @@ in the first input line;
 the first such character found there
 will be used for the rest of the input.
 Accepted separator characters are
-comma (**,**),
-semicolon (**;**),
-tabulator (**\\t**),
+comma&nbsp;(**,**),
+semicolon&nbsp;(**;**),
+tabulator&nbsp;(**\\t**),
 and
-pipe (**|**).
+pipe&nbsp;(**|**).
 If the input uses a different separator character,
 specify it manually with the **-d** option.
 
@@ -512,16 +516,14 @@ If the quoting character
 is present inside a quoted field,
 it must be doubled.
 
-For example,
-
+For example,  
 **"field""with""quotes"**
 will be interpreted as **field"with"quotes**,
-whereas
-
+whereas  
 **field""without""quotes"**
 will be interpreted as-is.
 
-The special setting **-q mixed**
+The special setting **-q&nbsp;mixed**
 allows input files
 to use both single-quotes (**'**)
 and double-quotes (**"**)
@@ -534,7 +536,7 @@ but the separator auto-detection
 (in case of “**-d auto**”
 or no **-d** argument at all)
 will fail and terminate the program
-with exit code 3.
+with exit&nbsp;code&nbsp;3.
 
 To correctly read single-column files,
 use “**-d none**”,
@@ -548,14 +550,14 @@ however, this will cause malformed CSV input to be ignored as well.
 ## Multi-Line Column Names
 
 If the first input field contains linebreaks,
-the automatic separator detection
+the automatic separator&nbsp;detection
 won't be able to find the separator
 and terminate the program
-with exit code 3,
+with exit&nbsp;code&nbsp;3,
 as it only checks the first input line.
 In this case, it is necessary
 to manually specify the separator character
-with the **-d** option.
+with the **-d**&nbsp;option.
 
 # Exit Codes
 
@@ -573,7 +575,7 @@ signify various error conditions:
   no column match,
   empty header line,
   unexpected quote/EOL/EOF).
-  Note that when the program exits with code 2,
+  Note that when the program exits with code&nbsp;2,
   it will already have printed parts of the CSV contents.
 * **3**
   No separator found on first line.
@@ -591,17 +593,17 @@ signify various error conditions:
 
 # Author
 
-Maximilian Eul <[maximilian@eul.cc](mailto:maximilian@eul.cc)>
+Maximilian Eul &lt;[maximilian@eul.cc](mailto:maximilian@eul.cc)>
 (https://github.com/mle86)
 
 # Standards
 
-Y. Shafranovich,
+Y.&nbsp;Shafranovich,
 *Common Format and MIME Type for Comma-Separated Values (CSV) Files*,
-[RFC 4180](https://tools.ietf.org/html/rfc4180),
+[RFC&nbsp;4180](https://tools.ietf.org/html/rfc4180),
 October 2005.
 
-T. Bray,
+T.&nbsp;Bray,
 *The JavaScript Object Notation (JSON) Data Interchange Format*,
-[RFC 7159](https://tools.ietf.org/html/rfc7159),
+[RFC&nbsp;7159](https://tools.ietf.org/html/rfc7159),
 March 2014.
