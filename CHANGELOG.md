@@ -3,7 +3,7 @@ next (2017-10)
   - more examples
   - readme cleanup
 
-v2.4.1 (2017-05)
+v2.4.1 (2017-05-23)
 
   - fixed `--limit` when reading multi-line records (`-b`)
   - fixed `--skip` when reading multi-line records (`-b`)
