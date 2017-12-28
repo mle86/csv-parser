@@ -13,6 +13,6 @@ define expectedOutput <<-EOT
 	[["very\\"long,field","second-field"]]
 EOT
 
-assertCmdEq "echo \"\$input\" | $CSV -ije" "$output"
+assertCmdEq "echo \"\$input\" | $CSV -ije" "$expectedOutput"
 
 success
