@@ -16,7 +16,7 @@ DEP=*.h def/*.def
 CC=gcc
 LD=gcc
 #CFEAT =-D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
-CFLAGS=-O3 -std=c99 -pedantic -Wall -Wextra -DPROGNAME='"$(BIN)"' -D_FORTIFY_SOURCE=1
+CFLAGS=-O3 -std=c99 -pedantic -Wall -Wextra -DPROGNAME='"$(BIN)"' -D_FORTIFY_SOURCE=1 -fPIE
 
 .PHONY : all install test clean
 
