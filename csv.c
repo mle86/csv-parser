@@ -138,6 +138,9 @@ int main (int argc, char** argv) {
 	if (!with_unknowns && has_U_option && mode != MODE_NAMED_COLUMNS) {
 		WARN("option -U has no effect in input modes other than -n\n");
 	}
+	if (allow_breaks && enclosure == ENC_NONE) {
+		WARN("option -b has no effect when combined with --quotes=none!\n");
+	}
 
 	bool pretty_print = (colormode == COLOR_ON) || (colormode == COLOR_AUTO && isatty(fileno(stdout)));
 	bool file_has_header = (mode == MODE_NAMED_COLUMNS || mode == MODE_AUTO_COLUMNS);
