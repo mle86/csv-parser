@@ -285,6 +285,8 @@ const nstr* next_field (void) {
 				VERBOSE("found field enclosure character %c on line %zu\n", enclosure, lineno());
 			}
 		}
+	} else if (enclosure == ENC_NONE) {
+		// field cannot be enclosed, ignore all potential enclosure characters
 	} else if (lp[0] == enclosure) {
 		// quoted field
 		quote = lp[0];

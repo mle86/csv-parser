@@ -5,5 +5,3 @@
   add its functionality (column aliasing) to -a mode,
   have "-n" option as legacy alias for "-U -a" (with coldef requirement)
 
-- -q none
-

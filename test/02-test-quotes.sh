@@ -62,6 +62,9 @@ EOT
 assertCmdEq "$CSV -am -q+ < $SAMPLE/quotes2.csv" "$expectedOutput" \
 	"csv -q'+' did not handle mixed-quoted values correctly!"
 
+assertCmdEq "$CSV -am -q none < $SAMPLE/quotes2.csv" "$expectedOutput" \
+	"csv --quotes=none did not handle mixed-quoted values correctly!"
+
 # Now let's see what -q auto makes of this file.
 # Since the "-quoted field comes first, the '-quoted field should be treated as unquoted.
 

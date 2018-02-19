@@ -15,6 +15,9 @@
 #define ENC_AUTO '\0'
 /* Use this for set_input(enclosure) if the input may contain mixed enclosure characters.  */
 #define ENC_MIXED '\xff'
+/* Use this for set_input(enclosure) if your input contains typical enclosure characters but they should not be interpreted as such.
+ * This works because linebreaks are always read as record separator (fgets/getline), never as field enclosure. */
+#define ENC_NONE '\n'
 
 
 typedef enum trimmode {

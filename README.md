@@ -135,6 +135,8 @@ The default output mode is **-m**.
   (recognized quoting characters are "doublequotes" and 'singlequotes').
   The special value “*mixed*”
   allows the input to use both quoting characters.
+  The special value “*none*”
+  causes all potential enclosure characters to be read as-is.
 * **-b, --allow-breaks**  
   By default,
   every record is assumed to span exactly one line.

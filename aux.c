@@ -156,6 +156,8 @@ void enc_arg (char *enclosure, const char* option, const char* value) {
 		  *enclosure = ENC_AUTO;
 	  else if (streq(value, "mixed"))
 		  *enclosure = ENC_MIXED;
+	  else if (streq(value, "none") || streq(value, "no"))
+		  *enclosure = ENC_NONE;
 	  else
 		  chr_arg(enclosure, option, value);
 }
