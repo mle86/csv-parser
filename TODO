@@ -5,3 +5,11 @@
   add its functionality (column aliasing) to -a mode,
   have "-n" option as legacy alias for "-U -a" (with coldef requirement)
 
+- -q none
+
+- extract header line:
+     "head -n1 input.csv" or "csv -Cil1 <input.csv",
+     but -Ci is not allowed (yet). Maybe a new --header-only option?
+
+- -fPIE
+
