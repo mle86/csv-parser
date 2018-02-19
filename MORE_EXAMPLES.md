@@ -42,6 +42,13 @@ The output will look like this:
 
 `[["colname1", "colname2", …]]`
 
+To extract the CSV header line and output it in CSV format,
+use this command:
+
+`csv -Cibl1 < file.csv`
+
+(This is the only real use case for the -Ci option combination.)
+
 
 ## Syntax Check
 

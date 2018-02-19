@@ -126,7 +126,7 @@ int main (int argc, char** argv) {
 		if (outmode == OM_JSON_COMPACT)
 			FAIL(EXIT_SYNTAX, "input mode -i is not compatible with output mode -J\n");
 		else if (outmode == OM_CSV)
-			FAIL(EXIT_SYNTAX, "input mode -i is not compatible with output mode -C\n");
+			outmode = OM_CSV_NUMBERED;
 		else if (outmode == OM_SHELL_VARS)
 			outmode = OM_SHELL_VARS_NUMBERED;
 		else if (outmode == OM_JSON)

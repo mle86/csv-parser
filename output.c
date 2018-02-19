@@ -98,6 +98,7 @@ void output_begin (void) {
 		prints(CSV_LINESEP);
 		first_kv = true;  // output_kv() has cleared it
 		break;
+	case OM_CSV_NUMBERED:
 	case OM_SHELL_VARS_NUMBERED:
 		// don't print column names!
 		break;
@@ -109,6 +110,7 @@ void output_end (void) {
 	switch (mode) {
 		case OM_SIMPLE:
 		case OM_CSV:
+		case OM_CSV_NUMBERED:
 			break;
 		case OM_JSON:
 		case OM_JSON_NUMBERED:
@@ -156,6 +158,7 @@ void output_line_begin (void) {
 			break;
 		case OM_SHELL_VARS:
 		case OM_SHELL_VARS_NUMBERED:
+		case OM_CSV_NUMBERED:
 		case OM_CSV:
 			break;
 	}
@@ -177,6 +180,7 @@ void output_line_end (void) {
 			printf("%s]%s", pp_sym, pp_rst);
 			break;
 		case OM_CSV:
+		case OM_CSV_NUMBERED:
 			prints(CSV_LINESEP);
 			break;
 	}
@@ -247,6 +251,7 @@ void output_kv (const nstr* key, const nstr* value) {
 			break;
 
 		case OM_CSV:
+		case OM_CSV_NUMBERED:
 			if (likely(!first_kv)) {
 				printf("%s%c%s",
 					pp_sym,
@@ -300,6 +305,7 @@ inline void reformat_all_colnames (void) {
 					ColumnName[c] = reformat_shvar(orig, pp_esc, pp_key);
 					break;
 				case OM_CSV:
+				case OM_CSV_NUMBERED:
 					ColumnName[c] = reformat_csv(orig, pp_esc, pp_key);
 					break;
 			}

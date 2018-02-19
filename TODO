@@ -7,9 +7,5 @@
 
 - -q none
 
-- extract header line:
-     "head -n1 input.csv" or "csv -Cil1 <input.csv",
-     but -Ci is not allowed (yet). Maybe a new --header-only option?
-
 - -fPIE
 

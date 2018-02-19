@@ -31,6 +31,7 @@ typedef enum outmode {
 	OM_SHELL_VARS,
 	OM_SHELL_VARS_NUMBERED,  // special mode, only reachable with mode combination -iX.
 	OM_CSV,
+	OM_CSV_NUMBERED,  // special mode, only reachable with mode combination -iC.
 } outmode_t;
 
 
