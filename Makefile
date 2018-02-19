@@ -40,6 +40,7 @@ $(BIN): $(OBJS)
 	$(CC) -c -o ${*}.o $(CFLAGS) $<
 
 README.md: man/*
+	git submodule update --init man/man-to-md/
 	perl man/man-to-md.pl --word CSV --formatted-code --comment --paste-after DESCRIPTION:'Installation.md' --paste-after DESCRIPTION:'Code Standard.md' <man/csv.1 >$@
 
 install: $(BIN)
