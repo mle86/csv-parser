@@ -41,7 +41,7 @@ $(BIN): $(OBJS)
 
 README.md: man/*
 	git submodule update --init man/man-to-md/
-	perl man/man-to-md.pl --word CSV --formatted-code --comment --paste-section-after DESCRIPTION:'Installation.md' --paste-section-after DESCRIPTION:'Code Standard.md' <man/csv.1 >$@
+	perl man/man-to-md.pl --word CSV --formatted-code --comment --paste-section-after DESCRIPTION:'Installation.md' --paste-section-after DESCRIPTION:'Code Standard.md' --paste-after HEADLINE:'Badges.md' <man/csv.1 >$@
 
 install: $(BIN)
 	strip $(BIN)
