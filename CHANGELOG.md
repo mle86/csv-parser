@@ -3,6 +3,7 @@ next (2018-05)
   - introduced option `-q none`  (ignore all quoting characters)
   - more examples
   - readme cleanup
+  - Travis CI
 
 v2.4.1 (2017-05-23)
 
