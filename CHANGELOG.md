@@ -1,4 +1,4 @@
-next (2018-05)
+v2.5.0 (2018-05-07)
 
   - introduced option `-q none`  (ignore all quoting characters)
   - more examples

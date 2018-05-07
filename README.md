@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/mle86/sh-tests.svg?branch=master)](https://travis-ci.org/mle86/sh-tests)
 
 
-Version 2.4.1, May 2017
+Version 2.5.0, May 2018
 
 <pre><code><b>csv</b> [<i>MODE</i>] [<i>OPTIONS</i>] [<b>--</b>] [<i>COLUMNNAME</i>...]</code></pre>
 
