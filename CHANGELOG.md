@@ -1,5 +1,6 @@
-next (2017-10)
+next (2018-05)
 
+  - introduced option `-q none`  (ignore all quoting characters)
   - more examples
   - readme cleanup
 
