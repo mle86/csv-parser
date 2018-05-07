@@ -28,11 +28,15 @@ $ make
 This will compile the binary and copy it to /usr/local/bin/**csv**.
 The man page will be copied to /usr/local/share/man/man.1/**csv.1.gz**.
 
+
+
 # Code Standard
 
 The program source is valid ISO **C99**.
 It sets the `_POSIX_C_SOURCE = 200809L` feature macro for the **getline**(3) function.
 It also uses the GNU **getopt_long**(3) function.
+
+
 
 # Input Modes
 
