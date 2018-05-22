@@ -2,7 +2,7 @@
 
 # csv(1) - convert csv files to json and other formats
 
-[![Build Status](https://travis-ci.org/mle86/sh-tests.svg?branch=master)](https://travis-ci.org/mle86/sh-tests)
+[![Build Status](https://travis-ci.org/mle86/csv-parser.svg?branch=master)](https://travis-ci.org/mle86/csv-parser)
 
 
 Version 2.5.0, May 2018

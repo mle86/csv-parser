@@ -1,3 +1,7 @@
+v2.5.1 (2018-05-22)
+
+  - fixed documentation mistake
+
 v2.5.0 (2018-05-07)
 
   - introduced option `-q none`  (ignore all quoting characters)
