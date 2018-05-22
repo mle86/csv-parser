@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/mle86/csv-parser.svg?branch=master)](https://travis-ci.org/mle86/csv-parser)
 
 
-Version 2.5.0, May 2018
+Version 2.5.1, May 2018
 
 <pre><code><b>csv</b> [<i>MODE</i>] [<i>OPTIONS</i>] [<b>--</b>] [<i>COLUMNNAME</i>...]</code></pre>
 
