@@ -12,8 +12,8 @@
  */
 
 
-#define VERSION "2.5.1"
-#define VERDATE "May 2018"
+#define VERSION "2.5.2"
+#define VERDATE "February 2019"
 
 #define EXIT_HELP	0
 #define EXIT_SYNTAX	1

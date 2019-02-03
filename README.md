@@ -6,7 +6,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-498e7f.svg?style=flat)](/LICENSE)
 
 
-Version 2.5.1, May 2018
+Version 2.5.2, February 2019
 
 <pre><code><b>csv</b> [<i>MODE</i>] [<i>OPTIONS</i>] [<b>--</b>] [<i>COLUMNNAME</i>...]</code></pre>
 

@@ -1,4 +1,4 @@
-next
+v2.5.2 (2019-02-03)
 
   - clarified licensing
   - fixed build process
