@@ -1,6 +1,7 @@
 next
 
   - clarified licensing
+  - fixed build process
 
 v2.5.1 (2018-05-22)
 

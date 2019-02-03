@@ -39,7 +39,7 @@ $(BIN): $(OBJS)
 # All existing header files are prerequisites.
 	$(CC) -c -o ${*}.o $(CFLAGS) $<
 
-README.md: man/*
+README.md: man/csv.1 man/*.md
 	git submodule update --init man/man-to-md/
 	perl man/man-to-md.pl --word CSV --formatted-code --comment --paste-section-after DESCRIPTION:'Installation.md' --paste-section-after DESCRIPTION:'Code Standard.md' --paste-after HEADLINE:'Badges.md' <man/csv.1 >$@
 
