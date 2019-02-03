@@ -1,6 +1,16 @@
 #ifndef CONST_H
 #define CONST_H
 
+/**
+ * Common constants.
+ *
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
 
 #define VERSION "2.5.1"
 #define VERDATE "May 2018"

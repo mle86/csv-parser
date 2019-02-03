@@ -1,5 +1,16 @@
 #ifndef ESCAPE_H
 #define ESCAPE_H
+
+/**
+ * String escaping functions.
+ *
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
 #include "nstr.h"
 
 

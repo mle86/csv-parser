@@ -1,3 +1,11 @@
+/*
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
 #define _POSIX_C_SOURCE 1
 #include "global.h"
 #include "input.h"

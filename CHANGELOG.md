@@ -1,3 +1,7 @@
+next
+
+  - clarified licensing
+
 v2.5.1 (2018-05-22)
 
   - fixed documentation mistake

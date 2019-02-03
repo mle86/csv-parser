@@ -1,3 +1,12 @@
+/*
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
+
 // plain escaping replacements:
 escape("\x00", "\\0");
 escape("\x08", "\\b");
@@ -16,5 +25,6 @@ escape("\xe2\x80\xa9", "\\u2029");
 
 // other control characters:
 escape_other(0x01, 0x1f, 6, "\\u%04X");
+
 
 // vim: syntax=c

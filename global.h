@@ -1,5 +1,17 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
+
+/**
+ * Global variables
+ * and common macro functions.
+ *
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
 #include <string.h>
 #include <stdbool.h>
 #include "const.h"

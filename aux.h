@@ -1,5 +1,16 @@
 #ifndef AUX_H
 #define AUX_H
+
+/**
+ * Miscellaneous helper functions.
+ *
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
 #include <stdlib.h>
 #include "global.h"
 #include "input.h"

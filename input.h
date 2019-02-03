@@ -1,5 +1,17 @@
 #ifndef INPUT_H
 #define INPUT_H
+
+/**
+ * Input processing functions
+ * and input mode-related definitions.
+ *
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
 #include <stdbool.h>
 #include <stdio.h>
 #include "nstr.h"

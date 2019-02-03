@@ -1,5 +1,17 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
+
+/**
+ * Output functions
+ * and output mode-related definitions.
+ *
+ * This file is part of the 'csv-parser' project
+ * (see https://github.com/mle86/csv-parser).
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright © 2017-2019 Maximilian Eul
+ */
+
 #include <stdbool.h>
 #include "nstr.h"
 #include "const.h"
