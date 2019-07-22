@@ -481,7 +481,7 @@ for the representation of another character.
 It is recommended that input
 in an encoding
 other than plain ASCII or UTF-8
-is converted to UTF-8
+be converted to UTF-8
 with a tool like **iconv**(1)
 before being passed to this program.
 
@@ -581,7 +581,7 @@ signify various error conditions:
   (invalid arguments, missing, or too many column names).
 * **2**
   Input format error
-  (too many column,
+  (too many columns,
   no column match,
   empty header line,
   unexpected quote/EOL/EOF).
