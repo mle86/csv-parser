@@ -5,3 +5,12 @@
   add its functionality (column aliasing) to -a mode,
   have "-n" option as legacy alias for "-U -a" (with coldef requirement)
 
+- Support --filter:
+  drop all records which contain only empty fields
+
+- Support --filter-mode for --filter:
+    - none    (same as omitting --filter entirely)
+    - all-empty | z (default)
+    - all-zero | 0
+    - all-empty-or-zero | z0 | 0z		-- Drop all records which contain only empty and/or "0" fields
+
