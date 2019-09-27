@@ -74,6 +74,7 @@ int main (int argc, char** argv) {
 		{ "color",		2, NULL,   1 },
 		{ "colour",		2, NULL,   1 },
 		{ "trim",		2, NULL,   2 },
+		{ "filter",		2, NULL,   3 },
 //		{ "verbose",		0, NULL, 'v' },
 
 		{ "simple",		0, NULL, 'm' },
@@ -111,6 +112,7 @@ int main (int argc, char** argv) {
 		case 'q': enc_arg(&enclosure, "-q", optarg); break;
 		case   1: color_arg(&colormode, "--color", optarg); break;
 		case   2: trim_arg(&trimmode, "--trim", optarg); break;
+		case   3: filter_arg(&filtermode, "--filter", optarg); break;
 
 		case 'm': outmode = OM_SIMPLE; break;
 		case 'j': outmode = OM_JSON; break;

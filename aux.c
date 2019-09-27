@@ -188,3 +188,17 @@ void trim_arg (trimmode_t *mode, const char* option, const char* value) {
 	else invalid_arg(option, value);
 }
 
+void filter_arg (filtermode_t *mode, const char* option, const char* value) {
+	if (value == NULL || streq(value, "z") || streq(value, "empty") || streq(value, "empty-fields"))
+		*mode = FILTER_EMPTY;
+	else if (streq(value, "0") || streq(value, "zeroes") || streq(value, "zero"))
+		*mode = FILTER_ZEROES;
+	else if (streq(value, "0z") || streq(value, "z0") ||
+			streq(value, "zeroes-or-empty") || streq(value, "zero-or-empty") ||
+			streq(value, "empty-or-zero") || streq(value, "empty-or-zeroes"))
+		*mode = FILTER_EMPTY_OR_ZEROES;
+	else if (streq(value, "none") || streq(value, "no") || streq(value, "off"))
+		*mode = FILTER_NONE;
+	else invalid_arg(option, value);
+}
+
