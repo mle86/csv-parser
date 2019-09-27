@@ -143,7 +143,7 @@ inline void skip (size_t n) {
 		// Records may span multiple lines.
 		// We have to read and process them correctly:
 		while (n-- > 0) {
-			if (!next_line()) {
+			if (!get_line()) {
 				return;  // eof
 			}
 			while (next_field()) ;
@@ -260,6 +260,12 @@ void find_separator (void) {
 	}
 }
 
+/**
+ * Wrapper around get_line().
+ * These two functions are identical
+ * but next_line is for external calls
+ * and get_line is for internal calls only.
+ */
 bool next_line (void) {
 	return get_line();
 }
@@ -371,7 +377,7 @@ const nstr* next_field (void) {
 
 			addf('\n');
 
-			if (! next_line()) {
+			if (! get_line()) {
 				ERR(EXIT_FORMAT, "unexpected end of file on line %zu\n", lineno());
 				break;  // end quoted field here
 			}
@@ -394,5 +400,8 @@ const nstr* next_field (void) {
 
 	// Return the last field and clear cur_line:
 	return fin(NULL);
+ #undef fin
+ #undef addf
+ #undef quoted
 }
 
