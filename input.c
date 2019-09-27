@@ -29,16 +29,17 @@ static size_t line_number;
  */
 static size_t record_number;
 
-static char       separator;
-static char       enclosure;
-static bool       first_line;
-static bool       do_skip;
-static bool       remove_bom;
-static bool       allow_breaks;
-static size_t     limit_records;
-static size_t     skip_records;
-static FILE*      input;
-static trimmode_t trim;
+static char         separator;
+static char         enclosure;
+static bool         first_line;
+static bool         do_skip;
+static bool         remove_bom;
+static bool         allow_breaks;
+static size_t       limit_records;
+static size_t       skip_records;
+static FILE*        input;
+static trimmode_t   trim;
+static filtermode_t filter;
 
 /**
  * This is where get_line() will store its results.
@@ -100,8 +101,20 @@ static bool is_lineend (const char* s);
  */
 static void find_separator (void);
 
+/**
+ * Used by next_line()
+ * to determine if the cur_line should be returned or skipped.
+ */
+static bool is_filterable_line (void);
 
-void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_records, size_t _limit_records, trimmode_t _trim) {
+/**
+ * Used by is_filterable_line()
+ * to determine if the current field is empty.
+ */
+static bool is_filterable_field (const char* field);
+
+
+void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_records, size_t _limit_records, trimmode_t _trim, filtermode_t _filter) {
 	input         = file;
 	line_number   = 0;
 	record_number = 0;
@@ -113,6 +126,7 @@ void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks
 	remove_bom    = _remove_bom;
 	limit_records = _limit_records;
 	trim          = _trim;
+	filter        = _filter;
 	skip_records  = 0;
 
 	lp            = NULL;
@@ -269,12 +283,21 @@ void find_separator (void) {
 
 /**
  * Wrapper around get_line().
- * These two functions are identical
- * but next_line is for external calls
- * and get_line is for internal calls only.
+ * Silently skips over records matching the filtermode,
+ *  up to and including skipping over the entire input if it's all filterable records.
  */
 bool next_line (void) {
-	return get_line();
+	if (filter == FILTER_NONE) {
+		// Simple case: no filtering.
+		return get_line();
+	}
+
+	bool line_status;
+	while ((line_status = get_line()) && is_filterable_line()) {
+		// Keep reading lines until we either hit EOF or find a non-empty line.
+	}
+
+	return line_status;
 }
 
 /**
@@ -430,5 +453,42 @@ const nstr* get_field (void) {
  #undef fin
  #undef addf
  #undef quoted
+}
+
+bool is_filterable_line (void) {
+	/* To determine whether the current line/record should be dropped,
+	 * we'll walk all of its fields (using next_field)
+	 * and test them against is_filterable_field().
+	 * If any one of them is non-empty, we can instantly return false (= do not drop this record),
+	 * we'll just have to reset the 'lp' pointer to the line start
+	 * so that the caller can walk the line with next_field again.  */
+
+	const size_t original_line = line_number;  // for better verbose msg in case of multi-line records
+
+	const nstr* field;
+	while ((field = get_field())) {
+		if (!is_filterable_field(field->buffer)) {
+			// non-empty record --> non-empty line!
+			lp = cur_line;  // reset lp so that the caller can re-read the line with next_field:
+			return false;
+		}
+	}
+
+	// We found only empty/filterable fields on that line, or possibly no fields at all:
+	VERBOSE("skipped filtered line %zu\n", original_line);
+	return true;
+}
+
+inline bool is_filterable_field (const char* field) {
+	switch (filter) {
+		case FILTER_EMPTY:
+			return (field[0] == '\0');
+		case FILTER_ZEROES:
+			return (field[0] == '0' && field[1] == '\0');
+		case FILTER_EMPTY_OR_ZEROES:
+			return (field[0] == '\0' || (field[0] == '0' && field[1] == '\0'));
+		default:
+			return false;
+	}
 }
 

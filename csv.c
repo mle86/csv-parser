@@ -50,6 +50,8 @@ int main (int argc, char** argv) {
 
 	trimmode_t trimmode = TRIM_NONE;
 
+	filtermode_t filtermode = FILTER_NONE;
+
 	size_t skip_lines  = 0;
 	size_t limit_lines = 0;
 	char   separator   = SEP_AUTO;
@@ -157,7 +159,7 @@ int main (int argc, char** argv) {
 	if (limit_lines && file_has_header)
 		limit_lines += 1;
 
-	set_input(stdin, separator, enclosure, allow_breaks, remove_bom, skip_after_header, skip_lines, limit_lines, trimmode);
+	set_input(stdin, separator, enclosure, allow_breaks, remove_bom, skip_after_header, skip_lines, limit_lines, trimmode, filtermode);
 	set_output(outmode, do_flush, pretty_print, "");
 
 	if (! next_line()) {

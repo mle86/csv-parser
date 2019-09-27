@@ -40,8 +40,16 @@ typedef enum trimmode {
 	TRIM_LINES	= TRIM_LINES_L | TRIM_LINES_R,
 } trimmode_t;
 
+typedef enum filtermode {
+	FILTER_NONE	= 0,  // no filtering
 
-void set_input (FILE* file, char separator, char enclosure, bool allow_breaks, bool remove_bom, bool skip_after_header, size_t skip_lines, size_t limit_lines, trimmode_t trim);
+	FILTER_EMPTY,  // drop records consisting solely of empty strings
+	FILTER_ZEROES,  // drop records consisting solely of single zeroes
+	FILTER_EMPTY_OR_ZEROES,  // drop records consisting solely of single zeroes and/or empty strings
+} filtermode_t;
+
+
+void set_input (FILE* file, char separator, char enclosure, bool allow_breaks, bool remove_bom, bool skip_after_header, size_t skip_lines, size_t limit_lines, trimmode_t trim, filtermode_t filter);
 
 size_t lineno (void);
 
