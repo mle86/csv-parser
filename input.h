@@ -49,7 +49,7 @@ bool next_line (void);
 
 /**
  * Returns a pointer to an nstr containing the next field,
- * or NULL if there was not next field on the current line (EOL or EOF).
+ * or NULL if there was no next field on the current line (EOL or EOF).
  * The pointer is only valid until the next call!  */
 const nstr* next_field (void);
 

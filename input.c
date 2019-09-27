@@ -87,7 +87,7 @@ static unsigned short check_bom (const char* s);
 static bool is_lineend (const char* s);
 
 /**
- * Tried to find a separator character on the current line and store it in 'separator'.
+ * Tries to find a separator character on the current line and store it in 'separator'.
  * If nothing is found, 'separator' won't be changed.
  */
 static void find_separator (void);
