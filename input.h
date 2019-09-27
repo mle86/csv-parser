@@ -45,7 +45,9 @@ typedef enum filtermode {
 
 	FILTER_EMPTY,  // drop records consisting solely of empty strings
 	FILTER_ZEROES,  // drop records consisting solely of single zeroes
-	FILTER_EMPTY_OR_ZEROES,  // drop records consisting solely of single zeroes and/or empty strings
+	FILTER_EMPTY_OR_ZEROES,  // drop records consisting solely of single zeroes or empty strings
+	FILTER_BLANK,  // drop records consisting solely of whitespace
+	FILTER_BLANK_OR_ZEROES,  // drop records consisting solely of single zeroes or whitespace
 } filtermode_t;
 
 

@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 /**
  * Number of the last-read line, indexed by 1.
@@ -112,6 +113,8 @@ static bool is_filterable_line (void);
  * to determine if the current field is empty.
  */
 static bool is_filterable_field (const char* field);
+
+static bool isspaces (const char* s);
 
 
 void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_records, size_t _limit_records, trimmode_t _trim, filtermode_t _filter) {
@@ -487,8 +490,20 @@ inline bool is_filterable_field (const char* field) {
 			return (field[0] == '0' && field[1] == '\0');
 		case FILTER_EMPTY_OR_ZEROES:
 			return (field[0] == '\0' || (field[0] == '0' && field[1] == '\0'));
+		case FILTER_BLANK_OR_ZEROES:
+			return (field[0] == '\0' || (field[0] == '0' && field[1] == '\0') || isspaces(field));
+		case FILTER_BLANK:
+			return (field[0] == '\0' || isspaces(field));
 		default:
 			return false;
 	}
+}
+
+inline bool isspaces (const char* s) {
+	while (*s) {
+		if (!isspace(*(s++)))
+			return false;
+	}
+	return true;
 }
 

@@ -197,6 +197,14 @@ void filter_arg (filtermode_t *mode, const char* option, const char* value) {
 			streq(value, "zeroes-or-empty") || streq(value, "zero-or-empty") ||
 			streq(value, "empty-or-zero") || streq(value, "empty-or-zeroes"))
 		*mode = FILTER_EMPTY_OR_ZEROES;
+	else if (streq(value, "b") || streq(value, "blank") || streq(value, "whitespace"))
+		*mode = FILTER_BLANK;
+	else if (streq(value, "0b") || streq(value, "b0") ||
+			streq(value, "zeroes-or-blank") || streq(value, "zero-or-blank") ||
+			streq(value, "blank-or-zero") || streq(value, "blank-or-zeroes") ||
+			streq(value, "zeroes-or-whitespace") || streq(value, "zero-or-whitespace") ||
+			streq(value, "whitespace-or-zero") || streq(value, "whitespace-or-zeroes"))
+		*mode = FILTER_BLANK_OR_ZEROES;
 	else if (streq(value, "none") || streq(value, "no") || streq(value, "off"))
 		*mode = FILTER_NONE;
 	else invalid_arg(option, value);
