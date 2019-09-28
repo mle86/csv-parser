@@ -52,6 +52,7 @@ static size_t cur_line_bufsz = 0;
  * While reading cur_line, we need a pointer to increase which keeps its position between next_field() calls.
  * We cannot simply increase the cur_line pointer itself, because getline(3) might call realloc() on it;
  * we use this pointer instead.  Our get_line() always must reset lp to &cur_line[0] if successful.
+ * Our next_field() always sets this to NULL if there are no more fields on the current line.
  */
 static const char* lp = NULL;
 
@@ -67,6 +68,13 @@ static const char* lp = NULL;
  *  if 'record_number' has already reached 'limit_records' (assuming it's set).
  */
 static bool get_line (void);
+
+/**
+ * Returns a pointer to an nstr containing the next field,
+ * or NULL if there was no next field on the current line (EOL or EOF).
+ * The pointer is only valid until the next call!
+ */
+static const nstr* get_field (void);
 
 /**
  * Reads and discards 'n' input records, updating 'line_number'.
@@ -146,8 +154,7 @@ inline void skip (size_t n) {
 			if (!get_line()) {
 				return;  // eof
 			}
-			while (next_field()) ;
-			record_number--;  // next_field() has increased it, but we don't want to count skipped records
+			while (get_field()) ;
 		}
 	}
 
@@ -270,7 +277,35 @@ bool next_line (void) {
 	return get_line();
 }
 
+/**
+ * Wrapper around get_field().
+ * Increases 'record_number' after there are no more fields on the current line,
+ * i.e. whenever it returns the final field and 'lp' has been re-set to NULL.
+ */
 const nstr* next_field (void) {
+	const size_t original_record = record_number;
+
+	const nstr* f = get_field();
+
+	if (f && !lp) {
+		record_number++;
+
+		if (record_number == 1 && skip_records > 0) {
+			// This was the header record and now we're supposed to skip some records.
+			// We cannot do it right here, or we'll overwrite our 'field' buffer and return garbage.
+			// But we can leave a flag for the next get_line() call:
+			do_skip = true;
+		}
+	}
+
+	if (f && !lp) {
+		VERBOSE("line %zu, record %zu (orig %zu), field \"%s\"\n", line_number, record_number, original_record, f&&f->buffer ? f->buffer : "//");
+	}
+
+	return f;
+}
+
+const nstr* get_field (void) {
 	static nstr* field = NULL;
 	static size_t bsz = 0;
 	#define BSZ_INITIAL 4095
@@ -389,14 +424,6 @@ const nstr* next_field (void) {
 	}
 
 	// Record end.
-	record_number++;
-
-	if (record_number == 1 && skip_records > 0) {
-		// This was the header record and now we're supposed to skip some records.
-		// We cannot do it right here, or we'll overwrite our 'field' buffer and return garbage.
-		// But we can leave a flag for the next get_line() call:
-		do_skip = true;
-	}
 
 	// Return the last field and clear cur_line:
 	return fin(NULL);
