@@ -1,6 +1,7 @@
 v2.6.0 (2019-10)
 
   - introduced option `--filter` (drop empty records)
+  - recognize more zero formats
 
 v2.5.2 (2019-02-03)
 

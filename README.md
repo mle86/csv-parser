@@ -221,7 +221,7 @@ The default output mode is **-m**.
       that consist of empty-string or whitespace-only fields only.
     * **zero**/**0**:
       Drops all records
-      that consist of zero values (“0”) fields only.
+      that consist of zero values (“0”, “.000”...) fields only.
     * **empty-or-zero**/**z0**:
       Drops all records
       that consist of zero values and/or empty-string fields only.
