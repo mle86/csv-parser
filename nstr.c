@@ -149,6 +149,50 @@ bool nstr_appendc_a (nstr* *dest, char c, size_t *maxdestsize) {
 	return true;
 }
 
+bool nstr_appends (nstr* dest, const char* src, size_t srclen, size_t maxdestsize) {
+	if (!dest)
+		// cannot append anything to a nullptr
+		return false;
+	if (!src || !src[0])
+		// okay, nop
+		return true;
+
+	const size_t newsize = dest->length + srclen;
+	if (newsize > maxdestsize)
+		// too long!
+		return false;
+
+	memcpy(dest->buffer + dest->length, src, srclen);
+	dest->length = newsize;
+	dest->buffer[newsize] = '\0';
+
+	return true;
+}
+
+bool nstr_appends_a (nstr* *dest, const char* src, size_t srclen, size_t *maxdestsize) {
+	if (!dest)
+		return false;
+	if (!src || !src[0])
+		// nop
+		return true;
+
+	const bool   initial = (*dest == NULL);
+	const size_t cursize = (initial) ? 0 : (*dest)->length;
+	const size_t newsize = cursize + srclen;
+
+	if (initial || newsize > *maxdestsize) {
+		// resize!
+		realloc_nstr(*dest, newsize + append_reserve);
+		*maxdestsize = newsize + append_reserve;
+	}
+
+	memcpy((*dest)->buffer + cursize, src, srclen);
+	(*dest)->length = newsize;
+	(*dest)->buffer[newsize] = '\0';
+
+	return true;
+}
+
 bool nstr_appendsz (nstr* dest, const char* src, size_t maxdestsize) {
 	if (!dest)
 		// cannot append anything to a nullptr
@@ -158,15 +202,8 @@ bool nstr_appendsz (nstr* dest, const char* src, size_t maxdestsize) {
 		return true;
 
 	const size_t srclen = strlen(src);
-	const size_t newsize = dest->length + srclen;
-	if (newsize > maxdestsize)
-		// too long!
-		return false;
 
-	memcpy(dest->buffer + dest->length, src, srclen + 1);
-	dest->length = newsize;
-
-	return true;
+	return nstr_appends(dest, src, srclen, maxdestsize);
 }
 
 bool nstr_appendsz_a (nstr* *dest, const char* src, size_t *maxdestsize) {
@@ -176,21 +213,9 @@ bool nstr_appendsz_a (nstr* *dest, const char* src, size_t *maxdestsize) {
 		// nop
 		return true;
 
-	const bool   initial = (*dest == NULL);
-	const size_t cursize = (initial) ? 0 : (*dest)->length;
-	const size_t srclen  = strlen(src);
-	const size_t newsize = cursize + srclen;
+	const size_t srclen = strlen(src);
 
-	if (initial || newsize > *maxdestsize) {
-		// resize!
-		realloc_nstr(*dest, newsize + append_reserve);
-		*maxdestsize = newsize + append_reserve;
-	}
-
-	memcpy((*dest)->buffer + cursize, src, srclen + 1);
-	(*dest)->length = newsize;
-
-	return true;
+	return nstr_appends_a(dest, src, srclen, maxdestsize);
 }
 
 nstr* nstr_dup (const nstr* src) {

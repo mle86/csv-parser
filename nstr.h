@@ -92,6 +92,24 @@ bool nstr_appendc (nstr* dest, char src, size_t maxdestsize);
 bool nstr_appendc_a (nstr* *dest, char src, size_t *maxdestsize);
 
 /**
+ * Appends the first 'srclength' bytes of the 'src' string onto 'dest', assuming there's enough space left,
+ * and adds a trailing NUL byte.
+ * This assumes that the 'src' buffer is at least 'srclength' bytes.
+ * If dest's current length plus 'length' combined would be greater than 'maxdestsize',
+ * the function returns FALSE and does nothing.
+ */
+bool nstr_appends (nstr* dest, const char* src, size_t srclength, size_t maxdestsize);
+
+/**
+ * Appends the first 'srclength' bytes of the 'src' string onto 'dest', resizing the 'dest' buffer if necessary
+ * and adding a trailing NUL byte.
+ * This assumes that the 'src' buffer is at least 'srclength' bytes.
+ * The buffer's current size must be passed in *maxdestsize;
+ * That value will be changed to the new buffer size if the buffer gets resized.
+ */
+bool nstr_appends_a (nstr* *dest, const char* src, size_t srclength, size_t *maxdestsize);
+
+/**
  * Appends the 'src' string onto 'dest', assuming there's enough space left.
  * If dest's current length plus strlen(src) combined would be greater than 'maxdestsize',
  * the function returns FALSE and does nothing.
