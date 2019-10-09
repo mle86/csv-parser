@@ -206,6 +206,31 @@ The default output mode is **-m**.
       Whitespace at the start/end of a line
       is considered to be part of the first/last field's value.
       This is the default setting if the option is missing.
+* **--filter**[=*MODE*]  
+  When filtering is active,
+  the program won't output records
+  it considers “empty”.
+  (Filtered records do not count toward the **--limit** either.)
+  Possible values for *MODE*:
+    * **empty**/**z**:
+      Drops all records
+      that consist of empty-string fields only.
+      This is the default if the option is given without *MODE*.
+    * **blank**/**b**:
+      Drops all records
+      that consist of empty-string or whitespace-only fields only.
+    * **zero**/**0**:
+      Drops all records
+      that consist of zero values (“0”) fields only.
+    * **empty-or-zero**/**z0**:
+      Drops all records
+      that consist of zero values and/or empty-string fields only.
+    * **blank-or-zero**/**b0**:
+      Drops all records
+      that consist of zero values and/or whitespace fields only.
+    * **none**/**off**:
+      No record filtering.
+      This is the default setting if the option is missing.
 * **-F, --flush**  
   Flush the output after every input line.
 * **-M, --keep-bom**  

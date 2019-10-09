@@ -230,6 +230,42 @@ This is the default setting if the option is missing.
 .RE
 .PD
 .TP
+\fB\-\-filter\fR[=\fIMODE\fR]
+When filtering is active,
+the program won't output records
+it considers \(lqempty\(rq.
+(Filtered records do not count toward the \fB\-\-limit\fR either.)
+Possible values for \fIMODE\fR:
+.PD 0
+.RS
+.IP - 2
+.BR empty / z :
+Drops all records
+that consist of empty-string fields only.
+This is the default if the option is given without \fIMODE\fR.
+.IP - 2
+.BR blank / b :
+Drops all records
+that consist of empty-string or whitespace-only fields only.
+.IP - 2
+.BR zero / 0 :
+Drops all records
+that consist of zero values (\(lq0\(rq) fields only.
+.IP - 2
+.BR empty-or-zero / z0 :
+Drops all records
+that consist of zero values and/or empty-string fields only.
+.IP - 2
+.BR blank-or-zero / b0 :
+Drops all records
+that consist of zero values and/or whitespace fields only.
+.IP - 2
+.BR none / off :
+No record filtering.
+This is the default setting if the option is missing.
+.RE
+.PD
+.TP
 .B \-F, \-\-flush
 Flush the output after every input line.
 .TP
