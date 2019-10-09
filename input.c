@@ -82,7 +82,7 @@ static const nstr* get_field (void);
  * Reads and discards 'n' input records, updating 'line_number'.
  * Does not change 'cur_line' or 'cur_line_len' in any way.
  */
-static void skip (size_t n);
+static inline void skip (size_t n);
 
 /**
  * Tries to find a UTF-x BOM on the 's' line and return the length of the found BOM.
@@ -114,8 +114,8 @@ static bool is_filterable_line (void);
  */
 static bool is_filterable_field (const char* field);
 
-static bool isspaces (const char* s);
-inline bool iszero (const char* s);
+static inline bool isspaces (const char* s);
+static inline bool iszero (const char* s);
 
 
 void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks, bool _remove_bom, bool skip_after_header, size_t _skip_records, size_t _limit_records, trimmode_t _trim, filtermode_t _filter) {
@@ -151,11 +151,11 @@ void set_input (FILE* file, char _separator, char _enclosure, bool _allow_breaks
 	}
 }
 
-inline size_t lineno (void) {
+size_t lineno (void) {
 	return line_number;
 }
 
-inline void skip (size_t n) {
+void skip (size_t n) {
 	char* buf = NULL;
 	size_t bufsz = 0;
 
@@ -477,7 +477,7 @@ bool is_filterable_line (void) {
 	return true;
 }
 
-inline bool is_filterable_field (const char* field) {
+bool is_filterable_field (const char* field) {
 	switch (filter) {
 		case FILTER_EMPTY:
 			return (field[0] == '\0');
@@ -494,7 +494,7 @@ inline bool is_filterable_field (const char* field) {
 	}
 }
 
-inline bool isspaces (const char* s) {
+bool isspaces (const char* s) {
 	while (*s) {
 		if (!isspace(*(s++)))
 			return false;
@@ -502,7 +502,7 @@ inline bool isspaces (const char* s) {
 	return true;
 }
 
-inline bool iszero (const char* s) {
+bool iszero (const char* s) {
 	/* Recognized "zero" formats:
 	 *  0		S0,S1
 	 *  000		S0,S1+
