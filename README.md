@@ -221,13 +221,13 @@ The default output mode is **-m**.
       that consist of empty-string or whitespace-only fields only.
     * **zero**/**0**:
       Drops all records
-      that consist of zero values (“0”, “.000”...) fields only.
+      that consist of zero-valued (“0”, “.000”...) fields only.
     * **empty-or-zero**/**z0**:
       Drops all records
-      that consist of zero values and/or empty-string fields only.
+      that consist of zero-valued and/or empty-string fields only.
     * **blank-or-zero**/**b0**:
       Drops all records
-      that consist of zero values and/or whitespace fields only.
+      that consist of zero-valued and/or whitespace fields only.
     * **none**/**off**:
       No record filtering.
       This is the default setting if the option is missing.
