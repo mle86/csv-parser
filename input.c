@@ -11,6 +11,7 @@
 #include "const.h"
 #include "global.h"
 #include "chars.h"
+#include "fw.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -327,6 +328,11 @@ const nstr* next_field (void) {
 }
 
 const nstr* get_field (void) {
+	if (is_fw()) {
+		// Delegate everything to the fw module:
+		return next_fw_field(cur_line, cur_line_len, &lp);
+	}
+
 	static nstr* field = NULL;
 	static size_t bsz = 0;
 	#define BSZ_INITIAL 4095

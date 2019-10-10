@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "global.h"
 #include "input.h"
 
@@ -21,6 +22,9 @@ void  Version (void);
 
 void* Malloc  (size_t size);
 void* Realloc (void* origptr, size_t newsize);
+
+void* structcpy (void* origptr, size_t size);
+#define structcpy(orig, size) memcpy(Malloc(size), (orig), (size))
 
 void sep_arg    (char *separator,    const char* option, const char* value);
 void enc_arg    (char *enclosure,    const char* option, const char* value);

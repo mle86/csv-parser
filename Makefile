@@ -10,6 +10,7 @@ OBJS+=input.o
 OBJS+=output.o
 OBJS+=escape.o
 OBJS+=nstr.o
+OBJS+=fw.o
 
 DEP=*.h def/*.def
 
