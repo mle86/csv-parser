@@ -12,6 +12,7 @@
 #include "output.h"
 #include "nstr.h"
 #include "aux.h"
+#include "fw.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -30,6 +31,7 @@ typedef struct coldef {
 
 static void find_colnames (void);
 static void read_colname_assignments (size_t args, const char** fieldname);
+static void read_fw_assignments (size_t args, const char** argv);
 static size_t read_coldefs (size_t argc, const char** argv, struct coldef coldefs [], size_t max);
 static void match_colnames (size_t argc, const char** argv, bool with_unknowns);
 static void autonumber_columns (void);
@@ -42,6 +44,7 @@ int main (int argc, char** argv) {
 		MODE_NAMED_COLUMNS,
 		MODE_ASSIGNED_NAMES,
 		MODE_NUMBERED_COLUMNS,
+		MODE_FIXED_WIDTH_COLUMNS,
 	} mode = MODE_AUTO_COLUMNS;
 
 	outmode_t outmode = OM_SIMPLE;
@@ -68,6 +71,7 @@ int main (int argc, char** argv) {
 		{ "named-columns",	0, NULL, 'n' },
 		{ "auto-columns",	0, NULL, 'a' },
 		{ "numbered-columns",	0, NULL, 'i' },
+		{ "fixed-width",	0, NULL,   4 },
 
 		{ "help",		0, NULL, 'h' },
 		{ "version",		0, NULL, 'V' },
@@ -100,10 +104,11 @@ int main (int argc, char** argv) {
 	signed char c;
 	while ((c = getopt_long(argc, argv, options, long_options, NULL)) != -1)
 	switch (c) {
-		case 'a': mode = MODE_AUTO_COLUMNS;     break;
-		case 'g': mode = MODE_ASSIGNED_NAMES;   break;
-		case 'n': mode = MODE_NAMED_COLUMNS;    break;
-		case 'i': mode = MODE_NUMBERED_COLUMNS; break;
+		case 'a': mode = MODE_AUTO_COLUMNS;        break;
+		case 'g': mode = MODE_ASSIGNED_NAMES;      break;
+		case 'n': mode = MODE_NAMED_COLUMNS;       break;
+		case 'i': mode = MODE_NUMBERED_COLUMNS;    break;
+		case   4: mode = MODE_FIXED_WIDTH_COLUMNS; break;
 
 		case 'h': Help();    return EXIT_HELP;
 		case 'V': Version(); return EXIT_HELP;
@@ -143,6 +148,10 @@ int main (int argc, char** argv) {
 			outmode = OM_SHELL_VARS_NUMBERED;
 		else if (outmode == OM_JSON)
 			outmode = OM_JSON_NUMBERED;
+	} else if (mode == MODE_FIXED_WIDTH_COLUMNS) {
+		separator = SEP_NONE;
+		enclosure = ENC_NONE;
+		allow_breaks = false;
 	}
 	if (with_unknowns && mode != MODE_NAMED_COLUMNS) {
 		FAIL(EXIT_SYNTAX, "option -u can only be used with input mode -n\n");
@@ -192,6 +201,10 @@ int main (int argc, char** argv) {
 	} else if (mode == MODE_NUMBERED_COLUMNS) {
 		/* Auto-numbered columns, no header line.  */
 		autonumber_columns();
+
+	} else if (mode == MODE_FIXED_WIDTH_COLUMNS) {
+		/* Read column names and positions/widths from cmdline arguments.  */
+		read_fw_assignments(argc - optind, (const char**)(argv + optind));
 	}
 
 	if (file_has_header) {
@@ -358,6 +371,41 @@ void read_colname_assignments (size_t args, const char** argv) {
 			VERBOSE("got column name \"%s\" (%zu)\n", ColumnName[c]->buffer, c);
 		}
 	}
+}
+
+void read_fw_assignments (size_t args, const char** argv) {
+	if (args <= 0)
+		FAIL(EXIT_SYNTAX, "no column definitions\n");
+	if ((args % 2) != 0)
+		// colname colpos colname colpos... -- always in pairs
+		FAIL(EXIT_SYNTAX, "invalid column definitions\n");
+
+	fw_col_t ColumnPos [args / 2];
+
+	for (size_t c = 0; c < args / 2; c++) {
+		const char* colname = argv[(c * 2)];
+		const char* colpos  = argv[(c * 2) + 1];
+
+		const char* e = NULL;
+		fw_col_t fw = { .start=0, .end=0 };
+		fw.start = strtoll(colpos, (char**)&e, 10);
+		if (*e && (*e == ',' || *e == '-') && *(++e) != '\0') {
+			fw.end = strtoll(e, (char**)&e, 10);
+		}
+
+		if (fw.start <= 0 || *e)
+			FAIL(EXIT_SYNTAX, "invalid column '%s' definition: '%s'\n", colname, colpos);
+
+		ColumnName[c] = nstr_fromsz(colname);
+		ColumnPos [c] = fw;
+
+		if (c > 0 && ColumnPos[c - 1].end == 0 && ColumnPos[c].start > 1) {
+			// Previous column has no defined end pos. Set it now:
+			ColumnPos[c - 1].end = ColumnPos[c].start - 1;
+		}
+	}
+
+	set_fw(ColumnPos, args / 2);
 }
 
 void autonumber_columns (void) {

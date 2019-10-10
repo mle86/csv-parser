@@ -1,3 +1,7 @@
+next (2020-01)
+
+  - introduced input mode `--fixed-width` (fixed width text files)
+
 v2.6.0 (2020-01-03)
 
   - introduced option `--filter` (drop empty records)
