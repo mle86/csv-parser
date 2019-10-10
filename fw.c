@@ -79,6 +79,10 @@ nstr* next_fw_field (const char* line, size_t linelen, const char* *lp) {
 
 	prev_column = col;  // !
 
+	if (col == FINAL_COLUMN) {
+		*lp = NULL;
+	}
+
 	return field;
 }
 

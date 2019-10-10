@@ -56,5 +56,18 @@ EOT
 assertCmdEq "$CSV -im -s1 -l1 < $SAMPLE/sample1.csv" "$expectedOutput" \
 	"csv -is1l1 failed!"
 
+# The --fixed-width mode does not treat the first line specially (similar to -g),
+# but internally its record counting process is a bit different.
+# Make sure it still works as expected:
+
+define expectedOutput <<-EOT
+	X1: V0
+	X2: V2
+	X3: V4
+EOT
+
+assertCmdEq "$CSV -m -s1 -l1 --fixed-width  X1 1-2  X2 5-6  X3 9-10 < $SAMPLE/fixed1.fw" "$expectedOutput" \
+	"csv --fixed-width -s1l1 failed!"
+
 
 success
