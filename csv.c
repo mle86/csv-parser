@@ -165,6 +165,9 @@ int main (int argc, char** argv) {
 	if (with_unknowns && mode != MODE_NAMED_COLUMNS) {
 		FAIL(EXIT_SYNTAX, "option -u can only be used with input mode -n\n");
 	}
+	if ((trimmode & TRIM_FIELDS) && mode != MODE_FIXED_WIDTH_COLUMNS) {
+		FAIL(EXIT_SYNTAX, "field trimming can only be used with input mode --fixed-width\n");
+	}
 	if (!with_unknowns && has_U_option && mode != MODE_NAMED_COLUMNS) {
 		WARN("option -U has no effect in input modes other than -n\n");
 	}

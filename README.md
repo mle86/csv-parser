@@ -219,10 +219,14 @@ The default output mode is **-m**.
     * **lines**/**records**:
       Removes whitespace from the start and end of every input line.
       This is the default if the option is given without _MODE_.
+    * **fields**:
+      Removes whitespace from the start and end of every field value.
+      Currently this is only available in **--fixed-width** input mode.
     * **none**/**off**:
       No whitespace removal.
-      Whitespace at the start/end of a line
-      is considered to be part of the first/last field's value.
+      Whitespace
+      is considered to be
+      part of the input field values.
       This is the default setting if the option is missing.
 * **--filter**[=_MODE_]  
   When filtering is active,
