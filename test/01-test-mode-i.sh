@@ -29,6 +29,6 @@ define expectedOutput <<-EOT
 EOT
 
 assertCmdEq "$CSV -im < $SAMPLE/sample1.csv" "$expectedOutput" \
-	"csv -a did not read sample1.csv correctly!"
+	"csv -i did not read sample1.csv correctly!"
 
 success

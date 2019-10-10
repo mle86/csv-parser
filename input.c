@@ -177,7 +177,7 @@ void skip (size_t n) {
 	}
 
 	if (ferror(input)) {
-		ERR(EXIT_INTERNAL, "read error");
+		ERR(EXIT_INTERNAL, "read error\n");
 		clearerr(input);
 	}
 
@@ -199,7 +199,7 @@ bool get_line (void) {
 	ssize_t len = getline(&cur_line, &cur_line_bufsz, input);
 	if (len < 0) {
 		if (ferror(input)) {
-			ERR(EXIT_INTERNAL, "read error");
+			ERR(EXIT_INTERNAL, "read error\n");
 			clearerr(input);
 		}
 		cur_line_len = 0;
