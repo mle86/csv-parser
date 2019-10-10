@@ -77,7 +77,7 @@ static bool get_line (void);
  * or NULL if there was no next field on the current line (EOL or EOF).
  * The pointer is only valid until the next call!
  */
-static const nstr* get_field (void);
+static nstr* get_field (void);
 
 /**
  * Reads and discards 'n' input records, updating 'line_number'.
@@ -311,7 +311,7 @@ bool next_line (void) {
  * i.e. whenever it returns the final field and 'lp' has been re-set to NULL.
  */
 const nstr* next_field (void) {
-	const nstr* f = get_field();
+	nstr* f = get_field();
 
 	if (f && !lp) {
 		record_number++;
@@ -324,10 +324,36 @@ const nstr* next_field (void) {
 		}
 	}
 
+	if (f && (trim & TRIM_FIELDS_R)) {
+		// Remove trailing whitespace:
+		size_t trimlen = 0;
+		for (size_t p = f->length; p > 0; p--) {
+			if (!istrim(f->buffer[p - 1]))
+				break;
+			trimlen++;
+		}
+		if (trimlen > 0) {
+			f->length -= trimlen;
+			f->buffer[f->length] = '\0';
+		}
+	}
+	if (f && (trim & TRIM_FIELDS_L)) {
+		size_t trimlen = 0;
+		for (size_t p = 0; p < f->length; p++) {
+			if (!istrim(f->buffer[p]))
+				break;
+			trimlen++;
+		}
+		if (trimlen > 0) {
+			f->length -= trimlen;
+			memmove(f->buffer, f->buffer + trimlen, f->length + 1);
+		}
+	}
+
 	return f;
 }
 
-const nstr* get_field (void) {
+nstr* get_field (void) {
 	if (is_fw()) {
 		// Delegate everything to the fw module:
 		return next_fw_field(cur_line, cur_line_len, &lp);

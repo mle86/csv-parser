@@ -61,7 +61,7 @@ bool is_fw (void);
  *
  * The returned pointer is valid until the next call.
  */
-const nstr* next_fw_field (const char* line, size_t linelen, const char* *lp);
+nstr* next_fw_field (const char* line, size_t linelen, const char* *lp);
 
 
 #endif  // FW_H

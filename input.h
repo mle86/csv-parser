@@ -45,6 +45,10 @@ typedef enum trimmode {
 	TRIM_LINES_L	= 1,
 	TRIM_LINES_R	= 2,
 	TRIM_LINES	= TRIM_LINES_L | TRIM_LINES_R,
+
+	TRIM_FIELDS_L	= 4,
+	TRIM_FIELDS_R	= 8,
+	TRIM_FIELDS	= TRIM_FIELDS_L | TRIM_FIELDS_R,
 } trimmode_t;
 
 typedef enum filtermode {

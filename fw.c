@@ -36,7 +36,7 @@ inline bool is_fw (void) {
 }
 
 
-const nstr* next_fw_field (const char* line, size_t linelen, const char* *lp) {
+nstr* next_fw_field (const char* line, size_t linelen, const char* *lp) {
 	static nstr* field = NULL;
 	static size_t bsz = 0;
 	#define BSZ_INITIAL 4095
