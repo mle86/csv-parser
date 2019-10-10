@@ -1,6 +1,7 @@
 next (2020-01)
 
   - introduced input mode `--fixed-width` (fixed width text files)
+  - introduced option `--trim fields`  (enable field trim)
 
 v2.6.0 (2020-01-03)
 

@@ -88,7 +88,7 @@ void Help (void) { printf(
 	"                  "M1"auto"M0" (default), or "M1"never"M0".\n"
 	"  "M1"--trim"M0"[="Mu "MODE"M0"]   "
 	                   "Trim whitespace from input:\n"
-	"                  "M1"lines"M0" (default if "Mu "MODE"M0" is missing) or "M1"none"M0" (default).\n"
+	"                  "M1"lines"M0" (default if "Mu "MODE"M0" is missing), "M1"fields"M0", or "M1"none"M0" (default).\n"
 	"  "M1"--filter"M0"[="Mu "MODE"M0"] "
 	                   "Drop input records from output:\n"
 	"                  "M1"empty"M0" (default if "Mu "MODE"M0" is missing), "M1"blank"M0", "M1"zero"M0",\n"
@@ -189,6 +189,8 @@ void color_arg (colormode_t *mode, const char* option, const char* value) {
 void trim_arg (trimmode_t *mode, const char* option, const char* value) {
 	if (value == NULL || streq(value, "lines") || streq(value, "line") || streq(value, "records") || streq(value, "record"))
 		*mode = TRIM_LINES;
+	else if (streq(value, "fields") || streq(value, "field") || streq(value, "cells") || streq(value, "cell"))
+		*mode = TRIM_FIELDS;
 	else if (streq(value, "none") || streq(value, "no") || streq(value, "off"))
 		*mode = TRIM_NONE;
 	else invalid_arg(option, value);
