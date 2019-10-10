@@ -64,6 +64,9 @@ int main (int argc, char** argv) {
 	bool   do_flush     = false;
 	bool   with_unknowns = false;
 	bool   has_U_option = false;
+	bool   has_d_option = false;
+	bool   has_q_option = false;
+	bool   has_b_option = false;
 
 	const char* options = "gnaihVmjJXCd:q:bes:l:FMuU";
 	const struct option long_options [] = {
@@ -113,8 +116,8 @@ int main (int argc, char** argv) {
 		case 'h': Help();    return EXIT_HELP;
 		case 'V': Version(); return EXIT_HELP;
 
-		case 'd': sep_arg(&separator, "-d", optarg); break;
-		case 'q': enc_arg(&enclosure, "-q", optarg); break;
+		case 'd': sep_arg(&separator, "-d", optarg); has_d_option = true; break;
+		case 'q': enc_arg(&enclosure, "-q", optarg); has_q_option = true; break;
 		case   1: color_arg(&colormode, "--color", optarg); break;
 		case   2: trim_arg(&trimmode, "--trim", optarg); break;
 		case   3: filter_arg(&filtermode, "--filter", optarg); break;
@@ -125,7 +128,7 @@ int main (int argc, char** argv) {
 		case 'X': outmode = OM_SHELL_VARS; break;
 		case 'C': outmode = OM_CSV; break;
 
-		case 'b': allow_breaks = true; break;
+		case 'b': allow_breaks = true; has_b_option = true; break;
 		case 'e': IgnoreErrors = true; break;
 		case 'F': do_flush = true; break;
 //		case 'v': Verbose = true; break;
@@ -149,6 +152,12 @@ int main (int argc, char** argv) {
 		else if (outmode == OM_JSON)
 			outmode = OM_JSON_NUMBERED;
 	} else if (mode == MODE_FIXED_WIDTH_COLUMNS) {
+		if (has_d_option && separator != SEP_NONE)
+			WARN("option -d has no effect in input mode --fixed-width\n");
+		if (has_q_option && enclosure != ENC_NONE)
+			WARN("option -q has no effect in input mode --fixed-width\n");
+		if (has_b_option)
+			WARN("option -b has no effect in input mode --fixed-width\n");
 		separator = SEP_NONE;
 		enclosure = ENC_NONE;
 		allow_breaks = false;
