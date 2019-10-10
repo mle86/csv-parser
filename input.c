@@ -310,8 +310,6 @@ bool next_line (void) {
  * i.e. whenever it returns the final field and 'lp' has been re-set to NULL.
  */
 const nstr* next_field (void) {
-	const size_t original_record = record_number;
-
 	const nstr* f = get_field();
 
 	if (f && !lp) {
@@ -323,10 +321,6 @@ const nstr* next_field (void) {
 			// But we can leave a flag for the next get_line() call:
 			do_skip = true;
 		}
-	}
-
-	if (f && !lp) {
-		VERBOSE("line %zu, record %zu (orig %zu), field \"%s\"\n", line_number, record_number, original_record, f&&f->buffer ? f->buffer : "//");
 	}
 
 	return f;
