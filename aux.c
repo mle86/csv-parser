@@ -47,6 +47,7 @@ void Help (void) { printf(
 	"            as an array instead of an object.  Not compatible with "M1"-J"M0" mode.\n"
 	"            Causes the "M1"-X"M0" mode not to output any header names.\n"
 	"\n"
+); printf(
 	"Options:\n"
 	"  "M1"-m"M0", "M1"--simple"M0"  "
 	"Output in simple format. (This is the default format.)\n"
@@ -64,9 +65,9 @@ void Help (void) { printf(
 	"                     The special value \""M1"auto"M0"\" causes auto-detection\n"
 	"                     on the first input line (this is the default mode).\n"
 	"  "M1"-q"M0", "M1"--quotes"M0" "Mu "C"M0"  "
-	                     "Use field quoting character "Mu "C"M0". Default: -q\".\n"
-	"                     The special value \""M1"auto"M0"\" causes auto-detection\n"
-	"                     on the first quoted field (recognized: \", ').\n"
+	                  "Use field quoting character "Mu "C"M0". Default: -q\".\n"
+	"                  The special value \""M1"auto"M0"\" causes auto-detection\n"
+	"                  on the first quoted field (recognized: \", ').\n"
 	"  "M1"-b"M0", "M1"--allow-breaks"M0"  "
 	                      "Allow linebreaks within doublequoted fields.\n"
 	"  "M1"-s"M0", "M1"--skip "M0 Mu "N"M0"  "
@@ -79,6 +80,7 @@ void Help (void) { printf(
 	"                 In modes "M1"-n"M0" and "M1"-a"M0", the header line is not counted.\n"
 	"                 Setting "Mu "N"M0" to zero removes the limit (this is the default).\n"
 	"\n"
+); printf(
 	"  "M1"-e"M0", "M1"--ignore-errors"M0"  "
 	                  "Don't stop on encountering malformed CSV input.\n"
 	"  "M1"--color"M0"[="Mu "WHEN"M0"]  "
