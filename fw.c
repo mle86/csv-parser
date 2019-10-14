@@ -63,8 +63,12 @@ nstr* next_fw_field (const char* line, size_t linelen, const char* *lp) {
 		n = 1 + col->end - col->start;
 	} else {
 		// Copy the rest of the line, without the trailing CRLF:
+		const size_t lineend_len = count_lineend_len(line, linelen);
 		n = &line[linelen] - *lp;
-		n -= count_lineend_len(line, linelen);
+		n = (lineend_len >= n)
+			// prevent underflow
+			? 0
+			: n - lineend_len;
 	}
 
 	// Ensure there is enough letters left on the line:
