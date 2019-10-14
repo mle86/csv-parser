@@ -82,6 +82,12 @@ In this mode,
 \fICOLUMNNAME\fR specifications are
 neither needed nor possible.
 The first input line will not be treated specially.
+.TP
+.B \-\-fixed\-width
+See the
+.\" LINK-TO FIXED-WIDTH INPUT MODE
+\(lqFixed-Width Input Mode\(rq
+section below.
 .SH OUTPUT MODES
 The program operates in one of several
 .B output modes\fR.
@@ -370,6 +376,48 @@ This mode may be useful to filter or rename columns in existing CSV files
 and to change unusual separator characters in existing CSV files to the standard comma.
 .P
 This mode will remove all NUL bytes from the input.
+.SH FIXED-WIDTH INPUT MODE
+In \fB\-\-fixed\-width\fR input mode
+the program reads non-CSV flat files
+according to command-line column definitions.
+Every input line is assumed to span exactly one record
+(option \fB-b\fR has no effect in this input mode),
+there are no field quoting characters
+(option \fB-q\fR has no effect),
+and field separators are not needed
+(option \fB-d\fR has no effect).
+.P
+This mode uses position indexes
+which represent bytes.
+Using any multibyte encoding, such as UTF-8,
+can cause significant indexing problems.
+Indexing starts at 1 (one).
+.P
+This mode requires the definition
+of at least one column on the command line like this:
+.P
+.nf
+  \fIcolname\fR \fIstartpos\fR[-\fIendpos\fR] ...
+.fi
+.P
+A missing \fIendpos\fR
+means that the column ends directly before the following column definition,
+or at the line's end if there is no following definition.
+Single-byte columns
+can be defined by setting \fIendpos\fR
+to the same value as \fIstartpos\fR.
+.P
+For example,
+the invocation
+\(lq\fBcsv \-\-fixed\-width XA\ 1\-2 XB\ 4\-4\ XC\ 5 XD\ 12\fR\(rq
+will read
+each line's first and second byte as column \(lqXA\(rq;
+the fourth byte will be named \(lqXB\(rq;
+the fifth to eleventh byte will be named \(lqXC\(rq;
+and the twelfth byte and everything after it
+until the line end
+will be column \(lqXD\(rq.
+The line's third byte will be ignored.
 .SH PRETTY-PRINTING
 The program has limited pretty-printing capabilities:
 if the output (\fIstdout\fR) is a tty,

@@ -96,6 +96,10 @@ The default input mode is **-a**.
   _COLUMNNAME_ specifications are
   neither needed nor possible.
   The first input line will not be treated specially.
+* **--fixed-width**  
+  See the
+  “[Fixed-Width Input Mode](#fixed-width-input-mode)”
+  section below.
 
 <a name="output-modes"></a>
 
@@ -344,6 +348,51 @@ This mode may be useful to filter or rename columns in existing CSV files
 and to change unusual separator characters in existing CSV files to the standard comma.
 
 This mode will remove all NUL bytes from the input.
+
+<a name="fixed-width-input-mode"></a>
+
+# Fixed-Width Input Mode
+
+In **--fixed-width** input mode
+the program reads non-CSV flat files
+according to command-line column definitions.
+Every input line is assumed to span exactly one record
+(option **-b** has no effect in this input mode),
+there are no field quoting characters
+(option **-q** has no effect),
+and field separators are not needed
+(option **-d** has no effect).
+
+This mode uses position indexes
+which represent bytes.
+Using any multibyte encoding, such as UTF-8,
+can cause significant indexing problems.
+Indexing starts at 1 (one).
+
+This mode requires the definition
+of at least one column on the command line like this:
+
+<pre><code>  <i>colname</i> <i>startpos</i>[-<i>endpos</i>] ...
+</code></pre>
+
+A missing _endpos_
+means that the column ends directly before the following column definition,
+or at the line's end if there is no following definition.
+Single-byte columns
+can be defined by setting _endpos_
+to the same value as _startpos_.
+
+For example,
+the invocation
+“**csv --fixed-width XA&nbsp;1-2 XB&nbsp;4-4&nbsp;XC&nbsp;5 XD&nbsp;12**”
+will read
+each line's first and second byte as column “XA”;
+the fourth byte will be named “XB”;
+the fifth to eleventh byte will be named “XC”;
+and the twelfth byte and everything after it
+until the line end
+will be column “XD”.
+The line's third byte will be ignored.
 
 <a name="pretty-printing"></a>
 
