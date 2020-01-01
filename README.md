@@ -70,7 +70,9 @@ The default input mode is **-a**.
   printing only the named columns.
   Separate column names with a single “**.**” argument!
   The name order is irrelevant, as is case.
-  See the section “Named Columns Mode” below
+  See the section
+  “[Named Columns Mode](#named-columns-mode)”
+  below
   for more information about this input mode.
 * **-g, --assigned-names**  
   Names assigned to column positions:
@@ -126,10 +128,14 @@ The default output mode is **-m**.
   each of which represents one input line.
 * **-X, --shell-vars**  
   Output in shell&nbsp;variable&nbsp;assignment format.
-  See the “Examples” section below.
+  See the
+  “[Examples](#examples)”
+  section below.
 * **-C, --csv-output**  
   Standardized CSV output.
-  See the “CSV output mode” section below for more details.
+  See the
+  “[CSV output mode](#csv-output-mode)”
+  section below for more details.
 
 <a name="other-options"></a>
 
