@@ -1,4 +1,4 @@
-v2.6.0 (2019-10)
+v2.6.0 (2020-01-03)
 
   - introduced option `--filter` (drop empty records)
   - recognize more zero formats

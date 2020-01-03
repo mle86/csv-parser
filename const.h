@@ -8,12 +8,12 @@
  * (see https://github.com/mle86/csv-parser).
  *
  * SPDX-License-Identifier: MIT
- * Copyright © 2017-2019 Maximilian Eul
+ * Copyright © 2017-2020 Maximilian Eul
  */
 
 
-#define VERSION "2.5.2"
-#define VERDATE "February 2019"
+#define VERSION "2.6.0"
+#define VERDATE "January 2020"
 
 #define EXIT_HELP	0
 #define EXIT_SYNTAX	1
