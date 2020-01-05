@@ -5,6 +5,19 @@
  * Output functions
  * and output mode-related definitions.
  *
+ * Call sequence:
+ *
+ *   - On program start: set_output().
+ *   
+ *   - If input is empty: output_empty().
+ *   - If input is non-empty:
+ *       - output_begin().
+ *       - For each input record:
+ *           - output_line_begin().
+ *           - For each field in the record: output_kv().
+ *           - output_line_end().
+ *       - output_end().
+ *
  * This file is part of the 'csv-parser' project
  * (see https://github.com/mle86/csv-parser).
  *
@@ -47,12 +60,18 @@ typedef enum outmode {
 } outmode_t;
 
 
+/** Call this once (prior to any other output_* calls) to initialize the output module. */
 void set_output (outmode_t mode, bool do_flush, bool pretty, const char* shvar_prefix);
 
+/** Call this once to start non-empty output, i.e. shortly before printing the first record using output_line_begin(). */
 void output_begin (void);
+/** Call this once to terminate non-empty output, i.e. after the last record has been printed. */
 void output_end   (void);
+/** Call this once (instead of output_begin/output_end) if there are no input records to be printed. */
 void output_empty (void);
+/** Call this once for every input record before calling output_kv(). */
 void output_line_begin (void);
+/** Call this once for every input record after the record's last key--value pair has been printed using output_kv(). */
 void output_line_end   (void);
 
 void output_kv (const nstr* key, const nstr* value);

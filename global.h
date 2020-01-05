@@ -26,8 +26,8 @@ extern const nstr* ColumnName [];
 
 typedef enum colormode {
 	COLOR_OFF,  // no coloring
-	COLOR_ON,  // always color output
-	COLOR_AUTO,  // color output if stdout is a terminal
+	COLOR_ON,  // always colorize output
+	COLOR_AUTO,  // colorize output if stdout is a terminal
 } colormode_t;
 
 

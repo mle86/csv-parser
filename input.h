@@ -5,6 +5,13 @@
  * Input processing functions
  * and input mode-related definitions.
  *
+ * Call sequence:
+ *
+ *   - On program start: set_input().
+ *   - While next_line() returns true:
+ *       - While next_field() returns true:
+ *           - Process field.
+ *
  * This file is part of the 'csv-parser' project
  * (see https://github.com/mle86/csv-parser).
  *
@@ -51,16 +58,31 @@ typedef enum filtermode {
 } filtermode_t;
 
 
+/** Call this once (prior to any other input_* calls) to initialize the input module. */
 void set_input (FILE* file, char separator, char enclosure, bool allow_breaks, bool remove_bom, bool skip_after_header, size_t skip_lines, size_t limit_lines, trimmode_t trim, filtermode_t filter);
 
+/**
+ * Returns the last-read line number of the input file, starting with 1 for the first line.
+ * Returns 0 if next_line() hasn't been called yet.
+ */
 size_t lineno (void);
 
+/**
+ * Reads the next input line.
+ *
+ * Returns true if there was a line and next_field() can now be called;
+ * returns false on EOF or errors.
+ */
 bool next_line (void);
 
 /**
- * Returns a pointer to an nstr containing the next field,
- * or NULL if there was no next field on the current line (EOL or EOF).
- * The pointer is only valid until the next call!  */
+ * Returns a pointer to an nstr containing the next field.
+ *
+ * Returns NULL if there was no next field on the current line (EOL or EOF).
+ * In this case, next_line() should be called again to read the next input line.
+ *
+ * The returned pointer is only valid until the next call!
+ */
 const nstr* next_field (void);
 
 
