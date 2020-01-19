@@ -45,7 +45,7 @@
 
 typedef struct nstr {
 	size_t length;
-	char   buffer [1];
+	char   buffer [];
 } nstr;
 
 
